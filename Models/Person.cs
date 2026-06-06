@@ -1,0 +1,34 @@
+﻿using GeneGenie.Gedcom;
+
+namespace KekuleHtml.Models;
+
+/// <summary>
+/// Colour coding by Mary Hill.
+/// See <see href="http://www.genrootsorganizer.com/p/13-steps.html"/>.
+/// </summary>
+public enum MaryHillColour
+{
+    Blue,
+    Green,
+    Red,
+    Yellow
+}
+
+public sealed class Person
+{
+    public required int KekuleNumber { get; init; }
+
+    public required GedcomIndividualRecord GedcomRecord { get; init; }
+
+    public required MaryHillColour Color { get; init; }
+
+    /// <summary>
+    /// Used to track "Ahnenschwund"
+    /// </summary>
+    public int? FirstOccurrence { get; set; }
+
+    /// <inheritdoc cref="FirstOccurrence"/>
+    public bool IsDuplicate => FirstOccurrence.HasValue;
+
+    public int Generation => (int)Math.Floor(Math.Log2(KekuleNumber));
+}
