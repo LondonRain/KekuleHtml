@@ -13,10 +13,10 @@ public static class HtmlWriter
     #region CSS
 
     private const string CSS = """
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
-<meta charset="utf-8">
 <title>Kekulé-Liste</title>
 <style>
 body {
@@ -309,19 +309,19 @@ a:hover {
         if (missing > 0)
             html.Append($" ({missing} fehlen)");
 
-        html.AppendLine("<br>");
+        html.AppendLine("<br/>");
 
         if (generation.BirthMinYear.HasValue && generation.BirthMaxYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Geburten:</div>{generation.BirthMinYear} - {generation.BirthMaxYear} <br>");
+            html.AppendLine($"<div class=\"label\">Geburten:</div>{generation.BirthMinYear} - {generation.BirthMaxYear} <br/>");
 
         if (generation.DeathMinYear.HasValue && generation.DeathMaxYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Tode:</div>{generation.DeathMinYear} - {generation.DeathMaxYear} <br>");
+            html.AppendLine($"<div class=\"label\">Tode:</div>{generation.DeathMinYear} - {generation.DeathMaxYear} <br/>");
 
         if (generation.BirthAverageYear.HasValue && generation.DeathAverageYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Durchschnitt:</div>{generation.BirthAverageYear} - {generation.DeathAverageYear} <br>");
+            html.AppendLine($"<div class=\"label\">Durchschnitt:</div>{generation.BirthAverageYear} - {generation.DeathAverageYear} <br/>");
 
         if (generation.BirthMedianYear.HasValue && generation.DeathMedianYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Median:</div>{generation.BirthMedianYear} - {generation.DeathMedianYear} <br>");
+            html.AppendLine($"<div class=\"label\">Median:</div>{generation.BirthMedianYear} - {generation.DeathMedianYear} <br/>");
 
         html.AppendLine("</div>");
     }
