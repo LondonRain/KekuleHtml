@@ -1,4 +1,5 @@
-﻿using KekuleHtml.Services;
+﻿using KekuleHtml.Models;
+using KekuleHtml.Services;
 
 var adapter = new GedcomAdapter(args[0]);
 
@@ -12,23 +13,22 @@ var people =
 for (var i = 0; i < people.Count; i++)
 {
     Console.WriteLine(
-        $"{i + 1}: {HtmlWriter.GetFormattedName(people[i])} ({HtmlWriter.GetFormattedDates(people[i])})");
+        $"{i + 1}: {people[i].GetFormattedName()} ({people[i].GetFormattedDates()})");
 }
 
+// getting start person
 Console.Write("Person auswählen: ");
+var rootPerson = people[int.Parse(Console.ReadLine()!) - 1];
 
-var selected = people[int.Parse(Console.ReadLine()!) - 1];
+// creating gedcom reader
+var kekuleListBuilder = new KekuleListBuilder(adapter);
 
-var builder = new KekuleListBuilder(adapter);
+// getting persons
+var persons = kekuleListBuilder.GetPersons(rootPerson);
 
-var entries = builder.Build(selected);
+// getting family tree
+var familyTree = FamilyTree.CreateFamilyTree(persons);
 
-var statistics = StatisticsCalculator.Calculate(entries);
-
-HtmlWriter.Write(
-        "kekule.html",
-        selected,
-        entries,
-        statistics);
-
+// create HTML report
+HtmlWriter.Write("kekule.html", rootPerson, familyTree);
 Console.WriteLine("kekule.html erzeugt.");

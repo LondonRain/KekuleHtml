@@ -14,7 +14,7 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
 
     private readonly List<Person> _Entries = [];
 
-    public IReadOnlyList<Person> Build(GedcomIndividualRecord root)
+    public IReadOnlyList<Person> GetPersons(GedcomIndividualRecord root)
     {
         Traverse(root, 1);
 

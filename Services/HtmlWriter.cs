@@ -101,6 +101,15 @@ a:hover {
     display: inline-block;
     width: 100px;
 }
+.timeline {
+    margin-bottom: 2rem;
+    border: 1px solid #ddd;
+    background: white;
+}
+
+.timeline text {
+    font-size: 11px;
+}
 </style>
 </head>
 <body>
@@ -110,29 +119,28 @@ a:hover {
 
     #region Write
 
-    public static void Write(string fileName, GedcomIndividualRecord rootPerson, IReadOnlyList<Person> entries, IReadOnlyDictionary<int, Generation> statistics)
+    public static void Write(string fileName, GedcomIndividualRecord rootPerson, FamilyTree familyTree)
     {
         var html = new StringBuilder();
 
         html.AppendLine(CSS);
 
-        html.AppendLine($"<h1>Kekulé-Liste für {Escape(GetFormattedName(rootPerson))}</h1>");
+        html.AppendLine($"<h1>Kekulé-Liste für {Escape(rootPerson.GetFormattedName())}</h1>");
 
-        WriteTableOfContents(html, entries);
+        WriteTableOfContents(html, familyTree);
 
-        foreach (var generationGroup in entries.GroupBy(e => e.Generation).OrderBy(g => g.Key))
+        WriteTimelineSvg(html, familyTree);
+
+        foreach (var generation in familyTree.Generations)
         {
-            var generation = generationGroup.Key;
+            html.AppendLine($"<section id=\"gen{generation.GenerationNumber}\">");
 
-            html.AppendLine($"<section id=\"gen{generation}\">");
+            html.AppendLine($"<h2>{generation.ExternalName}: {generation.Description}</h2>");
 
-            html.AppendLine($"<h2>Generation {generation}</h2>");
+            WriteStatistics(html, generation);
 
-            if (statistics.TryGetValue(generation, out var stat))
-                WriteStatistics(html, stat);
-
-            foreach (var entry in generationGroup.OrderBy(e => e.KekuleNumber))
-                WritePerson(html, entry);
+            foreach (var person in generation.Persons)
+                WritePerson(html, person);
 
             html.AppendLine("</section>");
         }
@@ -145,47 +153,175 @@ a:hover {
         File.WriteAllText(fileName, html.ToString(), Encoding.UTF8);
     }
 
-    private static void WriteTableOfContents(
-        StringBuilder html,
-        IReadOnlyList<Person> entries)
+    private static void WriteTableOfContents(StringBuilder html, FamilyTree familyTree)
     {
         html.AppendLine("<nav>");
         html.AppendLine("<h2>Inhalt</h2>");
         html.AppendLine("<ul>");
 
-        foreach (var generation in entries.Select(e => e.Generation).Distinct().OrderBy(g => g))
-            html.AppendLine($"<li><a href=\"#gen{generation}\">Generation {generation}</a></li>");
+        foreach (var generation in familyTree.Generations)
+            html.AppendLine($"<li><a href=\"#gen{generation.GenerationNumber}\">{generation.ExternalName}</a></li>");
 
         html.AppendLine("</ul>");
         html.AppendLine("</nav>");
     }
 
-    private static void WriteStatistics(StringBuilder html, Generation statistics)
+    private static void WriteTimelineSvg(StringBuilder html, FamilyTree familyTree)
     {
-        var theoreticalCount = (int)Math.Pow(2, statistics.GenerationNumber);
+        var generations = familyTree.Generations;
 
-        var missing = Math.Max(0, theoreticalCount - statistics.Count);
+        if (generations.Count == 0)
+            return;
+
+        if (familyTree.MinYear == 0 || familyTree.MaxYear == 0)
+            return;
+
+        var maxGeneration = familyTree.Generations.Last().GenerationNumber;
+
+        const int leftMargin = 120;
+        const int rightMargin = 20;
+        const int topMargin = 20;
+        const int rowHeight = 26;
+
+        const int chartWidth = 1000;
+
+        var chartHeight = topMargin + ((maxGeneration + 1) * rowHeight) + 40;
+
+        double Scale(int year)
+        {
+            return leftMargin + (year - familyTree.MinYear) * (chartWidth - leftMargin - rightMargin) / (double)(familyTree.MaxYear - familyTree.MinYear);
+        }
+
+        html.AppendLine("<h2>Zeitliche Einordnung der Generationen</h2>");
+
+        html.AppendLine($"<svg class=\"timeline\" width=\"{chartWidth}\" height=\"{chartHeight}\" xmlns=\"http://www.w3.org/2000/svg\">");
+
+        // --- background lines (every 50 years)
+
+        for (var year = familyTree.MinYear; year <= familyTree.MaxYear; year += 50)
+        {
+            var x = Scale(year);
+
+            html.AppendLine($"""
+            <line
+                x1="{x:F0}"
+                y1="0"
+                x2="{x:F0}"
+                y2="{chartHeight - 25}"
+                stroke="#e5e7eb"
+                stroke-width="1"/>
+            """);
+
+            html.AppendLine($"""
+            <text
+                x="{x:F0}"
+                y="{chartHeight - 5}"
+                font-size="11"
+                text-anchor="middle">
+                {year}
+            </text>
+            """);
+        }
+
+        // --- generations
+
+        foreach (var generation in generations.OrderByDescending(x => x.GenerationNumber))
+        {
+            var row = maxGeneration - generation.GenerationNumber;
+
+            var y = topMargin + row * rowHeight;
+
+            html.AppendLine($"""
+            <text
+                x="5"
+                y="{y + 10}"
+                font-size="12">
+                {generation.ShortName}: {generation.Description}
+            </text>
+            """);
+
+            // outer bar: whole generation
+
+            // when generation has no death year and last birth is within 110 years range, assume they are still living and draw bar up to current year
+            int? logicalMaxYear = generation.DeathMaxYear;
+            int currentYear = DateTime.Today.Year;
+            if (!logicalMaxYear.HasValue &&
+                currentYear - generation.BirthMaxYear <= 110)
+            {
+                logicalMaxYear = currentYear;
+            }
+
+            if (generation.BirthMinYear.HasValue && logicalMaxYear.HasValue)
+            {
+                var x1 = Scale(generation.BirthMinYear.Value);
+
+                var x2 = Scale(logicalMaxYear.Value);
+
+                html.AppendLine($"<a href=\"#gen{generation.GenerationNumber}\">");
+
+                html.AppendLine($"""
+                <rect
+                    x="{x1:F0}"
+                    y="{y}"
+                    width="{Math.Max(1, x2 - x1):F0}"
+                    height="12"
+                    fill="#d1d5db">
+                    <title>{generation.Description}&#10;Zeitraum: {generation.BirthMinYear}-{generation.DeathMaxYear}</title>
+                </rect>
+                """);
+            }
+
+            // inner bar: median
+            if (generation.BirthMedianYear.HasValue && generation.DeathMedianYear.HasValue)
+            {
+                var medianX1 = Scale(generation.BirthMedianYear.Value);
+
+                var medianX2 = Scale(generation.DeathMedianYear.Value);
+
+                html.AppendLine($"""
+                <rect
+                    x="{medianX1:F0}"
+                    y="{y}"
+                    width="{Math.Max(1, medianX2 - medianX1):F0}"
+                    height="12"
+                    fill="#2563eb">
+                    <title>{generation.Description}&#10;Median-Lebensspanne&#10;{generation.BirthMedianYear}-{generation.DeathMedianYear}</title>
+                </rect>
+                """);
+            }
+
+            html.AppendLine("</a>");
+        }
+
+        html.AppendLine("</svg>");
+    }
+
+    private static void WriteStatistics(StringBuilder html, Generation generation)
+    {
+        var theoreticalCount = (int)Math.Pow(2, generation.GenerationNumber);
+
+        var missing = Math.Max(0, theoreticalCount - generation.Count);
 
         html.AppendLine("<div class=\"stats\">");
 
-        html.Append($"<div class=\"label\">Personen:</div>{statistics.Count}");
+        html.Append($"<div class=\"label\">Personen:</div>{generation.Count}");
 
         if (missing > 0)
             html.Append($" ({missing} fehlen)");
 
         html.AppendLine("<br>");
 
-        if (statistics.BirthMinYear.HasValue && statistics.BirthMaxYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Geburten:</div>{statistics.BirthMinYear} - {statistics.BirthMaxYear} <br>");
+        if (generation.BirthMinYear.HasValue && generation.BirthMaxYear.HasValue)
+            html.AppendLine($"<div class=\"label\">Geburten:</div>{generation.BirthMinYear} - {generation.BirthMaxYear} <br>");
 
-        if (statistics.DeathMinYear.HasValue && statistics.DeathMaxYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Tode:</div>{statistics.DeathMinYear} - {statistics.DeathMaxYear} <br>");
+        if (generation.DeathMinYear.HasValue && generation.DeathMaxYear.HasValue)
+            html.AppendLine($"<div class=\"label\">Tode:</div>{generation.DeathMinYear} - {generation.DeathMaxYear} <br>");
 
-        if (statistics.BirthAverageYear.HasValue && statistics.DeathAverageYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Durchschnitt:</div>{statistics.BirthAverageYear} - {statistics.DeathAverageYear} <br>");
+        if (generation.BirthAverageYear.HasValue && generation.DeathAverageYear.HasValue)
+            html.AppendLine($"<div class=\"label\">Durchschnitt:</div>{generation.BirthAverageYear} - {generation.DeathAverageYear} <br>");
 
-        if (statistics.BirthMedianYear.HasValue && statistics.DeathMedianYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Median:</div>{statistics.BirthMedianYear} - {statistics.DeathMedianYear} <br>");
+        if (generation.BirthMedianYear.HasValue && generation.DeathMedianYear.HasValue)
+            html.AppendLine($"<div class=\"label\">Median:</div>{generation.BirthMedianYear} - {generation.DeathMedianYear} <br>");
 
         html.AppendLine("</div>");
     }
@@ -197,7 +333,7 @@ a:hover {
 
         html.AppendLine($"<span class=\"number\">{entry.KekuleNumber}</span>");
 
-        html.Append(Escape(GetFormattedName(entry.GedcomRecord)));
+        html.Append(Escape(entry.GedcomRecord.GetFormattedName()));
 
         if (entry.IsDuplicate)
         {
@@ -205,7 +341,7 @@ a:hover {
         }
         else
         {
-            var dates = GetFormattedDates(entry.GedcomRecord);
+            var dates = entry.GedcomRecord.GetFormattedDates();
 
             if (!string.IsNullOrWhiteSpace(dates))
                 html.Append($" <span class=\"dates\">({Escape(dates)})</span>");
@@ -218,65 +354,6 @@ a:hover {
     #endregion
 
     #region Helpers
-
-    internal static string GetFormattedDates(GedcomIndividualRecord person)
-    {
-        var birth = FormatDate(person.Birth?.Date);
-
-        var death = FormatDate(person.Death?.Date);
-
-        if (string.IsNullOrWhiteSpace(birth) && string.IsNullOrWhiteSpace(death))
-            return string.Empty;
-        else if (!string.IsNullOrWhiteSpace(birth) && string.IsNullOrWhiteSpace(death))
-            return $"* {birth}";
-        else if (string.IsNullOrWhiteSpace(birth) && !string.IsNullOrWhiteSpace(death))
-            return $"† {death}";
-        else
-            return $"*{birth} – †{death}";
-    }
-
-    private static string? FormatDate(GedcomDate? date)
-    {
-        if (date == null)
-            return null;
-
-        if (date.DateTime1.HasValue)
-        {
-            var value = date.DateTime1.Value;
-
-            if (value.Day != 1 || value.Month != 1 ||
-                !string.Equals(date.Date1, value.Year.ToString(), StringComparison.Ordinal))
-            {
-                return value.ToString("d");
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(date.DateString))
-            return date.DateString;
-
-        return date.Date1;
-    }
-
-    internal static string GetFormattedName(GedcomIndividualRecord person)
-    {
-        var name = person.GetName();
-
-        if (name == null)
-            return "(unbekannt)";
-
-        var surname = name.Surname?.Trim();
-        var given = name.Given?.Trim();
-
-        if (!string.IsNullOrWhiteSpace(surname) &&
-            !string.IsNullOrWhiteSpace(given))
-        {
-            return $"{surname}, {given}";
-        }
-
-        var raw = name.Name ?? string.Empty;
-
-        return raw.Replace("/", string.Empty).Trim();
-    }
 
     private static string Escape(string? value)
     {

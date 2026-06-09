@@ -1,4 +1,5 @@
 ﻿using GeneGenie.Gedcom;
+using System.Diagnostics;
 
 namespace KekuleHtml.Models;
 
@@ -14,12 +15,16 @@ public enum MaryHillColour
     Yellow
 }
 
+[DebuggerDisplay("KekuleNumber: {KekuleNumber}")]
 public sealed class Person
 {
     public required int KekuleNumber { get; init; }
 
     public required GedcomIndividualRecord GedcomRecord { get; init; }
 
+    public string FormattedName => GedcomRecord.GetFormattedName();
+
+    /// <inheritdoc cref="MaryHillColour"/>
     public required MaryHillColour Color { get; init; }
 
     /// <summary>
@@ -31,4 +36,10 @@ public sealed class Person
     public bool IsDuplicate => FirstOccurrence.HasValue;
 
     public int Generation => (int)Math.Floor(Math.Log2(KekuleNumber));
+
+    public int? BirthYear => GedcomRecord.Birth?.Date?.DateTime1?.Year;
+
+    public int? DeathYear => GedcomRecord.Death?.Date?.DateTime1?.Year;
+
+    public string FormattedDates => GedcomRecord.GetFormattedDates();
 }
