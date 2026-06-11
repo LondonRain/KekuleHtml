@@ -12,6 +12,23 @@
         /// </summary>
         public required IReadOnlyList<Generation> Generations { get; init; }
 
+        public IEnumerable<Person> AllPersons
+        {
+            get
+            {
+                foreach (var generation in Generations)
+                {
+                    foreach (var person in generation.Persons)
+                        yield return person;
+                }
+            }
+        }
+
+        public Person? GetPerson(int kekuleNumber)
+        {
+            return AllPersons.FirstOrDefault(p => p.KekuleNumber == kekuleNumber);
+        }
+
         public int MinYear
         {
             get

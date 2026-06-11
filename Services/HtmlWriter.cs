@@ -1,5 +1,6 @@
 ﻿using GeneGenie.Gedcom;
 using KekuleHtml.Models;
+using System.Globalization;
 using System.Net;
 using System.Text;
 
@@ -18,6 +19,12 @@ public static class HtmlWriter
 <html>
 <head>
 <title>Kekulé-Liste</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+ <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
 <style>
 body {
     font-family: Segoe UI, sans-serif;
@@ -97,10 +104,12 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
 .label {
     display: inline-block;
     width: 100px;
 }
+
 .timeline {
     margin-bottom: 2rem;
     border: 1px solid #ddd;
@@ -109,6 +118,69 @@ a:hover {
 
 .timeline text {
     font-size: 11px;
+}
+
+#migrationMap
+{
+    width: 100%;
+    height: 700px;
+    margin-bottom: 2rem;
+    border: 1px solid #ddd;
+}
+
+.migrationLegend
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    background: #fafafa;
+}
+
+.legendItem
+{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-size: 0.95rem;
+}
+
+.legendColor
+{
+    width: 16px;
+    height: 16px;
+
+    border-radius: 50%;
+
+    border: 1px solid #666;
+
+    display: inline-block;
+}
+
+.legendColor.blue
+{
+    background: #005D8F;
+}
+
+.legendColor.green
+{
+    background: #0A7050;
+}
+
+.legendColor.red
+{
+    background: #BE2323;
+}
+
+.legendColor.yellow
+{
+    background: #F5AF00;
 }
 </style>
 </head>
@@ -119,7 +191,7 @@ a:hover {
 
     #region Write
 
-    public static void Write(string fileName, GedcomIndividualRecord rootPerson, FamilyTree familyTree)
+    public static void Write(string fileName, GedcomIndividualRecord rootPerson, FamilyTree familyTree, IEnumerable<MigrationCluster> migrationClusters)
     {
         var html = new StringBuilder();
 
@@ -130,6 +202,8 @@ a:hover {
         WriteTableOfContents(html, familyTree);
 
         WriteTimelineSvg(html, familyTree);
+
+        WriteMigrationMap(html, familyTree, migrationClusters);
 
         foreach (var generation in familyTree.Generations)
         {
@@ -242,13 +316,20 @@ a:hover {
 
             // outer bar: whole generation
 
-            // when generation has no death year and last birth is within 110 years range, assume they are still living and draw bar up to current year
             int? logicalMaxYear = generation.DeathMaxYear;
             int currentYear = DateTime.Today.Year;
-            if (!logicalMaxYear.HasValue &&
-                currentYear - generation.BirthMaxYear <= 110)
+            if (!logicalMaxYear.HasValue)
             {
-                logicalMaxYear = currentYear;
+                if (currentYear - generation.BirthMaxYear <= 110)
+                {
+                    // when generation has no death year and last birth is within 110 years range, assume they are still living and draw bar up to current year
+                    logicalMaxYear = currentYear;
+                }
+                else
+                {
+                    // for older generations that miss a death year, use last birth year for it
+                    logicalMaxYear = generation.BirthMaxYear;
+                }
             }
 
             if (generation.BirthMinYear.HasValue && logicalMaxYear.HasValue)
@@ -294,6 +375,144 @@ a:hover {
         }
 
         html.AppendLine("</svg>");
+    }
+
+    private static void WriteMigrationMap(StringBuilder html, FamilyTree familyTree, IEnumerable<MigrationCluster> migrationClusters)
+    {
+        if (!migrationClusters.Any())
+            return;
+
+        // --- Legend
+
+        html.AppendLine("<h2>Geographische Verteilung der Ahnenlinien</h2>");
+
+        html.AppendLine($"""
+<div class="migrationLegend">
+
+    <div class="legendItem">
+        <span class="legendColor blue"></span>
+        {Escape(familyTree.GetPerson(4)?.SurName)}
+    </div>
+
+    <div class="legendItem">
+        <span class="legendColor green"></span>
+        {Escape(familyTree.GetPerson(5)?.SurName)}
+    </div>
+
+    <div class="legendItem">
+        <span class="legendColor red"></span>
+        {Escape(familyTree.GetPerson(6)?.SurName)}
+    </div>
+
+    <div class="legendItem">
+        <span class="legendColor yellow"></span>
+        {Escape(familyTree.GetPerson(7)?.SurName)}
+    </div>
+
+</div>
+""");
+
+        // --- Map
+
+        html.AppendLine("""
+<div id="migrationMap"></div>
+""");
+
+        html.AppendLine("<script>");
+
+        html.AppendLine("""
+const migrationMap = L.map('migrationMap');
+
+L.tileLayer(
+    'https://tile.openstreetmap.de/{z}/{x}/{y}.png',
+    {
+        maxZoom: 18,
+        attribution: '©️ OpenStreetMap',
+    })
+    .addTo(migrationMap);
+
+const bounds = [];
+""");
+
+        foreach (var cluster in migrationClusters)
+        {
+            var color =
+                cluster.MaryHillColour switch
+                {
+                    MaryHillColour.Blue => "#005D8F",
+                    MaryHillColour.Green => "#0A7050",
+                    MaryHillColour.Red => "#BE2323",
+                    MaryHillColour.Yellow => "#F5AF00",
+                    _ => throw new InvalidOperationException($"Unexpected colour {cluster.MaryHillColour}!")
+                };
+
+            var opacity = GetOpacity(cluster);
+            var opacityText = opacity.ToString("F2", CultureInfo.InvariantCulture);
+
+            var radius = 6.0 + 3.0 * Math.Sqrt(cluster.Count);
+            var radiusText = radius.ToString("F1", CultureInfo.InvariantCulture);
+
+            var latitude = cluster.Latitude.ToString(CultureInfo.InvariantCulture);
+            var longitude = cluster.Longitude.ToString(CultureInfo.InvariantCulture);
+
+            var popup =
+                $"{EscapeJs(cluster.PlaceName)}<br/>" +
+                $"Ereignisse: {cluster.Count}<br/>" +
+                $"Zeitraum: {cluster.MinYear} - {cluster.MaxYear}";
+
+            html.AppendLine($$"""
+bounds.push([{{latitude}}, {{longitude}}]);
+
+L.circleMarker(
+    [{{latitude}}, {{longitude}}],
+    {
+        radius: {{radiusText}},
+        color: "{{color}}",
+        fillColor: "{{color}}",
+        fillOpacity: {{opacityText}},
+        weight: 1
+    })
+    .bindPopup("{{popup}}")
+    .addTo(migrationMap);
+""");
+        }
+
+        html.AppendLine("""
+if (bounds.length > 0)
+{
+    migrationMap.fitBounds(
+        bounds,
+        {
+            padding: [40, 40]
+        });
+}
+""");
+
+        html.AppendLine("</script>");
+
+        double GetOpacity(MigrationCluster cluster)
+        {
+            // newest years are the darkest
+            const double defaultOpacity = 0.8;
+            const double minOpacity = 0.1;
+            const double scalableOpacity = defaultOpacity - minOpacity;
+
+            // calculate colour fade per MarryHill colour
+            var minYear = migrationClusters.Where(c => c.MaryHillColour == cluster.MaryHillColour).Min(c => c.MinYear);
+            var maxYear = migrationClusters.Where(c => c.MaryHillColour == cluster.MaryHillColour).Max(c => c.MinYear);
+            int yearRange = maxYear - minYear;
+
+            if (minYear == maxYear)
+            {
+                return defaultOpacity;
+            }
+            else
+            {
+                double yearsSinceMinYear = cluster.MinYear - minYear;
+                double opacity = Math.Round(yearsSinceMinYear / yearRange * scalableOpacity + minOpacity, 2);
+                return opacity;
+            }
+        }
     }
 
     private static void WriteStatistics(StringBuilder html, Generation generation)
@@ -358,6 +577,19 @@ a:hover {
     private static string Escape(string? value)
     {
         return WebUtility.HtmlEncode(value ?? string.Empty);
+    }
+
+    private static string EscapeJs(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        return value
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"")
+            .Replace("'", "\\'")
+            .Replace("\r", "")
+            .Replace("\n", "");
     }
 
     #endregion

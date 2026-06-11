@@ -65,5 +65,10 @@ public sealed class GedcomAdapter
         return _Families.GetValueOrDefault(link.Family);
     }
 
+    internal GedcomFamilyRecord? GetFamily(string family)
+    {
+        return _Families.GetValueOrDefault(family);
+    }
+
     #endregion
 }

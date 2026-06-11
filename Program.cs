@@ -29,6 +29,11 @@ var persons = kekuleListBuilder.GetPersons(rootPerson);
 // getting family tree
 var familyTree = FamilyTree.CreateFamilyTree(persons);
 
+// creating migration clusters
+var migrationCollector = new MigrationCollector(adapter);
+var migrationPoints = migrationCollector.GetMigrationPoins(familyTree);
+var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoints);
+
 // create HTML report
-HtmlWriter.Write("kekule.html", rootPerson, familyTree);
+HtmlWriter.Write("kekule.html", rootPerson, familyTree, migrationClusters);
 Console.WriteLine("kekule.html erzeugt.");

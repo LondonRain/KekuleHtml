@@ -15,7 +15,7 @@ public enum MaryHillColour
     Yellow
 }
 
-[DebuggerDisplay("KekuleNumber: {KekuleNumber}")]
+[DebuggerDisplay("KekuleNumber: {KekuleNumber}, Name: {FormattedName}")]
 public sealed class Person
 {
     public required int KekuleNumber { get; init; }
@@ -23,6 +23,8 @@ public sealed class Person
     public required GedcomIndividualRecord GedcomRecord { get; init; }
 
     public string FormattedName => GedcomRecord.GetFormattedName();
+
+    public string SurName => GedcomRecord.GetName().Surname;
 
     /// <inheritdoc cref="MaryHillColour"/>
     public required MaryHillColour Color { get; init; }
