@@ -257,7 +257,7 @@ a:hover {
         const int topMargin = 20;
         const int rowHeight = 26;
 
-        const int chartWidth = 1000;
+        const int chartWidth = 1200;
 
         var chartHeight = topMargin + ((maxGeneration + 1) * rowHeight) + 40;
 
@@ -449,11 +449,42 @@ const bounds = [];
             var opacity = GetOpacity(cluster);
             var opacityText = opacity.ToString("F2", CultureInfo.InvariantCulture);
 
+            // this are meters (as per leaflet API documentation) - but it seem to be pixels in reality.
+            // the formula is somehow arbitrary to get a balance between small and big sized circles while retaining visibility of the
+            // tiniest ones and not drawing the largest ones too big, still preserving distinguishability between different sizes.
             var radius = 6.0 + 3.0 * Math.Sqrt(cluster.Count);
             var radiusText = radius.ToString("F1", CultureInfo.InvariantCulture);
 
-            var latitude = cluster.Latitude.ToString(CultureInfo.InvariantCulture);
-            var longitude = cluster.Longitude.ToString(CultureInfo.InvariantCulture);
+            var latitude = cluster.Latitude;
+            var longitude = cluster.Longitude;
+
+            // slightly offset overlaying points (only when needed)
+            const double offset = 0.002;
+            if (migrationClusters.Any(c => c != cluster &&
+                                           Math.Abs(c.Latitude - cluster.Latitude) <= offset &&
+                                           Math.Abs(c.Longitude - cluster.Longitude) <= offset))
+            {
+                switch (cluster.MaryHillColour)
+                {
+                    case MaryHillColour.Blue:
+                        latitude += offset;
+                        break;
+                    case MaryHillColour.Green:
+                        latitude -= offset;
+                        break;
+                    case MaryHillColour.Red:
+                        longitude += offset;
+                        break;
+                    case MaryHillColour.Yellow:
+                        longitude -= offset;
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unexpected colour {cluster.MaryHillColour}!");
+                }
+            }
+
+            var latitudeText = latitude.ToString(CultureInfo.InvariantCulture);
+            var longitudeText = longitude.ToString(CultureInfo.InvariantCulture);
 
             var popup =
                 $"{EscapeJs(cluster.PlaceName)}<br/>" +
@@ -461,10 +492,10 @@ const bounds = [];
                 $"Zeitraum: {cluster.MinYear} - {cluster.MaxYear}";
 
             html.AppendLine($$"""
-bounds.push([{{latitude}}, {{longitude}}]);
+bounds.push([{{latitudeText}}, {{longitudeText}}]);
 
 L.circleMarker(
-    [{{latitude}}, {{longitude}}],
+    [{{latitudeText}}, {{longitudeText}}],
     {
         radius: {{radiusText}},
         color: "{{color}}",
@@ -493,9 +524,9 @@ if (bounds.length > 0)
         double GetOpacity(MigrationCluster cluster)
         {
             // newest years are the darkest
-            const double defaultOpacity = 0.8;
+            const double maxOpacity = 0.8;
             const double minOpacity = 0.1;
-            const double scalableOpacity = defaultOpacity - minOpacity;
+            const double scalableOpacity = maxOpacity - minOpacity;
 
             // calculate colour fade per MarryHill colour
             var minYear = migrationClusters.Where(c => c.MaryHillColour == cluster.MaryHillColour).Min(c => c.MinYear);
@@ -504,7 +535,7 @@ if (bounds.length > 0)
 
             if (minYear == maxYear)
             {
-                return defaultOpacity;
+                return maxOpacity;
             }
             else
             {
