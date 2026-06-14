@@ -45,8 +45,9 @@ public class MigrationCollector(GedcomAdapter adapter)
         AddPlace(points, death.Place, death.Date.DateTime1.Value.Year, person.Color);
     }
 
-    private static void CollectResidence(ISet<MigrationPoint> points, Person person)
+    private void CollectResidence(ISet<MigrationPoint> points, Person person)
     {
+        // residence from a single person
         foreach (var evt in person.GedcomRecord.Attributes)
         {
             if (evt.GedcomTag != "RESI")
@@ -56,6 +57,27 @@ public class MigrationCollector(GedcomAdapter adapter)
                 continue;
 
             AddPlace(points, evt.Place, evt.Date.DateTime1.Value.Year, person.Color);
+        }
+
+        // residences from marriages
+        foreach (var familyLink in person.GedcomRecord.SpouseIn)
+        {
+            var family = _Adapter.GetFamily(familyLink.Family);
+
+            if (family == null)
+                continue;
+
+            foreach (var evt in family.Events)
+            {
+                if (evt.GedcomTag != "RESI")
+                    continue;
+
+                if (evt.Date?.DateTime1 == null)
+                    continue;
+
+                // will be added for both partners with a different color
+                AddPlace(points, evt.Place, evt.Date.DateTime1.Value.Year, person.Color);
+            }
         }
     }
 
