@@ -27,7 +27,7 @@ public sealed class Person
     public string SurName => GedcomRecord.GetName().Surname;
 
     /// <inheritdoc cref="MaryHillColour"/>
-    public required MaryHillColour Color { get; init; }
+    public required MaryHillColour Colour { get; init; }
 
     /// <summary>
     /// Used to track "Ahnenschwund"

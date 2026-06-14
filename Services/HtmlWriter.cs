@@ -197,7 +197,7 @@ a:hover {
 
         html.AppendLine(CSS);
 
-        html.AppendLine($"<h1>Kekulé-Liste für {Escape(rootPerson.GetFormattedName())}</h1>");
+        html.AppendLine($"<h1>Kekulé-Liste für {EscapeHtml(rootPerson.GetFormattedName())}</h1>");
 
         WriteTableOfContents(html, familyTree);
 
@@ -391,22 +391,22 @@ a:hover {
 
     <div class="legendItem">
         <span class="legendColor blue"></span>
-        {Escape(familyTree.GetPerson(4)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(4)?.SurName)}
     </div>
 
     <div class="legendItem">
         <span class="legendColor green"></span>
-        {Escape(familyTree.GetPerson(5)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(5)?.SurName)}
     </div>
 
     <div class="legendItem">
         <span class="legendColor red"></span>
-        {Escape(familyTree.GetPerson(6)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(6)?.SurName)}
     </div>
 
     <div class="legendItem">
         <span class="legendColor yellow"></span>
-        {Escape(familyTree.GetPerson(7)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(7)?.SurName)}
     </div>
 
 </div>
@@ -434,9 +434,10 @@ L.tileLayer(
 const bounds = [];
 """);
 
-        foreach (var cluster in migrationClusters)
+        // draw the small circles on top
+        foreach (var cluster in migrationClusters.OrderByDescending(c => c.Count))
         {
-            var color =
+            var colour =
                 cluster.MaryHillColour switch
                 {
                     MaryHillColour.Blue => "#005D8F",
@@ -489,7 +490,8 @@ const bounds = [];
             var popup =
                 $"{EscapeJs(cluster.PlaceName)}<br/>" +
                 $"Ereignisse: {cluster.Count}<br/>" +
-                $"Zeitraum: {cluster.MinYear} - {cluster.MaxYear}";
+                $"Zeitraum: {cluster.MinYear} - {cluster.MaxYear}<br/><br/>" +
+                $"<small>Details:<br/>{cluster.Description.Replace(Environment.NewLine, "<br/>")}</small>";
 
             html.AppendLine($$"""
 bounds.push([{{latitudeText}}, {{longitudeText}}]);
@@ -498,12 +500,12 @@ L.circleMarker(
     [{{latitudeText}}, {{longitudeText}}],
     {
         radius: {{radiusText}},
-        color: "{{color}}",
-        fillColor: "{{color}}",
+        color: "{{colour}}",
+        fillColor: "{{colour}}",
         fillOpacity: {{opacityText}},
         weight: 1
     })
-    .bindPopup("{{popup}}")
+    .bindPopup("{{popup}}", {maxWidth: 800})
     .addTo(migrationMap);
 """);
         }
@@ -577,13 +579,13 @@ if (bounds.length > 0)
     }
     private static void WritePerson(StringBuilder html, Person entry)
     {
-        var cssClass = entry.Color.ToString().ToLowerInvariant();
+        var cssClass = entry.Colour.ToString().ToLowerInvariant();
 
         html.AppendLine($"<div class=\"person {cssClass}\">");
 
         html.AppendLine($"<span class=\"number\">{entry.KekuleNumber}</span>");
 
-        html.Append(Escape(entry.GedcomRecord.GetFormattedName()));
+        html.Append(EscapeHtml(entry.GedcomRecord.GetFormattedName()));
 
         if (entry.IsDuplicate)
         {
@@ -594,7 +596,7 @@ if (bounds.length > 0)
             var dates = entry.GedcomRecord.GetFormattedDates();
 
             if (!string.IsNullOrWhiteSpace(dates))
-                html.Append($" <span class=\"dates\">({Escape(dates)})</span>");
+                html.Append($" <span class=\"dates\">({EscapeHtml(dates)})</span>");
         }
 
         html.AppendLine();
@@ -605,9 +607,13 @@ if (bounds.length > 0)
 
     #region Helpers
 
-    private static string Escape(string? value)
+    private static string EscapeHtml(string? value)
     {
-        return WebUtility.HtmlEncode(value ?? string.Empty);
+        if (value == null)
+            return string.Empty;
+
+        value = value.Replace(Environment.NewLine, "<br/>");
+        return WebUtility.HtmlEncode(value);
     }
 
     private static string EscapeJs(string? value)

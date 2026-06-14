@@ -31,7 +31,7 @@ var familyTree = FamilyTree.CreateFamilyTree(persons);
 
 // creating migration clusters
 var migrationCollector = new MigrationCollector(adapter);
-var migrationPoints = migrationCollector.GetMigrationPoins(familyTree);
+var migrationPoints = migrationCollector.GetMigrationPoints(familyTree);
 var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoints);
 
 // create HTML report

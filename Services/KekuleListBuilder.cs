@@ -30,7 +30,7 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
         {
             KekuleNumber = number,
             GedcomRecord = person,
-            Color = GetColorFromKekule(number)
+            Colour = GetColourFromKekule(number)
         };
 
         if (_Seen.TryGetValue(person.XRefID, out var firstNumber))
@@ -51,12 +51,12 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
         Traverse(mother, number * 2 + 1);
     }
 
-    public static MaryHillColour GetColorFromKekule(int number)
+    public static MaryHillColour GetColourFromKekule(int number)
     {
         if (number < 1)
             throw new ArgumentException("Must be 1 or greater.");
 
-        // fixed color for first 2 generations (0 and 1).
+        // fixed colour for first 2 generations (0 and 1).
         if (number == 1 || number == 2)
             return MaryHillColour.Blue;
         else if (number == 3)
@@ -70,7 +70,7 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
             baseAncestor >>= 1;
         }
 
-        // 4 colors for 4 different lines from generation 2 onwards
+        // 4 colours for 4 different lines from generation 2 onwards
         return baseAncestor switch
         {
             4 => MaryHillColour.Blue,

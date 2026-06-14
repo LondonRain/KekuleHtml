@@ -10,9 +10,9 @@ public class MigrationCollector(GedcomAdapter adapter)
 
     #region Points
 
-    public IReadOnlyList<MigrationPoint> GetMigrationPoins(FamilyTree familyTree)
+    public IReadOnlyList<MigrationPoint> GetMigrationPoints(FamilyTree familyTree)
     {
-        var points = new HashSet<MigrationPoint>();
+        var points = new List<MigrationPoint>();
 
         foreach (var person in familyTree.AllPersons.Where(p => !p.IsDuplicate))
         {
@@ -22,30 +22,40 @@ public class MigrationCollector(GedcomAdapter adapter)
             CollectMarriage(points, person);
         }
 
-        return points.OrderBy(p => p.MaryHillColour).ThenBy(p => p.Year).ThenBy(p => p.PlaceName).ToList();
+        return points.OrderBy(p => p.Person.Colour).ThenBy(p => p.YearFrom).ThenBy(p => p.PlaceName).ToList();
     }
 
-    private static void CollectBirth(ISet<MigrationPoint> points, Person person)
+    private static void CollectBirth(IList<MigrationPoint> points, Person person)
     {
         var birth = person.GedcomRecord.Birth;
 
         if (birth?.Date?.DateTime1 == null)
             return;
 
-        AddPlace(points, birth.Place, birth.Date.DateTime1.Value.Year, person.Color);
+        AddPoint(
+            points,
+            person,
+            PointOrigin.Birth,
+            birth.Place,
+            birth.Date.DateTime1.Value.Year);
     }
 
-    private static void CollectDeath(ISet<MigrationPoint> points, Person person)
+    private static void CollectDeath(IList<MigrationPoint> points, Person person)
     {
         var death = person.GedcomRecord.Death;
 
         if (death?.Date?.DateTime1 == null)
             return;
 
-        AddPlace(points, death.Place, death.Date.DateTime1.Value.Year, person.Color);
+        AddPoint(
+            points,
+            person,
+            PointOrigin.Death,
+            death.Place,
+            death.Date.DateTime1.Value.Year);
     }
 
-    private void CollectResidence(ISet<MigrationPoint> points, Person person)
+    private void CollectResidence(IList<MigrationPoint> points, Person person)
     {
         // residence from a single person
         foreach (var evt in person.GedcomRecord.Attributes)
@@ -56,7 +66,13 @@ public class MigrationCollector(GedcomAdapter adapter)
             if (evt.Date?.DateTime1 == null)
                 continue;
 
-            AddPlace(points, evt.Place, evt.Date.DateTime1.Value.Year, person.Color);
+            AddPoint(
+                points,
+                person,
+                PointOrigin.Residence,
+                evt.Place,
+                evt.Date.DateTime1.Value.Year,
+                evt.Date.DateTime2?.Year);
         }
 
         // residences from marriages
@@ -75,13 +91,19 @@ public class MigrationCollector(GedcomAdapter adapter)
                 if (evt.Date?.DateTime1 == null)
                     continue;
 
-                // will be added for both partners with a different color
-                AddPlace(points, evt.Place, evt.Date.DateTime1.Value.Year, person.Color);
+                // will be added for both partners with a different colour
+                AddPoint(
+                    points,
+                    person,
+                    PointOrigin.Residence,
+                    evt.Place,
+                    evt.Date.DateTime1.Value.Year,
+                    evt.Date.DateTime2?.Year);
             }
         }
     }
 
-    private void CollectMarriage(ISet<MigrationPoint> points, Person person)
+    private void CollectMarriage(IList<MigrationPoint> points, Person person)
     {
         foreach (var familyLink in person.GedcomRecord.SpouseIn)
         {
@@ -90,30 +112,40 @@ public class MigrationCollector(GedcomAdapter adapter)
             if (family?.Marriage?.Date?.DateTime1 == null)
                 continue;
 
-            // will be added from both marriage sides with a different color
-            AddPlace(points, family.Marriage.Place, family.Marriage.Date.DateTime1.Value.Year, person.Color);
+            // will be added from both marriage sides with a different colour
+            AddPoint(
+                points,
+                person,
+                PointOrigin.Marriage,
+                family.Marriage.Place,
+                family.Marriage.Date.DateTime1.Value.Year);
         }
     }
 
-    private static void AddPlace(ISet<MigrationPoint> points, GedcomPlace? place, int year, MaryHillColour color)
+    private static void AddPoint(
+        IList<MigrationPoint> points,
+        Person person,
+        PointOrigin pointOrigin,
+        GedcomPlace place,
+        int yearFrom,
+        int? yearTo = null)
     {
-        if (place == null)
+        if (string.IsNullOrWhiteSpace(place?.Latitude) || string.IsNullOrWhiteSpace(place?.Longitude))
             return;
 
-        if (string.IsNullOrWhiteSpace(place.Latitude))
-            return;
-
-        if (string.IsNullOrWhiteSpace(place.Longitude))
-            return;
+        if (yearTo == yearFrom)
+            yearTo = null;
 
         points.Add(
             new MigrationPoint
             {
+                Person = person,
+                PointOrigin = pointOrigin,
                 Latitude = ParseCoordinate(place.Latitude),
                 Longitude = ParseCoordinate(place.Longitude),
-                Year = year,
-                MaryHillColour = color,
-                PlaceName = place.Name
+                PlaceName = place.Name,
+                YearFrom = yearFrom,
+                YearTo = yearTo
             });
     }
 
@@ -139,7 +171,7 @@ public class MigrationCollector(GedcomAdapter adapter)
             {
                 p.Latitude,
                 p.Longitude,
-                p.MaryHillColour
+                p.Person.Colour
             })
             .Select(g =>
             {
@@ -147,16 +179,18 @@ public class MigrationCollector(GedcomAdapter adapter)
 
                 return new MigrationCluster
                 {
+                    MigrationPoints = g.OrderBy(p => p.Person.Colour).ThenBy(p => p.Person.FormattedName).ThenBy(p => p.YearFrom).ToList(),
                     Latitude = g.Key.Latitude,
                     Longitude = g.Key.Longitude,
-                    MaryHillColour = g.Key.MaryHillColour,
+                    MaryHillColour = g.Key.Colour,
                     Count = g.Count(),
-                    MinYear = g.Min(x => x.Year),
-                    MaxYear = g.Max(x => x.Year),
+                    MinYear = g.Min(x => x.YearFrom),
+                    MaxYear = Math.Max(g.Max(x => x.YearFrom), g.Max(x => x.YearTo).GetValueOrDefault()),
                     PlaceName = first.PlaceName
                 };
             })
-            .OrderByDescending(x => x.Count)
+            .OrderBy(c => c.PlaceName)
+            .ThenByDescending(x => x.Count)
             .ToList();
     }
 

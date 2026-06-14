@@ -2,33 +2,35 @@
 
 namespace KekuleHtml.Models;
 
-[DebuggerDisplay("{MaryHillColour}, {Year}, {PlaceName}")]
-public sealed class MigrationPoint : IEquatable<MigrationPoint>
+public enum PointOrigin
 {
+    Birth,
+    Marriage,
+    Death,
+    Residence
+}
+
+/// <summary>
+/// One entry in time of a <see cref="Person"/> being at a <see cref="PlaceName"/> at a certain <see cref="YearFrom"/>.
+/// </summary>
+[DebuggerDisplay("{DebuggerDisplay}")]
+public sealed class MigrationPoint
+{
+
+    public required Person Person { get; init; }
+
+    public required PointOrigin PointOrigin { get; init; }
+
     public required double Latitude { get; init; }
 
     public required double Longitude { get; init; }
 
     public required string PlaceName { get; init; }
 
-    public required int Year { get; init; }
+    public required int YearFrom { get; init; }
 
+    public int? YearTo { get; init; }
 
-    public required MaryHillColour MaryHillColour { get; init; }
-
-    public bool Equals(MigrationPoint? other)
-    {
-        if (other is null)
-            return false;
-
-        return Latitude.Equals(other.Latitude)
-            && Longitude.Equals(other.Longitude)
-            && PlaceName.Equals(other.PlaceName)
-            && Year == other.Year
-            && MaryHillColour == other.MaryHillColour;
-    }
-
-    public override bool Equals(object? obj) => Equals(obj as MigrationPoint);
-
-    public override int GetHashCode() => HashCode.Combine(Latitude, Longitude, PlaceName, Year, MaryHillColour);
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    public string DebuggerDisplay => $"{Person.Colour}, {Person.FormattedName}, {PointOrigin}, {YearFrom}-{YearTo}, {PlaceName}";
 }
