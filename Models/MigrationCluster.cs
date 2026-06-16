@@ -26,72 +26,81 @@ namespace KekuleHtml.Models
         public required string PlaceName { get; init; }
 
         /// <summary>
-        /// Details about events in this cluster to display in tooltip.
+        /// Detailed HTML about events in this cluster to display in tooltip.
         /// </summary>
-        public string Description
+        public string DescriptionHtml
         {
             get
             {
-                var sb = new StringBuilder();
+                var sbOuter = new StringBuilder();
 
-                foreach (var pointsOfPerson in MigrationPoints.GroupBy(p => p.Person))
+                if (MigrationPoints.Any())
                 {
-                    // --- Name
+                    sbOuter.Append("<ul>");
 
-                    sb.Append($"{pointsOfPerson.Key.FormattedName}: ");
-
-                    // --- Birth
-
-                    // don't know whether multiple birth entries would be allowed. but better ignore others than simply crash.
-                    var birth = pointsOfPerson.FirstOrDefault(p => p.PointOrigin == PointOrigin.Birth);
-
-                    if (birth != null)
-                        sb.Append($"* {birth.YearFrom}, ");
-
-                    // --- Marriage
-
-                    var marriages = pointsOfPerson.Where(p => p.PointOrigin == PointOrigin.Marriage).ToList();
-
-                    if (marriages.Count > 0)
+                    foreach (var pointsOfPerson in MigrationPoints.GroupBy(p => p.Person))
                     {
-                        sb.Append("⚭ ");
+                        var sbInner = new StringBuilder();
 
-                        foreach (var marriage in marriages)
-                            sb.Append($"{marriage.YearFrom}, ");
-                    }
+                        // --- Name
 
-                    // --- Residence
+                        sbInner.Append($"{pointsOfPerson.Key.FormattedName}: ");
 
-                    var residences = pointsOfPerson.Where(p => p.PointOrigin == PointOrigin.Residence).ToList();
+                        // --- Birth
 
-                    if (residences.Count > 0)
-                    {
-                        var allYears = residences.Select(r => r.YearFrom).Concat(residences.Select(r => r.YearTo).OfType<int>()).ToList();
+                        // don't know whether multiple birth entries would be allowed. but better ignore others than simply crash.
+                        var birth = pointsOfPerson.FirstOrDefault(p => p.PointOrigin == PointOrigin.Birth);
 
-                        if (allYears.Count > 0)
+                        if (birth != null)
+                            sbInner.Append($"* {birth.YearFrom}, ");
+
+                        // --- Marriage
+
+                        var marriages = pointsOfPerson.Where(p => p.PointOrigin == PointOrigin.Marriage).ToList();
+
+                        if (marriages.Count > 0)
                         {
-                            int minYear = allYears.Min();
-                            int? maxYear = allYears.Max();
+                            sbInner.Append("⚭ ");
 
-                            if (maxYear.HasValue && maxYear != minYear)
-                                sb.Append($"⌂ {minYear} - {maxYear}, ");
-                            else
-                                sb.Append($"⌂ {minYear}, ");
+                            foreach (var marriage in marriages)
+                                sbInner.Append($"{marriage.YearFrom}, ");
                         }
+
+                        // --- Residence
+
+                        var residences = pointsOfPerson.Where(p => p.PointOrigin == PointOrigin.Residence).ToList();
+
+                        if (residences.Count > 0)
+                        {
+                            var allYears = residences.Select(r => r.YearFrom).Concat(residences.Select(r => r.YearTo).OfType<int>()).ToList();
+
+                            if (allYears.Count > 0)
+                            {
+                                int minYear = allYears.Min();
+                                int? maxYear = allYears.Max();
+
+                                if (maxYear.HasValue && maxYear != minYear)
+                                    sbInner.Append($"⌂ {minYear} - {maxYear}, ");
+                                else
+                                    sbInner.Append($"⌂ {minYear}, ");
+                            }
+                        }
+
+                        // --- Death
+
+                        // don't know whether multiple death entries would be allowed. but better ignore others than simply crash.
+                        var death = pointsOfPerson.FirstOrDefault(p => p.PointOrigin == PointOrigin.Death);
+
+                        if (death != null)
+                            sbInner.Append($"✝ {death.YearFrom}, ");
+
+                        sbOuter.AppendLine($"<li>{sbInner.ToString().TrimEnd().TrimEnd(',')}</li>");
                     }
 
-                    // --- Death
-
-                    // don't know whether multiple death entries would be allowed. but better ignore others than simply crash.
-                    var death = pointsOfPerson.FirstOrDefault(p => p.PointOrigin == PointOrigin.Death);
-
-                    if (death != null)
-                        sb.Append($"✝ {death.YearFrom}, ");
-
-                    sb.AppendLine();
+                    sbOuter.Append("</ul>");
                 }
 
-                return sb.ToString().TrimEnd().TrimEnd(',');
+                return sbOuter.ToString();
             }
         }
 

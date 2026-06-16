@@ -167,6 +167,18 @@ a:hover {
 {
     background: #F5AF00;
 }
+
+/* the collapsible details with text about its persons. make sure that list with persons is condensed. */
+details
+{
+font-size: smaller;
+line-height: 0.6;
+}
+details ul
+{
+margin-block-start: 0rem;
+padding-left: 1rem;
+}
 </style>
 </head>
 <body>
@@ -416,6 +428,12 @@ L.tileLayer(
     })
     .addTo(migrationMap);
 
+migrationMap.on('popupopen', function(e) {
+    // having details opened and then closing it makes sure that popup already has the size it needs when details are opened by user.
+    const details = e.popup._contentNode.querySelector('.auto-close-details');
+    details.removeAttribute('open');
+});
+
 const bounds = [];
 """);
 
@@ -472,11 +490,16 @@ const bounds = [];
             var latitudeText = latitude.ToString(CultureInfo.InvariantCulture);
             var longitudeText = longitude.ToString(CultureInfo.InvariantCulture);
 
-            var popup =
-                $"{EscapeJs(cluster.PlaceName)}<br/>" +
-                $"Ereignisse: {cluster.Count}<br/>" +
-                $"Zeitraum: {cluster.MinYear} - {cluster.MaxYear}<br/><br/>" +
-                $"<small>Details:<br/>{cluster.Description.Replace(Environment.NewLine, "<br/>")}</small>";
+            var popup = string.Concat(
+                $"{EscapeJs(cluster.PlaceName)}<br/>",
+                $"Ereignisse: {cluster.Count}<br/>",
+                $"Zeitraum: {cluster.MinYear} - {cluster.MaxYear}<br/><br/>",
+                "<details open=\'true\' class=\'auto-close-details\'>",
+                "<summary>Details</summary>",
+                // make sure details can also be closed by clicking any of its content
+                "<div onclick=\\\"this.closest(\'details\').removeAttribute(\'open\');\\\">",
+                $"<p>{ReplaceLineBreaks(cluster.DescriptionHtml)}</p>",
+                "</div></details>");
 
             html.AppendLine($$"""
 bounds.push([{{latitudeText}}, {{longitudeText}}]);
@@ -592,12 +615,13 @@ if (bounds.length > 0)
 
     #region Helpers
 
+    private static string ReplaceLineBreaks(string value) => value.Replace(Environment.NewLine, "<br/>");
+
     private static string EscapeHtml(string? value)
     {
-        if (value == null)
+        if (string.IsNullOrEmpty(value))
             return string.Empty;
 
-        value = value.Replace(Environment.NewLine, "<br/>");
         return WebUtility.HtmlEncode(value);
     }
 
