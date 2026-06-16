@@ -14,7 +14,6 @@ public static class HtmlWriter
     #region CSS
 
     private const string CSS = """
-<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,94 +31,87 @@ body {
     max-width: 1200px;
     line-height: 1.4;
 }
-
+/* general styling */
 h1 {
     margin-bottom: 1rem;
 }
-
 h2 {
     margin-top: 2rem;
 }
 
+/* table of contents */
 nav {
     margin-bottom: 2rem;
 }
-
 nav ul {
     columns: 3;
     padding-left: 1rem;
 }
-
 nav li {
     margin-bottom: 0.25rem;
 }
 
-.person {
-    padding: 4px 8px;
-    margin: 2px 0;
-    border-left: 8px solid;
-}
-
-.blue {
-    border-color: #005D8F;
-}
-
-.green {
-    border-color: #0A7050;
-}
-
-.red {
-    border-color: #BE2323;
-}
-
-.yellow {
-    border-color: #F5AF00;
-}
-
-.number {
-    display: inline-block;
-    width: 6em;
-    font-weight: bold;
-}
-
-.dates {
-    color: #555;
-}
-
-.duplicate-note {
-    color: #888;
-    font-style: italic;
-}
-
+/* generational information */
 .stats {
     margin-bottom: 1rem;
     color: #555;
 }
-
-a {
-    text-decoration: none;
-    color: blue;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
 .label {
     display: inline-block;
     width: 100px;
 }
 
+/* single person entries */
+.person {
+    padding: 4px 8px;
+    margin: 2px 0;
+    border-left: 8px solid;
+}
+.blue {
+    border-color: #005D8F;
+}
+.green {
+    border-color: #0A7050;
+}
+.red {
+    border-color: #BE2323;
+}
+.yellow {
+    border-color: #F5AF00;
+}
+.number {
+    display: inline-block;
+    width: 6em;
+    font-weight: bold;
+}
+.dates {
+    color: #555;
+}
+.duplicate-note {
+    color: #888;
+    font-style: italic;
+}
+
+/* make sure that links won't be ugly when printed and visited */
+a {
+    text-decoration: none;
+    color: blue;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* styling of the timeline svg region */
 .timeline {
     margin-bottom: 2rem;
     border: 1px solid #ddd;
     background: white;
 }
-
 .timeline text {
     font-size: 11px;
 }
 
+/* styling of the map */
 #migrationMap
 {
     width: 100%;
@@ -127,7 +119,6 @@ a:hover {
     margin-bottom: 2rem;
     border: 1px solid #ddd;
 }
-
 .migrationLegend
 {
     display: flex;
@@ -141,7 +132,6 @@ a:hover {
 
     background: #fafafa;
 }
-
 .legendItem
 {
     display: flex;
@@ -150,7 +140,6 @@ a:hover {
 
     font-size: 0.95rem;
 }
-
 .legendColor
 {
     width: 16px;
@@ -162,22 +151,18 @@ a:hover {
 
     display: inline-block;
 }
-
 .legendColor.blue
 {
     background: #005D8F;
 }
-
 .legendColor.green
 {
     background: #0A7050;
 }
-
 .legendColor.red
 {
     background: #BE2323;
 }
-
 .legendColor.yellow
 {
     background: #F5AF00;
