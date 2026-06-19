@@ -14,7 +14,7 @@ namespace KekuleHtml.Models
                 return "(unbekannt)";
 
             var surname = name.Surname?.Trim();
-            var given = name.Given?.Trim();
+            var given = name.Given?.Replace(",", string.Empty).Replace("\"", string.Empty).Replace("\'", string.Empty).Trim();
 
             if (!string.IsNullOrWhiteSpace(surname) &&
                 !string.IsNullOrWhiteSpace(given))
