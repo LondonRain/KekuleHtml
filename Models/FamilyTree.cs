@@ -1,4 +1,6 @@
-﻿namespace KekuleHtml.Models
+﻿// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Tim
+namespace KekuleHtml.Models
 {
     /// <summary>
     /// Family tree holds all our <see cref="Generation"/>s consisting of <see cref="Person"/>s.
