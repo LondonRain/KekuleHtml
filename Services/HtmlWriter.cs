@@ -458,7 +458,7 @@ const bounds = [];
             // this are meters (as per leaflet API documentation) - but it seem to be pixels in reality.
             // the formula is somehow arbitrary to get a balance between small and big sized circles while retaining visibility of the
             // tiniest ones and not drawing the largest ones too big, still preserving distinguishability between different sizes.
-            var radius = 6.0 + 3.0 * Math.Sqrt(cluster.Count);
+            var radius = 4.0 + 4.0 * Math.Sqrt(cluster.Count);
             var radiusText = radius.ToString("F1", CultureInfo.InvariantCulture);
 
             var latitude = cluster.Latitude;
