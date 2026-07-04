@@ -52,6 +52,14 @@ nav ul {
 nav li {
     margin-bottom: 0.25rem;
 }
+/* make sure that links won't be ugly when printed and visited */
+a {
+    text-decoration: none;
+    color: blue;
+}
+a:hover {
+    text-decoration: underline;
+}
 
 /* generational information */
 .stats {
@@ -61,6 +69,10 @@ nav li {
 .label {
     display: inline-block;
     width: 100px;
+}
+/* when printing avoid page breaks within the listing of one generation */
+section {
+    page-break-inside: avoid;
 }
 
 /* single person entries */
@@ -92,15 +104,6 @@ nav li {
 .duplicate-note {
     color: #888;
     font-style: italic;
-}
-
-/* make sure that links won't be ugly when printed and visited */
-a {
-    text-decoration: none;
-    color: blue;
-}
-a:hover {
-    text-decoration: underline;
 }
 
 /* styling of the timeline svg region */
