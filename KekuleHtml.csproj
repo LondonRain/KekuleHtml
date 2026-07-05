@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GeneGenie.Gedcom" Version="1.0.3" />
+    <Reference Include="GeneGenie.Gedcom">
+      <HintPath>Externals\GeneGenie.Gedcom.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
