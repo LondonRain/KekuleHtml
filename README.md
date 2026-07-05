@@ -6,6 +6,11 @@ Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstell
 
 Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren.
 
+## Voraussetzungen
+- Die Anwendung basiert auf [.NET10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Dieses muss installiert sein.
+- Damit Datumswerte korrekt eingelesen werden können, müssen diese dem [GEDCOM-Standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date) entsprechen. Bspw. funktionieren keine deutschen Monatsnamen.
+- Für die Kartenfunktionalität müssen die Orte georeferenziert worden sein. Eine eigene Georeferenzierung auf Basis der Ortsnamen findet nicht statt. Siehe Abschnitt ["Geographische Verteilung der Ahnenlinien"](#geographische-verteilung-der-ahnenlinien).
+
 ## Aufruf
 
 Als Kommandozeilenparameter muss die eigene GEDCOM-Datei angegeben werden:
@@ -29,7 +34,7 @@ Außerdem wird ein Zeitleistendiagramm erzeugt, welches die Lebensspanne der ein
 
 ### Geographische Verteilung der Ahnenlinien
 
-Liegen für Personen geolokalisierte Orte vor (LATI- und LONG-Tag in GEDCOM), so wird eine Karte ausgegeben.
+Liegen für Personen geolokalisierte Orte vor ([LATI- und LONG-Tag](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#latitude) in GEDCOM), so wird eine Karte ausgegeben.
 
 ![Karte der geographischen Verteilung der Ahnenlinien](img/2_migration_map.png)
 
