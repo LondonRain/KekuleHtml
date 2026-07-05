@@ -13,12 +13,24 @@ var people =
 for (var i = 0; i < people.Count; i++)
 {
     Console.WriteLine(
-        $"{i + 1}: {people[i].GetFormattedName()} ({people[i].GetFormattedDates()})");
+        $"{i + 1}: {people[i].GetFormattedNameWithDates()}");
 }
 
 // getting start person
-Console.Write("Person auswählen: ");
-var rootPerson = people[int.Parse(Console.ReadLine()!) - 1];
+Console.WriteLine();
+Console.WriteLine("Bitte Startperson auswählen. \"0\" zum Beenden.");
+int userChoice;
+while (!int.TryParse(Console.ReadLine(), out userChoice) ||
+       userChoice < 0 || userChoice > people.Count)
+{
+    Console.Write("Bitte eine gültige Zahl eingeben: ");
+}
+
+// die
+if (userChoice == 0)
+    return;
+
+var rootPerson = people[userChoice - 1];
 
 // creating gedcom reader
 var kekuleListBuilder = new KekuleListBuilder(adapter);
@@ -36,4 +48,6 @@ var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoint
 
 // create HTML report
 HtmlWriter.Write("kekule.html", rootPerson, familyTree, migrationClusters);
-Console.WriteLine("kekule.html erzeugt.");
+
+Console.WriteLine();
+Console.WriteLine($"kekule.html für \"{rootPerson.GetFormattedNameWithDates()}\" erzeugt.");

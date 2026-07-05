@@ -43,6 +43,8 @@ namespace KekuleHtml.Models
                 return $"*{birth} – †{death}";
         }
 
+        internal static string GetFormattedNameWithDates(this GedcomIndividualRecord person) => $"{GetFormattedName(person)} ({GetFormattedDates(person)})";
+
         private static string? FormatDate(GedcomDate? date)
         {
             if (date == null)

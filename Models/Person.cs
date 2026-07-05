@@ -26,7 +26,11 @@ public sealed class Person
 
     public string FormattedName => GedcomRecord.GetFormattedName();
 
-    public string SurName => GedcomRecord.GetName().Surname;
+    public string FormattedDates => GedcomRecord.GetFormattedDates();
+
+    public string FormattedNameWithDates => GedcomRecord.GetFormattedNameWithDates();
+
+    public string Surname => GedcomRecord.GetName().Surname;
 
     /// <inheritdoc cref="MaryHillColour"/>
     public required MaryHillColour Colour { get; init; }
@@ -44,6 +48,4 @@ public sealed class Person
     public int? BirthYear => GedcomRecord.Birth?.Date?.DateTime1?.Year;
 
     public int? DeathYear => GedcomRecord.Death?.Date?.DateTime1?.Year;
-
-    public string FormattedDates => GedcomRecord.GetFormattedDates();
 }

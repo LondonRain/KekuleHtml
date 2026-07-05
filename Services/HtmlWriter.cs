@@ -393,22 +393,22 @@ padding-left: 1rem;
 
     <div class="legendItem">
         <span class="legendColor blue"></span>
-        {EscapeHtml(familyTree.GetPerson(4)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(4)?.Surname)}
     </div>
 
     <div class="legendItem">
         <span class="legendColor green"></span>
-        {EscapeHtml(familyTree.GetPerson(5)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(5)?.Surname)}
     </div>
 
     <div class="legendItem">
         <span class="legendColor red"></span>
-        {EscapeHtml(familyTree.GetPerson(6)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(6)?.Surname)}
     </div>
 
     <div class="legendItem">
         <span class="legendColor yellow"></span>
-        {EscapeHtml(familyTree.GetPerson(7)?.SurName)}
+        {EscapeHtml(familyTree.GetPerson(7)?.Surname)}
     </div>
 
 </div>
@@ -598,7 +598,7 @@ if (bounds.length > 0)
 
         html.AppendLine($"<span class=\"number\">{entry.KekuleNumber}</span>");
 
-        html.Append(EscapeHtml(entry.GedcomRecord.GetFormattedName()));
+        html.Append(EscapeHtml(entry.FormattedName));
 
         if (entry.IsDuplicate)
         {
@@ -606,7 +606,7 @@ if (bounds.length > 0)
         }
         else
         {
-            var dates = entry.GedcomRecord.GetFormattedDates();
+            var dates = entry.FormattedDates;
 
             if (!string.IsNullOrWhiteSpace(dates))
                 html.Append($" <span class=\"dates\">({EscapeHtml(dates)})</span>");
