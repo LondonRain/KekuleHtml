@@ -1,7 +1,16 @@
 ﻿using KekuleHtml.Models;
 using KekuleHtml.Services;
 
-var adapter = new GedcomAdapter(args[0]);
+
+// check params
+string? path = args.FirstOrDefault();
+if (!Path.Exists(path) || Path.GetExtension(path) != ".ged")
+{
+    Console.WriteLine("Bitte den Pfad zu einer GEDCOM-Datei als ersten Parameter angeben.");
+    return;
+}
+
+var adapter = new GedcomAdapter(path);
 
 var people =
     adapter.Individuals
@@ -47,7 +56,9 @@ var migrationPoints = migrationCollector.GetMigrationPoints(familyTree);
 var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoints);
 
 // create HTML report
-HtmlWriter.Write("kekule.html", rootPerson, familyTree, migrationClusters);
+string fileName = "kekule.html";
+var outputPath = Path.Combine(Path.GetDirectoryName(path)!, fileName);
+HtmlWriter.Write(outputPath, rootPerson, familyTree, migrationClusters);
 
 Console.WriteLine();
-Console.WriteLine($"kekule.html für \"{rootPerson.GetFormattedNameWithDates()}\" erzeugt.");
+Console.WriteLine($"Für \"{rootPerson.GetFormattedNameWithDates()}\" wurde in \"{outputPath}\" eine Kekule-Liste erzeugt.");

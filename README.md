@@ -20,7 +20,7 @@ Eine alphabetisch sortierte Liste aller in der Datei existierenden Personen wird
 
 ![Startperson auswählen](img/0_select_start_person.png)
 
-Anschließend wird im selben Verzeichnis eine `kekule.html` erzeugt. Diese wird nicht automatisch im Browser geöffnet.
+Anschließend wird im selben Verzeichnis wie die GEDCOM-Datei eine `kekule.html` erzeugt. Diese wird nicht automatisch im Browser geöffnet.
 
 ## Funktionen
 
