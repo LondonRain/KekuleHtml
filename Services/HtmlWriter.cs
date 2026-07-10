@@ -19,7 +19,7 @@ public static class HtmlWriter
 <!DOCTYPE html>
 <html>
 <head>
-<title>Kekulé-Liste</title>
+<title>Kekule-Liste</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
@@ -201,7 +201,7 @@ padding-left: 1rem;
 
         html.AppendLine(CSS);
 
-        html.AppendLine($"<h1>Kekulé-Liste für {EscapeHtml(rootPerson.GetFormattedName())}</h1>");
+        html.AppendLine($"<h1>Kekule-Liste für {EscapeHtml(rootPerson.GetFormattedName())}</h1>");
 
         WriteTableOfContents(html, familyTree);
 
