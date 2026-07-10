@@ -73,6 +73,7 @@ Pro Generation wird der Zeitraum der vorkommenden Geburten und Todesfälle ausge
 
 - **KekuleHtml** nutzt [GeneGenie.Gedcom](https://github.com/TheGeneGenieProject/GeneGenie.Gedcom) zum Parsen der GEDCOM-Datei.
 - [Leaflet](https://leafletjs.com/) wird mit [OpenStreetMap.de](https://www.openstreetmap.de/)-Daten zur Kartendarstellung verwendet.
+- [Leaflet Control FullScreen](https://github.com/brunob/leaflet.fullscreen) ergänzt einen Vollbildknopf für die Karte
 - Die [Kennedy Family](https://github.com/D-Jeffrey/gedcom-samples/tree/main#kennedy)-Beispiel-GEDCOM-Datei von [gedcom-samples](https://github.com/D-Jeffrey/gedcom-samples) wurde zum Erstellen der Dokumentation genutzt.
 
 Herzlichen Dank an alle!

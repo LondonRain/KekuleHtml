@@ -23,9 +23,11 @@ public static class HtmlWriter
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen/dist/Control.FullScreen.css" />
  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.fullscreen/dist/Control.FullScreen.umd.js"></script>
 <style>
 body {
     font-family: Segoe UI, sans-serif;
@@ -424,6 +426,8 @@ padding-left: 1rem;
 
         html.AppendLine("""
 const migrationMap = L.map('migrationMap');
+
+migrationMap.addControl(new L.Control.FullScreen());
 
 L.tileLayer(
     'https://tile.openstreetmap.de/{z}/{x}/{y}.png',
