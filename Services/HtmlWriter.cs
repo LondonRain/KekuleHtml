@@ -462,7 +462,7 @@ const bounds = [];
             var opacity = GetOpacity(cluster);
             var opacityText = opacity.ToString("F2", CultureInfo.InvariantCulture);
 
-            // this are meters (as per leaflet API documentation) - but it seem to be pixels in reality.
+            // for circleMarkers this are pixels. so the circle size stays the same, independent of the current zoom level.
             // the formula is somehow arbitrary to get a balance between small and big sized circles while retaining visibility of the
             // tiniest ones and not drawing the largest ones too big, still preserving distinguishability between different sizes.
             var radius = 4.0 + 4.0 * Math.Sqrt(cluster.Count);
