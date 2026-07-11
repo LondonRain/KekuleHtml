@@ -596,7 +596,7 @@ if (bounds.length > 0)
     {
         var cssClass = entry.Colour.ToString().ToLowerInvariant();
 
-        html.AppendLine($"<div class=\"person {cssClass}\">");
+        html.AppendLine($"<div class=\"person {cssClass}\" id=\"p_{entry.KekuleNumber}\">");
 
         html.AppendLine($"<span class=\"number\">{entry.KekuleNumber}</span>");
 
@@ -604,7 +604,7 @@ if (bounds.length > 0)
 
         if (entry.IsDuplicate)
         {
-            html.Append($" <span class=\"duplicate-note\">(siehe Nr. {entry.FirstOccurrence})</span>");
+            html.Append($" <span class=\"duplicate-note\">(siehe Nr. <a href=\"#p_{entry.FirstOccurrence}\">{entry.FirstOccurrence})</a></span>");
         }
         else
         {
