@@ -8,7 +8,7 @@ namespace KekuleHtml.Models
     /// <summary>
     /// Extension methods on different <see cref="GedcomRecord"/> objects.
     /// </summary>
-    internal static class GedcomIndividualRecordExtensions
+    internal static class GedcomRecordExtensions
     {
         #region GedcomIndividualRecord
 
