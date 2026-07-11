@@ -62,3 +62,7 @@ HtmlWriter.Write(outputPath, rootPerson, familyTree, migrationClusters);
 
 Console.WriteLine();
 Console.WriteLine($"Für \"{rootPerson.GetFormattedNameWithDates()}\" wurde in \"{outputPath}\" eine Kekule-Liste erzeugt.");
+
+Console.WriteLine();
+Console.WriteLine("Beliebige Taste zum Beenden drücken...");
+Console.ReadKey();
