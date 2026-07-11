@@ -30,7 +30,7 @@ Es wird ein Inhaltsverzeichnis mit Links zu jeder Generation ausgegeben.
 
 ![Inhalt & Zeitliche Einordnung der Generationen](img/1_toc.png)
 
-Außerdem wird ein Zeitleistendiagramm erzeugt, welches die Lebensspanne der einzelnen Generationen darstellt. Die grauen Balken gehen vom kleinsten Geburts- bis zum größten Sterbedatum. Gibt es in der Generation kein Sterbedatum und ist das Geburtsjahr 110 oder weniger Jahre her, wird angenommen, dass die Generation noch lebt und der Balken erstreckt sich bis ins aktuelle Jahr. Die blauen Balken stellen die jeweilige Zeitspanne vom Median der Geburts- und Sterbejahre dar. Die Balken sind ebenfalls klickbar und springen dann zur Auflistung der jeweiligen Generation.
+Außerdem wird ein Zeitleistendiagramm erzeugt, welches die Lebensspanne der einzelnen Generationen darstellt. Die grauen Balken gehen vom kleinsten Geburts- bis zum größten Sterbedatum. Gibt es in der Generation nicht bei jeder Person Sterbedaten und ist mindestens eines der Geburtsjahre 110 oder weniger Jahre her, wird angenommen, dass die Generation noch lebt und der Balken erstreckt sich bis ins aktuelle Jahr. Die blauen Balken stellen die jeweilige Zeitspanne vom Median der Geburts- und Sterbejahre dar. Die Balken sind ebenfalls klickbar und springen dann zur Auflistung der jeweiligen Generation.
 
 ### Geographische Verteilung der Ahnenlinien
 

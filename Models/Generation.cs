@@ -49,4 +49,12 @@ public sealed class Generation
     public int? DeathMaxYear { get; init; }
     public int? DeathAverageYear { get; init; }
     public int? DeathMedianYear { get; init; }
+
+    /// <summary>
+    /// Whether generation contains people that did not die already and aren't older than 110 years.
+    /// </summary>
+    /// <remarks>
+    /// If there is at least one of those persons assume that generation could still be alive.
+    /// </remarks>
+    public bool MightStillBeLiving { get; init; }
 }

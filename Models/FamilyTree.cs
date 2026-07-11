@@ -69,28 +69,52 @@ namespace KekuleHtml.Models
 
         }
 
-        private static Generation CreateStatistics(IGrouping<int, Person> group)
+        private static Generation CreateStatistics(IGrouping<int, Person> generationGroup)
         {
-            var birthYears = group.Select(x => x.GedcomRecord.Birth?.Date?.DateTime1?.Year)
-                .Where(x => x.HasValue)
-                .Select(x => x!.Value)
-                .OrderBy(x => x)
-                .ToList();
-            if (birthYears.Count == (0))
-                birthYears = null;
+            List<int>? birthYears = new();
+            List<int>? deathYears = new();
 
-            var deathYears = group.Select(x => x.GedcomRecord.Death?.Date?.DateTime1?.Year)
-                   .Where(x => x.HasValue)
-                   .Select(x => x!.Value)
-                   .OrderBy(x => x)
-                   .ToList();
-            if (deathYears.Count == (0))
-                deathYears = null;
+            int currentYear = DateTime.Today.Year;
+            bool mightStillBeLiving = false;
+
+            foreach (var person in generationGroup)
+            {
+                if (person.GedcomRecord.Birth != null &&
+                    person.GedcomRecord.Birth.Date.TryGetYear1(out var birthYear))
+                {
+                    int birthYearValue = birthYear!.Value;
+
+                    birthYears.Add(birthYearValue);
+
+                    if (!mightStillBeLiving && currentYear - birthYearValue <= 110)
+                    {
+                        // person was born less than 110 years ago, assume it might be still alive
+                        mightStillBeLiving = true;
+                    }
+                }
+
+                if (person.GedcomRecord.Death != null &&
+                    person.GedcomRecord.Death.Date.TryGetYear1(out var deathYear))
+                {
+                    deathYears.Add(deathYear!.Value);
+                }
+            }
+
+            if (mightStillBeLiving)
+            {
+                // ...but everybody died alreaqdy
+                if (generationGroup.Count() == deathYears.Count)
+                    mightStillBeLiving = false;
+            }
+
+            // sort and handle empty lists
+            birthYears = birthYears.Count > 0 ? birthYears.Order().ToList() : null;
+            deathYears = deathYears.Count > 0 ? deathYears.Order().ToList() : null;
 
             return new Generation
             {
-                GenerationNumber = group.Key,
-                Persons = group.ToList(),
+                GenerationNumber = generationGroup.Key,
+                Persons = generationGroup.ToList(),
 
                 BirthMinYear = birthYears?.Min(),
                 BirthMaxYear = birthYears?.Max(),
@@ -100,7 +124,9 @@ namespace KekuleHtml.Models
                 DeathMinYear = deathYears?.Min(),
                 DeathMaxYear = deathYears?.Max(),
                 DeathAverageYear = deathYears != null ? (int)Math.Round(deathYears.Average()) : null,
-                DeathMedianYear = deathYears != null ? CalculateMedian(deathYears) : null
+                DeathMedianYear = deathYears != null ? CalculateMedian(deathYears) : null,
+
+                MightStillBeLiving = mightStillBeLiving
             };
 
             static int CalculateMedian(List<int> years)

@@ -322,18 +322,16 @@ padding-left: 1rem;
 
             int? logicalMaxYear = generation.DeathMaxYear;
             int currentYear = DateTime.Today.Year;
-            if (!logicalMaxYear.HasValue)
+
+            if (generation.MightStillBeLiving)
             {
-                if (currentYear - generation.BirthMaxYear <= 110)
-                {
-                    // when generation has no death year and last birth is within 110 years range, assume they are still living and draw bar up to current year
-                    logicalMaxYear = currentYear;
-                }
-                else
-                {
-                    // for older generations that miss a death year, use last birth year for it
-                    logicalMaxYear = generation.BirthMaxYear;
-                }
+                // draw bar up to today if someone might still be alive
+                logicalMaxYear = currentYear;
+            }
+            else if (!logicalMaxYear.HasValue)
+            {
+                // for older generations that miss a death year, use last birth year for it
+                logicalMaxYear = generation.BirthMaxYear;
             }
 
             if (generation.BirthMinYear.HasValue && logicalMaxYear.HasValue)

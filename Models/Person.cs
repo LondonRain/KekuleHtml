@@ -44,8 +44,4 @@ public sealed class Person
     public bool IsDuplicate => FirstOccurrence.HasValue;
 
     public int Generation => (int)Math.Floor(Math.Log2(KekuleNumber));
-
-    public int? BirthYear => GedcomRecord.Birth?.Date?.DateTime1?.Year;
-
-    public int? DeathYear => GedcomRecord.Death?.Date?.DateTime1?.Year;
 }
