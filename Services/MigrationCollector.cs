@@ -31,7 +31,7 @@ public class MigrationCollector(GedcomAdapter adapter)
     {
         var birth = person.GedcomRecord.Birth;
 
-        if (birth?.Date?.DateTime1 == null)
+        if (birth == null || !birth.Date.TryGetYear1(out var year1))
             return;
 
         AddPoint(
@@ -39,14 +39,14 @@ public class MigrationCollector(GedcomAdapter adapter)
             person,
             PointOrigin.Birth,
             birth.Place,
-            birth.Date.DateTime1.Value.Year);
+            year1!.Value);
     }
 
     private static void CollectDeath(IList<MigrationPoint> points, Person person)
     {
         var death = person.GedcomRecord.Death;
 
-        if (death?.Date?.DateTime1 == null)
+        if (death == null || !death.Date.TryGetYear1(out var year1))
             return;
 
         AddPoint(
@@ -54,7 +54,7 @@ public class MigrationCollector(GedcomAdapter adapter)
             person,
             PointOrigin.Death,
             death.Place,
-            death.Date.DateTime1.Value.Year);
+            year1!.Value);
     }
 
     private void CollectResidence(IList<MigrationPoint> points, Person person)
@@ -65,16 +65,19 @@ public class MigrationCollector(GedcomAdapter adapter)
             if (evt.GedcomTag != "RESI")
                 continue;
 
-            if (evt.Date?.DateTime1 == null)
+            if (!evt.Date.TryGetYear1(out var year1))
                 continue;
+
+            // a second date is optional
+            _ = evt.Date.TryGetYear2(out var year2);
 
             AddPoint(
                 points,
                 person,
                 PointOrigin.Residence,
                 evt.Place,
-                evt.Date.DateTime1.Value.Year,
-                evt.Date.DateTime2?.Year);
+                year1!.Value,
+                year2);
         }
 
         // residences from marriages
@@ -90,8 +93,11 @@ public class MigrationCollector(GedcomAdapter adapter)
                 if (evt.GedcomTag != "RESI")
                     continue;
 
-                if (evt.Date?.DateTime1 == null)
+                if (!evt.Date.TryGetYear1(out var year1))
                     continue;
+
+                // a second date is optional
+                _ = evt.Date.TryGetYear2(out var year2);
 
                 // will be added for both partners with a different colour
                 AddPoint(
@@ -99,8 +105,8 @@ public class MigrationCollector(GedcomAdapter adapter)
                     person,
                     PointOrigin.Residence,
                     evt.Place,
-                    evt.Date.DateTime1.Value.Year,
-                    evt.Date.DateTime2?.Year);
+                    year1!.Value,
+                    year2);
             }
         }
     }
@@ -111,7 +117,7 @@ public class MigrationCollector(GedcomAdapter adapter)
         {
             var family = _Adapter.GetFamily(familyLink.Family);
 
-            if (family?.Marriage?.Date?.DateTime1 == null)
+            if (family?.Marriage == null || !family.Marriage.Date.TryGetYear1(out var year1))
                 continue;
 
             // will be added from both marriage sides with a different colour
@@ -120,7 +126,7 @@ public class MigrationCollector(GedcomAdapter adapter)
                 person,
                 PointOrigin.Marriage,
                 family.Marriage.Place,
-                family.Marriage.Date.DateTime1.Value.Year);
+                year1!.Value);
         }
     }
 
@@ -132,6 +138,7 @@ public class MigrationCollector(GedcomAdapter adapter)
         int yearFrom,
         int? yearTo = null)
     {
+        // skip points without georeference
         if (string.IsNullOrWhiteSpace(place?.Latitude) || string.IsNullOrWhiteSpace(place?.Longitude))
             return;
 
