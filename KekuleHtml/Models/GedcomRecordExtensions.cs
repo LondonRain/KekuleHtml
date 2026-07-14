@@ -8,11 +8,11 @@ namespace KekuleHtml.Models
     /// <summary>
     /// Extension methods on different <see cref="GedcomRecord"/> objects.
     /// </summary>
-    internal static class GedcomRecordExtensions
+    public static class GedcomRecordExtensions
     {
         #region GedcomIndividualRecord
 
-        internal static string GetFormattedName(this GedcomIndividualRecord person)
+        public static string GetFormattedName(this GedcomIndividualRecord person)
         {
             var name = person.GetName();
 
@@ -33,7 +33,7 @@ namespace KekuleHtml.Models
             return raw.Replace("/", string.Empty).Trim();
         }
 
-        internal static string GetFormattedDates(this GedcomIndividualRecord person)
+        public static string GetFormattedDates(this GedcomIndividualRecord person)
         {
             var birth = FormatDate(person.Birth?.Date);
 
@@ -49,7 +49,7 @@ namespace KekuleHtml.Models
                 return $"*{birth} – †{death}";
         }
 
-        internal static string GetFormattedNameWithDates(this GedcomIndividualRecord person) => $"{GetFormattedName(person)} ({GetFormattedDates(person)})";
+        public static string GetFormattedNameWithDates(this GedcomIndividualRecord person) => $"{GetFormattedName(person)} ({GetFormattedDates(person)})";
 
         private static string? FormatDate(GedcomDate? date)
         {
@@ -82,7 +82,7 @@ namespace KekuleHtml.Models
         /// </summary>
         private static readonly Regex _YearRegex = new(@"\b(1\d{3}|20\d{2}|21\d{2})\b");
 
-        internal static bool TryGetYear1(this GedcomDate date, out int? year1)
+        public static bool TryGetYear1(this GedcomDate date, out int? year1)
         {
             year1 = null;
             if (date == null)
@@ -110,7 +110,7 @@ namespace KekuleHtml.Models
             return false;
         }
 
-        internal static bool TryGetYear2(this GedcomDate date, out int? year2)
+        public static bool TryGetYear2(this GedcomDate date, out int? year2)
         {
             year2 = null;
             if (date == null)

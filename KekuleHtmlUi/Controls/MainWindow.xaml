@@ -1,0 +1,194 @@
+<Window x:Class="KekuleHtmlUi.Controls.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:localControls="clr-namespace:KekuleHtmlUi.Controls"
+        xmlns:localConverters="clr-namespace:KekuleHtmlUi.Converters"
+        xmlns:localPresenters="clr-namespace:KekuleHtmlUi.Presenters"
+        xmlns:localProperties="clr-namespace:KekuleHtmlUi.Properties"
+        Title="KekuleHtml"
+        Height="300"
+        MinHeight="300"
+        Width="500"
+        MinWidth="500"
+        WindowStartupLocation="CenterScreen"
+        AllowDrop="True"
+        DragEnter="Window_DragEnter"
+        DragOver="Window_DragEnter"
+        DragLeave="Window_DragLeave"
+        Drop="Window_Drop"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=localPresenters:MainPresenter, IsDesignTimeCreatable=False}">
+
+    <Window.Resources>
+        <localConverters:BoolToNotBoolConverter x:Key="BoolToNotBoolConverter" />
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Drag & drop overlay -->
+        <Border x:Name="DropOverlay"
+                Margin="3"
+                Background="#9901362A"
+                BorderBrush="#CC01362A"
+                BorderThickness="2"
+                CornerRadius="8"
+                Visibility="Collapsed"
+                IsHitTestVisible="False"
+                Panel.ZIndex="1">
+
+            <!-- Overlay text -->
+            <Border Background="#01362A"
+                    CornerRadius="8"
+                    Padding="20 8"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <TextBlock Text="{x:Static localProperties:Resources.DropOverlayText}"
+                           Foreground="White"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+        </Border>
+
+        <!-- Input is locked while IsBusy (parsing/generating) -->
+        <Grid Margin="12"
+              IsEnabled="{Binding IsBusy, Converter={StaticResource BoolToNotBoolConverter}, Mode=OneWay}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- File header -->
+            <TextBlock Grid.Row="0"
+                       Margin="0 0 0 0"
+                       Text="{x:Static localProperties:Resources.GedcomFileHeader}"
+                       FontWeight="Bold" />
+
+            <!-- File hint -->
+            <TextBlock Grid.Row="1"
+                       Margin="0 6 0 0"
+                       Text="{x:Static localProperties:Resources.GedcomFileHint}"
+                       Foreground="Gray" />
+
+            <!-- File selection -->
+            <Grid Grid.Row="2"
+                  Margin="0 4 0 0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- File path -->
+                <TextBox Grid.Column="0"
+                         Padding="8,4"
+                         Height="Auto"
+                         VerticalContentAlignment="Center"
+                         IsReadOnly="True"
+                         Text="{Binding GedcomFilePath, Mode=OneWay}" />
+
+                <!-- Browse button -->
+                <Button Grid.Column="1"
+                        Margin="8 0 0 0"
+                        Padding="8,4"
+                        Content="{x:Static localProperties:Resources.BrowseButton}"
+                        Click="BrowseButton_Click" />
+            </Grid>
+
+            <!-- Person header -->
+            <TextBlock Grid.Row="3"
+                       Margin="0 12 0 0"
+                       Text="{x:Static localProperties:Resources.PersonHeader}"
+                       FontWeight="Bold" />
+
+            <!-- Person hint -->
+            <TextBlock Grid.Row="4"
+                       Margin="0 6 0 0"
+                       Text="{x:Static localProperties:Resources.PersonHint}"
+                       Foreground="Gray" />
+
+            <!-- Persons -->
+            <localControls:SuggestionComboBox Grid.Row="5"
+                                              Margin="0 4 0 0"
+                                              Padding="4"
+                                              VerticalAlignment="Top"
+                                              ItemsSource="{Binding Persons}"
+                                              DisplayMemberPath="DisplayName"
+                                              SelectedItem="{Binding SelectedPerson}"
+                                              Text="{Binding Text}" />
+
+            <!-- Empty row to fill up space -->
+
+            <!--Output header-->
+            <TextBlock Grid.Row="7"
+                       Margin="0"
+                       Text="{x:Static localProperties:Resources.Output}"
+                       FontWeight="Bold" />
+
+            <!-- Status text -->
+            <TextBlock Grid.Row="8"
+                       Margin="0 6 0 0"
+                       TextWrapping="Wrap"
+                       Text="{Binding StatusText}">
+
+                <!-- Error style -->
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground"
+                                Value="Gray" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasError}"
+                                         Value="True">
+                                <Setter Property="Foreground"
+                                        Value="Firebrick" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+
+            </TextBlock>
+
+            <!-- Options and action -->
+
+            <Grid Grid.Row="9"
+                  Margin="0 6 0 0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Open file? -->
+                <CheckBox Grid.Column="0"
+                          VerticalAlignment="Center"
+                          Content="{x:Static localProperties:Resources.OpenFileCheckbox}"
+                          IsChecked="{Binding OpenFileAfterGeneration}" />
+
+                <!-- OK -->
+                <Button Grid.Column="2"
+                        Padding="8,4"
+                        Content="{x:Static localProperties:Resources.OkButton}"
+                        IsEnabled="{Binding CanGenerateHtml}"
+                        IsDefault="True"
+                        Click="OkButton_Click" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
