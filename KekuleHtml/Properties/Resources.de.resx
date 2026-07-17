@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ConsolePromptEnterValidNumber" xml:space="preserve">
+    <value>Bitte eine gültige Zahl eingeben: </value>
+  </data>
+  <data name="ConsolePromptSelectStartPerson" xml:space="preserve">
+    <value>Bitte Startperson auswählen. "0" zum Beenden.</value>
+  </data>
+  <data name="ConsoleReportCreated" xml:space="preserve">
+    <value>Für "{0}" wurde in "{1}" eine Kekule-Liste erzeugt.</value>
+  </data>
+  <data name="ConsoleUsageGedcomPathRequired" xml:space="preserve">
+    <value>Bitte den Pfad zu einer GEDCOM-Datei als ersten Parameter angeben.</value>
+  </data>
+  <data name="GenerationExternalName" xml:space="preserve">
+    <value>Generation {0}</value>
+  </data>
+  <data name="GenerationGrandparents" xml:space="preserve">
+    <value>Großeltern</value>
+  </data>
+  <data name="GenerationGreatGrandparents" xml:space="preserve">
+    <value>Urgroßeltern</value>
+  </data>
+  <data name="GenerationNthGreatGrandparents" xml:space="preserve">
+    <value>{0}x-Urgroßeltern</value>
+  </data>
+  <data name="GenerationParents" xml:space="preserve">
+    <value>Eltern</value>
+  </data>
+  <data name="GenerationProband" xml:space="preserve">
+    <value>Proband</value>
+  </data>
+  <data name="HtmlDuplicateSeeNumber" xml:space="preserve">
+    <value>(siehe Nr. {0})</value>
+  </data>
+  <data name="HtmlHeadingKekuleListFor" xml:space="preserve">
+    <value>Kekule-Liste für {0}</value>
+  </data>
+  <data name="HtmlHeadingMigrationMap" xml:space="preserve">
+    <value>Geographische Verteilung der Ahnenlinien</value>
+  </data>
+  <data name="HtmlHeadingTableOfContents" xml:space="preserve">
+    <value>Inhalt</value>
+  </data>
+  <data name="HtmlHeadingTimeline" xml:space="preserve">
+    <value>Zeitliche Einordnung der Generationen</value>
+  </data>
+  <data name="HtmlLangCode" xml:space="preserve">
+    <value>de</value>
+  </data>
+  <data name="HtmlPopupDetails" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="HtmlPopupEvents" xml:space="preserve">
+    <value>Ereignisse: {0}</value>
+  </data>
+  <data name="HtmlPopupPeriod" xml:space="preserve">
+    <value>Zeitraum: {0} - {1}</value>
+  </data>
+  <data name="HtmlStatsAverage" xml:space="preserve">
+    <value>Durchschnitt:</value>
+  </data>
+  <data name="HtmlStatsBirths" xml:space="preserve">
+    <value>Geburten:</value>
+  </data>
+  <data name="HtmlStatsDeaths" xml:space="preserve">
+    <value>Tode:</value>
+  </data>
+  <data name="HtmlStatsMedian" xml:space="preserve">
+    <value>Median:</value>
+  </data>
+  <data name="HtmlStatsMissing" xml:space="preserve">
+    <value>({0} fehlen)</value>
+  </data>
+  <data name="HtmlStatsPeople" xml:space="preserve">
+    <value>Personen:</value>
+  </data>
+  <data name="HtmlTimelineMedianLifespan" xml:space="preserve">
+    <value>Median-Lebensspanne</value>
+  </data>
+  <data name="HtmlTimelinePeriod" xml:space="preserve">
+    <value>Zeitraum: {0}-{1}</value>
+  </data>
+  <data name="HtmlTitle" xml:space="preserve">
+    <value>Kekule-Liste</value>
+  </data>
+  <data name="NameUnknown" xml:space="preserve">
+    <value>(unbekannt)</value>
+  </data>
+</root>

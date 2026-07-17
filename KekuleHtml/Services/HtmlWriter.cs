@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Tim
 using GeneGenie.Gedcom;
 using KekuleHtml.Models;
+using KekuleHtml.Properties;
 using System.Globalization;
 using System.Net;
 using System.Text;
@@ -16,10 +17,6 @@ public static class HtmlWriter
     #region CSS
 
     private const string CSS = """
-<!DOCTYPE html>
-<html>
-<head>
-<title>Kekule-Liste</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
@@ -199,9 +196,17 @@ padding-left: 1rem;
     {
         var html = new StringBuilder();
 
+        html.AppendLine($"""
+<!DOCTYPE html>
+<html lang="{Resources.HtmlLangCode}">
+<head>
+<meta charset="utf-8"/>
+<title>{Resources.HtmlTitle}</title>
+""");
+
         html.AppendLine(CSS);
 
-        html.AppendLine($"<h1>Kekule-Liste für {EscapeHtml(rootPerson.GetFormattedName())}</h1>");
+        html.AppendLine($"<h1>{string.Format(Resources.HtmlHeadingKekuleListFor, EscapeHtml(rootPerson.GetFormattedName()))}</h1>");
 
         WriteTableOfContents(html, familyTree);
 
@@ -234,7 +239,7 @@ padding-left: 1rem;
     private static void WriteTableOfContents(StringBuilder html, FamilyTree familyTree)
     {
         html.AppendLine("<nav>");
-        html.AppendLine("<h2>Inhalt</h2>");
+        html.AppendLine($"<h2>{Resources.HtmlHeadingTableOfContents}</h2>");
         html.AppendLine("<ul>");
 
         foreach (var generation in familyTree.Generations)
@@ -270,7 +275,7 @@ padding-left: 1rem;
             return leftMargin + (year - familyTree.MinYear) * (chartWidth - leftMargin - rightMargin) / (double)(familyTree.MaxYear - familyTree.MinYear);
         }
 
-        html.AppendLine("<h2>Zeitliche Einordnung der Generationen</h2>");
+        html.AppendLine($"<h2>{Resources.HtmlHeadingTimeline}</h2>");
 
         html.AppendLine($"<svg class=\"timeline\" width=\"{chartWidth}\" height=\"{chartHeight}\" xmlns=\"http://www.w3.org/2000/svg\">");
 
@@ -343,13 +348,13 @@ padding-left: 1rem;
                 html.AppendLine($"<a href=\"#gen{generation.GenerationNumber}\">");
 
                 html.AppendLine($"""
-                <rect
+                <rect   
                     x="{x1:F0}"
                     y="{y}"
                     width="{Math.Max(1, x2 - x1):F0}"
                     height="12"
                     fill="#d1d5db">
-                    <title>{generation.Description}&#10;Zeitraum: {generation.BirthMinYear}-{generation.DeathMaxYear}</title>
+                    <title>{generation.Description}&#10;{string.Format(Resources.HtmlTimelinePeriod, generation.BirthMinYear, generation.DeathMaxYear)}</title>
                 </rect>
                 """);
             }
@@ -368,7 +373,7 @@ padding-left: 1rem;
                     width="{Math.Max(1, medianX2 - medianX1):F0}"
                     height="12"
                     fill="#2563eb">
-                    <title>{generation.Description}&#10;Median-Lebensspanne&#10;{generation.BirthMedianYear}-{generation.DeathMedianYear}</title>
+                    <title>{generation.Description}&#10;{Resources.HtmlTimelineMedianLifespan}&#10;{generation.BirthMedianYear}-{generation.DeathMedianYear}</title>
                 </rect>
                 """);
             }
@@ -386,7 +391,7 @@ padding-left: 1rem;
 
         // --- Legend
 
-        html.AppendLine("<h2>Geographische Verteilung der Ahnenlinien</h2>");
+        html.AppendLine($"<h2>{Resources.HtmlHeadingMigrationMap}</h2>");
 
         html.AppendLine($"""
 <div class="migrationLegend">
@@ -499,10 +504,10 @@ const bounds = [];
 
             var popup = string.Concat(
                 $"{EscapeJs(cluster.PlaceName)}<br/>",
-                $"Ereignisse: {cluster.Count}<br/>",
-                $"Zeitraum: {cluster.MinYear} - {cluster.MaxYear}<br/><br/>",
+                $"{string.Format(Resources.HtmlPopupEvents, cluster.Count)}<br/>",
+                $"{string.Format(Resources.HtmlPopupPeriod, cluster.MinYear, cluster.MaxYear)}<br/><br/>",
                 "<details open=\'true\' class=\'auto-close-details\'>",
-                "<summary>Details</summary>",
+                $"<summary>{Resources.HtmlPopupDetails}</summary>",
                 // make sure details can also be closed by clicking any of its content
                 "<div onclick=\\\"this.closest(\'details\').removeAttribute(\'open\');\\\">",
                 $"<p>{ReplaceLineBreaks(cluster.DescriptionHtml)}</p>",
@@ -571,24 +576,24 @@ if (bounds.length > 0)
 
         html.AppendLine("<div class=\"stats\">");
 
-        html.Append($"<div class=\"label\">Personen:</div>{generation.Count}");
+        html.Append($"<div class=\"label\">{Resources.HtmlStatsPeople}</div>{generation.Count}");
 
         if (missing > 0)
-            html.Append($" ({missing} fehlen)");
+            html.Append($" {string.Format(Resources.HtmlStatsMissing, missing)}");
 
         html.AppendLine("<br/>");
 
         if (generation.BirthMinYear.HasValue && generation.BirthMaxYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Geburten:</div>{generation.BirthMinYear} - {generation.BirthMaxYear} <br/>");
+            html.AppendLine($"<div class=\"label\">{Resources.HtmlStatsBirths}</div>{generation.BirthMinYear} - {generation.BirthMaxYear} <br/>");
 
         if (generation.DeathMinYear.HasValue && generation.DeathMaxYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Tode:</div>{generation.DeathMinYear} - {generation.DeathMaxYear} <br/>");
+            html.AppendLine($"<div class=\"label\">{Resources.HtmlStatsDeaths}</div>{generation.DeathMinYear} - {generation.DeathMaxYear} <br/>");
 
         if (generation.BirthAverageYear.HasValue && generation.DeathAverageYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Durchschnitt:</div>{generation.BirthAverageYear} - {generation.DeathAverageYear} <br/>");
+            html.AppendLine($"<div class=\"label\">{Resources.HtmlStatsAverage}</div>{generation.BirthAverageYear} - {generation.DeathAverageYear} <br/>");
 
         if (generation.BirthMedianYear.HasValue && generation.DeathMedianYear.HasValue)
-            html.AppendLine($"<div class=\"label\">Median:</div>{generation.BirthMedianYear} - {generation.DeathMedianYear} <br/>");
+            html.AppendLine($"<div class=\"label\">{Resources.HtmlStatsMedian}</div>{generation.BirthMedianYear} - {generation.DeathMedianYear} <br/>");
 
         html.AppendLine("</div>");
     }
@@ -604,7 +609,9 @@ if (bounds.length > 0)
 
         if (entry.IsDuplicate)
         {
-            html.Append($" <span class=\"duplicate-note\">(siehe Nr. <a href=\"#p_{entry.FirstOccurrence}\">{entry.FirstOccurrence})</a></span>");
+            var link = $"<a href=\"#p_{entry.FirstOccurrence}\">{entry.FirstOccurrence}</a>";
+
+            html.Append($" <span class=\"duplicate-note\">{string.Format(Resources.HtmlDuplicateSeeNumber, link)}</span>");
         }
         else
         {

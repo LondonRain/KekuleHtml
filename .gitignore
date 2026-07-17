@@ -75,3 +75,7 @@ x86/
 *.ged
 *.bak
 *.html
+
+# Claude
+.claude
+.mcp.json

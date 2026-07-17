@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
 using GeneGenie.Gedcom;
+using KekuleHtml.Properties;
 using System.Text.RegularExpressions;
 
 namespace KekuleHtml.Models
@@ -17,7 +18,7 @@ namespace KekuleHtml.Models
             var name = person.GetName();
 
             if (name == null)
-                return "(unbekannt)";
+                return Resources.NameUnknown;
 
             var surname = name.Surname?.Trim();
             var given = name.Given?.Replace(",", string.Empty).Replace("\"", string.Empty).Replace("\'", string.Empty).Trim();

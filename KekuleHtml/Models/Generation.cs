@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
+using KekuleHtml.Properties;
 using System.Diagnostics;
 
 namespace KekuleHtml.Models;
@@ -14,22 +15,22 @@ public sealed class Generation
 
     public string ShortName => $"G{GenerationNumber}";
 
-    public string ExternalName => $"Generation {GenerationNumber}";
+    public string ExternalName => string.Format(Resources.GenerationExternalName, GenerationNumber);
 
     public string Description
     {
         get
         {
             if (GenerationNumber == 0)
-                return "Proband";
+                return Resources.GenerationProband;
             else if (GenerationNumber == 1)
-                return "Eltern";
+                return Resources.GenerationParents;
             else if (GenerationNumber == 2)
-                return "Großeltern";
+                return Resources.GenerationGrandparents;
             else if (GenerationNumber == 3)
-                return "Urgroßeltern";
+                return Resources.GenerationGreatGrandparents;
             else
-                return $"{GenerationNumber - 2}x-Urgroßeltern";
+                return string.Format(Resources.GenerationNthGreatGrandparents, GenerationNumber - 2);
         }
     }
 

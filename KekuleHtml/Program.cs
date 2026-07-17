@@ -1,5 +1,6 @@
 ﻿using GeneGenie.Gedcom;
 using KekuleHtml.Models;
+using KekuleHtml.Properties;
 using KekuleHtml.Services;
 
 namespace KekuleHtml;
@@ -12,7 +13,7 @@ public static class Program
         string? path = args.FirstOrDefault();
         if (!Path.Exists(path) || Path.GetExtension(path) != ".ged")
         {
-            Console.WriteLine("Bitte den Pfad zu einer GEDCOM-Datei als ersten Parameter angeben.");
+            Console.WriteLine(Resources.ConsoleUsageGedcomPathRequired);
             return;
         }
 
@@ -27,12 +28,12 @@ public static class Program
 
         // getting start person
         Console.WriteLine();
-        Console.WriteLine("Bitte Startperson auswählen. \"0\" zum Beenden.");
+        Console.WriteLine(Resources.ConsolePromptSelectStartPerson);
         int userChoice;
         while (!int.TryParse(Console.ReadLine(), out userChoice) ||
                userChoice < 0 || userChoice > people.Count)
         {
-            Console.Write("Bitte eine gültige Zahl eingeben: ");
+            Console.Write(Resources.ConsolePromptEnterValidNumber);
         }
 
         // die
@@ -44,7 +45,7 @@ public static class Program
         string outputPath = CreateKekuleHtmlAsync(rootPerson, path, adapter).Result;
 
         Console.WriteLine();
-        Console.WriteLine($"Für \"{rootPerson.GetFormattedNameWithDates()}\" wurde in \"{outputPath}\" eine Kekule-Liste erzeugt.");
+        Console.WriteLine(string.Format(Resources.ConsoleReportCreated, rootPerson.GetFormattedNameWithDates(), outputPath));
     }
 
     public static Task<string> CreateKekuleHtmlAsync(GedcomIndividualRecord rootPerson, string gedcomPath, GedcomAdapter adapter)
