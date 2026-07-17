@@ -9,6 +9,10 @@ public static class Program
 {
     private static void Main(string[] args)
     {
+#if FORCE_ENGLISH
+        ForceEnglishCulture();
+#endif
+
         // check params
         string? path = args.FirstOrDefault();
         if (!Path.Exists(path) || Path.GetExtension(path) != ".ged")
@@ -59,6 +63,20 @@ public static class Program
         Console.WriteLine();
         Console.WriteLine(string.Format(Resources.ConsoleReportCreated, rootPerson.GetFormattedNameWithDates(), outputPath));
     }
+
+#if FORCE_ENGLISH
+    /// <summary>
+    /// Forces the English resources for testing (see FORCE_ENGLISH / Directory.Build.props).
+    /// </summary>
+    private static void ForceEnglishCulture()
+    {
+        var english = new System.Globalization.CultureInfo("en");
+        System.Globalization.CultureInfo.CurrentCulture = english;
+        System.Globalization.CultureInfo.CurrentUICulture = english;
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = english;
+        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = english;
+    }
+#endif
 
     public static Task<string> CreateKekuleHtmlAsync(GedcomIndividualRecord rootPerson, string gedcomPath, GedcomAdapter adapter)
     {

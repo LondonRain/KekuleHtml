@@ -1,4 +1,9 @@
 <Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="DebugEnglish" />
+    <BuildType Name="Release" />
+  </Configurations>
   <Project Path="KekuleHtmlUi/KekuleHtmlUi.csproj" />
   <Project Path="KekuleHtml\KekuleHtml.csproj" />
 </Solution>

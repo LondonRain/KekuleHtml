@@ -1,0 +1,16 @@
+<Project>
+
+  <!--
+    Defines the FORCE_ENGLISH compile symbol for ALL projects in this repository
+    (console + UI), forcing the English resources for testing. It is turned on by
+    either of:
+      * building the 'DebugEnglish' solution configuration (select it in VS), or
+      * passing -p:ForceEnglish=true on the command line, e.g.
+          dotnet run -p:ForceEnglish=true
+    Leave both unset for normal, culture-dependent behaviour.
+  -->
+  <PropertyGroup Condition="'$(ForceEnglish)' == 'true' Or '$(Configuration)' == 'DebugEnglish'">
+    <DefineConstants>$(DefineConstants);FORCE_ENGLISH</DefineConstants>
+  </PropertyGroup>
+
+</Project>
