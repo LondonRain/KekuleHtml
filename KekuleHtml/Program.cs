@@ -30,9 +30,21 @@ public static class Program
         Console.WriteLine();
         Console.WriteLine(Resources.ConsolePromptSelectStartPerson);
         int userChoice;
-        while (!int.TryParse(Console.ReadLine(), out userChoice) ||
-               userChoice < 0 || userChoice > people.Count)
+        while (true)
         {
+            string? input = Console.ReadLine();
+            if (input is null)
+            {
+                // EOF, e.g. when input is supplied via a pipeline
+                return;
+            }
+
+            if (int.TryParse(input, out userChoice) &&
+                userChoice >= 0 && userChoice <= people.Count)
+            {
+                break;
+            }
+
             Console.Write(Resources.ConsolePromptEnterValidNumber);
         }
 
