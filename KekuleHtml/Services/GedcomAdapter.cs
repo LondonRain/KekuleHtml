@@ -37,6 +37,18 @@ public sealed class GedcomAdapter
 
     public IReadOnlyCollection<GedcomIndividualRecord> Individuals => _Individuals.Values;
 
+    public IReadOnlyList<GedcomIndividualRecord> IndividualsSorted
+    {
+        get
+        {
+            return Individuals
+                .Where(i => i.Names.Any())
+                .OrderBy(i => i.GetName().Surname)
+                .ThenBy(i => i.GetName().Name)
+                .ToList();
+        }
+    }
+
     public GedcomIndividualRecord? GetFather(GedcomIndividualRecord person)
     {
         var family = GetParentFamily(person);
