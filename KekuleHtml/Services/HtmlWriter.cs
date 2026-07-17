@@ -607,18 +607,24 @@ if (bounds.length > 0)
 
         html.Append(EscapeHtml(entry.FormattedName));
 
-        if (entry.IsDuplicate)
-        {
-            var link = $"<a href=\"#p_{entry.FirstOccurrence}\">{entry.FirstOccurrence}</a>";
-
-            html.Append($" <span class=\"duplicate-note\">{string.Format(Resources.HtmlDuplicateSeeNumber, link)}</span>");
-        }
-        else
+        // only the first occurrence carries the dates; later occurrences ("Ahnenschwund") just cross-link.
+        if (!entry.IsDuplicate)
         {
             var dates = entry.FormattedDates;
 
             if (!string.IsNullOrWhiteSpace(dates))
                 html.Append($" <span class=\"dates\">({EscapeHtml(dates)})</span>");
+        }
+
+        // cross-link every occurrence of the same individual to all the others ("Ahnenschwund").
+        if (entry.HasDuplicates)
+        {
+            var links = string.Join(
+                ", ",
+                entry.Occurrences.Where(number => number != entry.KekuleNumber)
+                                 .Select(number => $"<a href=\"#p_{number}\">{number}</a>"));
+
+            html.Append($" <span class=\"duplicate-note\">{string.Format(Resources.HtmlDuplicateSeeNumber, links)}</span>");
         }
 
         html.AppendLine();

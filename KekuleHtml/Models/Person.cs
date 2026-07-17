@@ -35,13 +35,28 @@ public sealed class Person
     /// <inheritdoc cref="MaryHillColour"/>
     public required MaryHillColour Colour { get; init; }
 
+    public int Generation => (int)Math.Floor(Math.Log2(KekuleNumber));
+
     /// <summary>
-    /// Used to track "Ahnenschwund"
+    /// The Kekule number where this individual first appeared. Only set for duplicates.
+    /// Set while traversing whenever the same individual is reached again ("Ahnenschwund").
     /// </summary>
     public int? FirstOccurrence { get; set; }
 
-    /// <inheritdoc cref="FirstOccurrence"/>
+    /// <summary>
+    /// Whether person was already found before. Not <see langword="true"/> for first match.
+    /// </summary>
     public bool IsDuplicate => FirstOccurrence.HasValue;
 
-    public int Generation => (int)Math.Floor(Math.Log2(KekuleNumber));
+    /// <summary>
+    /// All Kekule numbers at which this same individual appears (including this one), sorted ascending.
+    /// Only contains more than one entry in case of "Ahnenschwund".
+    /// Filled in once the whole tree has been traversed.
+    /// </summary>
+    public IReadOnlyList<int> Occurrences { get; set; } = [];
+
+    /// <summary>
+    /// Whether person has any duplicates. <see langword="true"/> for every person of the duplicate group.
+    /// </summary>
+    public bool HasDuplicates => Occurrences.Count > 1;
 }

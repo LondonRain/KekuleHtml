@@ -20,6 +20,15 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
     {
         Traverse(root, 1);
 
+        // Now that every occurrence is known, link all occurrences of the same individual to each other ("Ahnenschwund"). The shared, sorted list is handed to each entry.
+        foreach (var group in _Entries.GroupBy(e => e.GedcomRecord.XRefID))
+        {
+            var occurrences = group.Select(e => e.KekuleNumber).Order().ToList();
+
+            foreach (var entry in group)
+                entry.Occurrences = occurrences;
+        }
+
         return _Entries.OrderBy(e => e.KekuleNumber).ToList();
     }
 

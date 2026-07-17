@@ -154,7 +154,7 @@
   </data>
   <data name="HtmlDuplicateSeeNumber" xml:space="preserve">
     <value>(see no. {0})</value>
-    <comment>{0} = HTML link to the first occurrence of a duplicated ancestor ("Ahnenschwund").</comment>
+    <comment>{0} = comma-separated HTML links to the other occurrences of a duplicated ancestor ("Ahnenschwund").</comment>
   </data>
   <data name="HtmlHeadingKekuleListFor" xml:space="preserve">
     <value>Kekule list for {0}</value>
