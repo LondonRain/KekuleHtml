@@ -5,6 +5,7 @@ using KekuleHtml.Models;
 using KekuleHtml.Properties;
 using System.Globalization;
 using System.Net;
+using System.Reflection;
 using System.Text;
 
 namespace KekuleHtml.Services;
@@ -196,11 +197,17 @@ padding-left: 1rem;
     {
         var html = new StringBuilder();
 
+        var version = Assembly.GetEntryAssembly()!.GetName().Version!;
+
         html.AppendLine($"""
 <!DOCTYPE html>
 <html lang="{Resources.HtmlLangCode}">
 <head>
 <meta charset="utf-8"/>
+<meta name="generator" content="KekuleHtml {version}">
+<meta name="kekulehtml:url" content="https://github.com/LondonRain/KekuleHtml">
+<meta name="kekulehtml:version" content="{version}">
+<meta name="kekulehtml:generated" content="{DateTime.Now.ToString("s")}">
 <title>{Resources.HtmlTitle}</title>
 """);
 
