@@ -32,7 +32,9 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
         return _Entries.OrderBy(e => e.KekuleNumber).ToList();
     }
 
-    private void Traverse(GedcomIndividualRecord? person, int number)
+    private void Traverse(GedcomIndividualRecord? person, int number) => Traverse(person, number, []);
+
+    private void Traverse(GedcomIndividualRecord? person, int number, HashSet<string> ancestryPath)
     {
         if (person == null)
             return;
@@ -44,22 +46,27 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
             Colour = GetColourFromKekule(number)
         };
 
-        if (_Seen.TryGetValue(person.XRefID, out var firstNumber))
-        {
+        // Remember the first occurrence so duplicates ("Ahnenschwund") can be marked and cross-linked,
+        // but keep traversing either way so every occurrence's ancestors are written out as well.
+        if (!_Seen.TryGetValue(person.XRefID, out var firstNumber))
+            _Seen[person.XRefID] = number;
+        else
             entry.FirstOccurrence = firstNumber;
-            _Entries.Add(entry);
-            return;
-        }
-
-        _Seen[person.XRefID] = number;
 
         _Entries.Add(entry);
+
+        // Guard against cyclic data (a person being their own ancestor); a normal implex is not a cycle
+        // because the repeated individual sits on a different, already-finished branch, not on this path.
+        if (!ancestryPath.Add(person.XRefID))
+            return;
 
         var father = _Adapter.GetFather(person);
         var mother = _Adapter.GetMother(person);
 
-        Traverse(father, number * 2);
-        Traverse(mother, number * 2 + 1);
+        Traverse(father, number * 2, ancestryPath);
+        Traverse(mother, number * 2 + 1, ancestryPath);
+
+        ancestryPath.Remove(person.XRefID);
     }
 
     public static MaryHillColour GetColourFromKekule(int number)
