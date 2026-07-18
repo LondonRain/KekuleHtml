@@ -24,6 +24,7 @@ artifacts/
 
 # Publish output
 publish/
+*.pubxml
 
 ### Windows
 # Windows thumbnail cache files
