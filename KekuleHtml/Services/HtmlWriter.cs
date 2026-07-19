@@ -204,10 +204,10 @@ padding-left: 1rem;
 <html lang="{Resources.HtmlLangCode}">
 <head>
 <meta charset="utf-8"/>
-<meta name="generator" content="KekuleHtml {version}">
-<meta name="kekulehtml:url" content="https://github.com/LondonRain/KekuleHtml">
-<meta name="kekulehtml:version" content="{version}">
-<meta name="kekulehtml:generated" content="{DateTime.Now.ToString("s")}">
+<meta name="generator" content="KekuleHtml {version}"/>
+<meta name="kekulehtml:url" content="https://github.com/LondonRain/KekuleHtml"/>
+<meta name="kekulehtml:version" content="{version}"/>
+<meta name="kekulehtml:generated" content="{DateTime.Now.ToString("s")}"/>
 <title>{Resources.HtmlTitle}</title>
 """);
 
