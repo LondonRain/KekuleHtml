@@ -7,16 +7,17 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](README.en.md)
 [![de](https://img.shields.io/badge/lang-de-green.svg)](README.md)
 
-1. [Prerequisites](#prerequisites)
-2. [Usage & Interface](#usage)
-3. [Features](#features)
-4. [Dependencies & License](#dependencies)
+1. [Description](#description)
+2. [Prerequisites](#prerequisites)
+3. [Usage & Interface](#usage)
+4. [Features](#features)
+5. [Dependencies & License](#dependencies)
 
 ## Description
 
 **KekuleHtml** was created to analyze personal genealogy data.
 
-Based on a [GEDCOM](https://de.wikipedia.org/wiki/Gedcom) file, it generates a compact HTML family tree according to [Kekule](https://de.wikipedia.org/wiki/Kekule), which can help, for example, with navigating your own data and the directory structures of your sources.
+Based on a [GEDCOM](https://en.wikipedia.org/wiki/GEDCOM) file, it generates a compact HTML family tree according to [Kekule](https://en.wikipedia.org/wiki/Ahnentafel), which can help, for example, with navigating your own data and the directory structures of your sources.
 
 In addition, it generates generational statistics and—provided geodata is available—a map that allows you to visualize migration patterns across different generations and family branches.
 

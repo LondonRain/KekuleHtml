@@ -7,16 +7,17 @@
   <img src="img/KekuleHtmlBanner.png" />
 </p>
 
-1. [Voraussetzungen](#voraussetzungen)
-2. [Aufruf & Oberfläche](#aufruf)
-3. [Funktionen](#funktionen)
-4. [Abhängigkeiten & Lizenz](#abhängigkeiten)
+1. [Beschreibung](#beschreibung)
+2. [Voraussetzungen](#voraussetzungen)
+3. [Aufruf & Oberfläche](#aufruf)
+4. [Funktionen](#funktionen)
+5. [Abhängigkeiten & Lizenz](#abhängigkeiten)
 
 ## Beschreibung
 
 **KekuleHtml** ist entstanden, um persönliche Ahnenforschungsdaten auszuwerten.
 
-Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedia.org/wiki/Kekule), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
+Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedia.org/wiki/Kekule-Nummer), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
 
 Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren.
 
