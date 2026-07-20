@@ -19,6 +19,10 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugEnglish|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="GeneGenie.Gedcom">
       <HintPath>Externals\GeneGenie.Gedcom.dll</HintPath>
