@@ -4,6 +4,11 @@
     <BuildType Name="DebugEnglish" />
     <BuildType Name="Release" />
   </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="licence.txt" />
+    <File Path="README.en.md" />
+    <File Path="README.md" />
+  </Folder>
   <Project Path="KekuleHtmlUi/KekuleHtmlUi.csproj" />
   <Project Path="KekuleHtml\KekuleHtml.csproj" />
 </Solution>
