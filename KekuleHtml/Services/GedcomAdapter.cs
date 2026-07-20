@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Tim
 using GeneGenie.Gedcom;
 using GeneGenie.Gedcom.Parser;
+using System.Diagnostics.CodeAnalysis;
 
 namespace KekuleHtml.Services;
 
@@ -10,6 +11,20 @@ namespace KekuleHtml.Services;
 /// </summary>
 public sealed class GedcomAdapter
 {
+    #region Consts
+
+    /// <summary>
+    /// Primary GEDCOM file extension (including the leading dot).
+    /// </summary>
+    public const string GedcomExtension = ".ged";
+
+    /// <summary>
+    /// Alternative GEDCOM file extension (including the leading dot).
+    /// </summary>
+    public const string GedcomExtensionAlternative = ".gedcom";
+
+    #endregion
+
     #region Variables
 
     private readonly GedcomDatabase _Database;
@@ -34,6 +49,24 @@ public sealed class GedcomAdapter
     #endregion
 
     #region Methods
+
+    /// <summary>
+    /// Returns <see langword="true"/> if <paramref name="path"/> has a supported GEDCOM extension.
+    /// </summary>
+    public static bool HasGedcomExtension([NotNullWhen(true)] string? path)
+    {
+        if (path is null)
+            return false;
+
+        var extension = Path.GetExtension(path);
+        return extension.Equals(GedcomExtension, StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(GedcomExtensionAlternative, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Checks whether <paramref name="path"/> <see cref="HasGedcomExtension(string?)"/> and whether file exists.
+    /// </summary>
+    public static bool IsValidPath([NotNullWhen(true)] string? path) => HasGedcomExtension(path) && Path.Exists(path);
 
     public IReadOnlyCollection<GedcomIndividualRecord> Individuals => _Individuals.Values;
 

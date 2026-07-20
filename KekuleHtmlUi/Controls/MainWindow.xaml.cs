@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
+using KekuleHtml.Services;
 using KekuleHtmlUi.Presenters;
 using Microsoft.Win32;
 using System.Windows;
@@ -16,13 +17,20 @@ public partial class MainWindow : Window
 
     #region Constructor
 
-    public MainWindow()
+    /// <summary>
+    /// Creates the main window. An optional <paramref name="gedcomFilePath"/> (e.g. from the command line) is loaded directly.
+    /// </summary>
+    public MainWindow(string? gedcomFilePath = null)
     {
         InitializeComponent();
 
         // Setting up DataContext.
         _Presenter = new MainPresenter();
         DataContext = _Presenter;
+
+        // Optionally load a GEDCOM file passed on the command line.
+        if (!string.IsNullOrWhiteSpace(gedcomFilePath))
+            _Presenter.GedcomFilePath = gedcomFilePath;
     }
 
     #endregion
@@ -95,8 +103,7 @@ public partial class MainWindow : Window
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            var gedcomFile = files.FirstOrDefault(f => f.EndsWith(".ged", StringComparison.OrdinalIgnoreCase) ||
-                                                       f.EndsWith(".gedcom", StringComparison.OrdinalIgnoreCase));
+            var gedcomFile = files.FirstOrDefault(GedcomAdapter.HasGedcomExtension);
 
             var fileToLoad = gedcomFile ?? files.FirstOrDefault();
             if (fileToLoad is not null)

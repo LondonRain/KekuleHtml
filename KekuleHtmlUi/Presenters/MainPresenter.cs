@@ -134,9 +134,7 @@ public class MainPresenter : BindableBase
             return;
         }
 
-        var extension = Path.GetExtension(_GedcomFilePath);
-        if (!extension.Equals(".ged", StringComparison.OrdinalIgnoreCase) &&
-            !extension.Equals(".gedcom", StringComparison.OrdinalIgnoreCase))
+        if (!GedcomAdapter.HasGedcomExtension(_GedcomFilePath))
         {
             SetStatus(Resources.StatusInvalidExtension, isError: true);
             return;

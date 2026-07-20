@@ -15,7 +15,7 @@ public static class Program
 
         // check params
         string? path = args.FirstOrDefault();
-        if (!Path.Exists(path) || Path.GetExtension(path) != ".ged")
+        if (!GedcomAdapter.IsValidPath(path))
         {
             Console.WriteLine(Resources.ConsoleUsageGedcomPathRequired);
             return;
