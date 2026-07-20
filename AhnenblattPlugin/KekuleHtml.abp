@@ -1,0 +1,12 @@
+[plugin]
+version=2.0.0.0
+filemustbeopened=1
+text=KekuleHtml
+
+MustExist.1=%abpluginpath%\KekuleHtml\KekuleHtmlUi.exe
+Help=%abpluginpath%\KekuleHtml\Readme.md
+
+1=$MAKEDIR(%temp%\KekuleHtml)
+2=$SAVEAS(GEDCOM,%temp%\KekuleHtml\KekuleHtml.ged)
+3=%abpluginpath%\KekuleHtml\KekuleHtmlUi.exe
+3.Param=%temp%\KekuleHtml\KekuleHtml.ged
