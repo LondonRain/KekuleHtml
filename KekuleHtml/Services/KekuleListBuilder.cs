@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
 using GeneGenie.Gedcom;
+using KekuleHtml.Helpers;
 using KekuleHtml.Models;
 
 namespace KekuleHtml.Services;
@@ -63,8 +64,15 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
         var father = _Adapter.GetFather(person);
         var mother = _Adapter.GetMother(person);
 
-        Traverse(father, number * 2, ancestryPath);
-        Traverse(mother, number * 2 + 1, ancestryPath);
+        try
+        {
+            Traverse(father, number * 2, ancestryPath);
+            Traverse(mother, number * 2 + 1, ancestryPath);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new KekuleHtmlException($"Failed to build Kekule list for person K:{number} \"{person.GetFormattedNameWithDates()}\".", ex);
+        }
 
         ancestryPath.Remove(person.XRefID);
     }
@@ -72,7 +80,7 @@ public sealed class KekuleListBuilder(GedcomAdapter adapter)
     public static MaryHillColour GetColourFromKekule(int number)
     {
         if (number < 1)
-            throw new ArgumentException("Must be 1 or greater.");
+            throw new ArgumentException($"Must be 1 or greater, but was {number}.", nameof(number));
 
         // fixed colour for first 2 generations (0 and 1).
         if (number == 1 || number == 2)

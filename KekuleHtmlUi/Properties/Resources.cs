@@ -37,12 +37,12 @@ public static class Resources
     public static string PersonHeader => Get(nameof(PersonHeader));
     public static string PersonHint => Get(nameof(PersonHint));
     public static string StatusFileNotFound(string filePath) => Format(nameof(StatusFileNotFound), filePath);
-    public static string StatusGenerateError(string errorMessage) => Format(nameof(StatusGenerateError), errorMessage);
+    public static string StatusGenerateError => Get(nameof(StatusGenerateError));
     public static string StatusGeneratingHtml => Get(nameof(StatusGeneratingHtml));
     public static string StatusHtmlGenerated(string outputPath) => Format(nameof(StatusHtmlGenerated), outputPath);
     public static string StatusInvalidExtension => Get(nameof(StatusInvalidExtension));
     public static string StatusPersonsFound(int count) => Format(nameof(StatusPersonsFound), count);
-    public static string StatusReadError(string errorMessage) => Format(nameof(StatusReadError), errorMessage);
+    public static string StatusReadError => Get(nameof(StatusReadError));
     public static string StatusReadingFile => Get(nameof(StatusReadingFile));
 
     #endregion

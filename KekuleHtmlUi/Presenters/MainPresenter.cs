@@ -168,7 +168,7 @@ public class MainPresenter : BindableBase
         }
         catch (Exception ex)
         {
-            SetStatus(Resources.StatusReadError(ex.Message), isError: true);
+            SetErrorStatus(ex, Resources.StatusReadError);
         }
         finally
         {
@@ -201,7 +201,7 @@ public class MainPresenter : BindableBase
         }
         catch (Exception ex)
         {
-            SetStatus(Resources.StatusGenerateError(ex.Message), isError: true);
+            SetErrorStatus(ex, Resources.StatusGenerateError);
         }
         finally
         {
@@ -213,6 +213,12 @@ public class MainPresenter : BindableBase
     {
         StatusText = message;
         HasError = isError;
+    }
+
+    private void SetErrorStatus(Exception ex, string message)
+    {
+        StatusText = string.Format(message, KekuleHtml.Helpers.ExceptionHelper.GetMessageText(ex));
+        HasError = true;
     }
 
     #endregion
