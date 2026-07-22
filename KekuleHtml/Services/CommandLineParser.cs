@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
+using System.Globalization;
+using KekuleHtml.Helpers;
+
 namespace KekuleHtml.Services;
 
 /// <summary>
@@ -17,6 +20,11 @@ public static class CommandLineParser
     private const string MAX_GENERATIONS_OPTION = "-maxGenerations";
 
     /// <summary>
+    /// Name of the option that sets <see cref="AppOptions.Language"/>.
+    /// </summary>
+    private const string LANGUAGE_OPTION = "-lang";
+
+    /// <summary>
     /// Parses <paramref name="args"/>. Unknown options are ignored.
     /// Invalid or out-of-range values fall back to their defaults, so parsing never throws.
     /// </summary>
@@ -24,6 +32,7 @@ public static class CommandLineParser
     {
         string? gedcomPath = null;
         int maxGenerations = KekuleDefaults.DefaultMaxGenerations;
+        CultureInfo? language = null;
 
         for (int i = 0; i < args.Count; i++)
         {
@@ -37,10 +46,10 @@ public static class CommandLineParser
                     }
                     break;
 
-                // Add further options here, e.g.:
-                // case "-lang":
-                //     if (TryTakeValue(args, ref i, out var lang)) language = lang;
-                //     break;
+                case LANGUAGE_OPTION:
+                    if (TryTakeValue(args, ref i, out var lang))
+                        language = CultureHelper.TryGetCulture(lang);
+                    break;
 
                 default:
                     // First non-option argument is treated as the GEDCOM file path.
@@ -53,7 +62,8 @@ public static class CommandLineParser
         return new AppOptions
         {
             GedcomPath = gedcomPath,
-            MaxGenerations = maxGenerations
+            MaxGenerations = maxGenerations,
+            Language = language
         };
     }
 

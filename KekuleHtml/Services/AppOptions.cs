@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
+using System.Globalization;
+
 namespace KekuleHtml.Services;
 
 /// <summary>
@@ -17,4 +19,10 @@ public sealed class AppOptions
     /// Number of generations to traverse (excluding the proband). Defaults to <see cref="KekuleDefaults.DefaultMaxGenerations"/>.
     /// </summary>
     public int MaxGenerations { get; init; } = KekuleDefaults.DefaultMaxGenerations;
+
+    /// <summary>
+    /// UI language/culture, or <see langword="null"/> when no valid <c>-lang</c> was given - in that case the current system culture is kept.
+    /// Applied via <see cref="KekuleHtml.Helpers.CultureHelper.Apply(CultureInfo?)"/>.
+    /// </summary>
+    public CultureInfo? Language { get; init; }
 }

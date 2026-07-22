@@ -1,4 +1,5 @@
 ﻿using GeneGenie.Gedcom;
+using KekuleHtml.Helpers;
 using KekuleHtml.Models;
 using KekuleHtml.Properties;
 using KekuleHtml.Services;
@@ -9,12 +10,16 @@ public static class Program
 {
     private static void Main(string[] args)
     {
-#if FORCE_ENGLISH
-        ForceEnglishCulture();
-#endif
-
         // check params
         var options = CommandLineParser.Parse(args);
+
+        // apply UI language; the FORCE_ENGLISH test build always wins (see Directory.Build.props)
+#if FORCE_ENGLISH
+        CultureHelper.ForceEnglish();
+#else
+        CultureHelper.Apply(options.Language);
+#endif
+
         string? path = options.GedcomPath;
         if (!GedcomAdapter.IsValidPath(path))
         {
@@ -64,20 +69,6 @@ public static class Program
         Console.WriteLine();
         Console.WriteLine(string.Format(Resources.ConsoleReportCreated, rootPerson.GetFormattedNameWithDates(), outputPath));
     }
-
-#if FORCE_ENGLISH
-    /// <summary>
-    /// Forces the English resources for testing (see FORCE_ENGLISH / Directory.Build.props).
-    /// </summary>
-    private static void ForceEnglishCulture()
-    {
-        var english = new System.Globalization.CultureInfo("en");
-        System.Globalization.CultureInfo.CurrentCulture = english;
-        System.Globalization.CultureInfo.CurrentUICulture = english;
-        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = english;
-        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = english;
-    }
-#endif
 
     public static Task<string> CreateKekuleHtmlAsync(GedcomIndividualRecord rootPerson, int maxGenerations, string gedcomPath, GedcomAdapter adapter)
     {
