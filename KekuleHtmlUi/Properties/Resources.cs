@@ -29,6 +29,8 @@ public static class Resources
     public static string DropOverlayText => Get(nameof(DropOverlayText));
     public static string GedcomFileHeader => Get(nameof(GedcomFileHeader));
     public static string GedcomFileHint => Get(nameof(GedcomFileHint));
+    public static string MaxGenerationsHeader => Get(nameof(MaxGenerationsHeader));
+    public static string MaxGenerationsHint => Get(nameof(MaxGenerationsHint));
     public static string OkButton => Get(nameof(OkButton));
     public static string OpenFileCheckbox => Get(nameof(OpenFileCheckbox));
     public static string OpenFileDialogFilter => Get(nameof(OpenFileDialogFilter));

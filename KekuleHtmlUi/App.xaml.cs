@@ -21,19 +21,21 @@ public partial class App : Application
 #endif
 
     /// <summary>
-    /// Creates and shows the main window. An optional GEDCOM file path can be passed as the
-    /// first command-line argument to load it directly on startup (like the console application).
+    /// Creates and shows the main window. Command-line arguments are parsed with the same
+    /// <see cref="CommandLineParser"/> as the console application: an optional GEDCOM file path
+    /// (loaded directly on startup) and an optional <c>-maxGenerations</c> value.
     /// </summary>
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        // Optional single command-line argument: a GEDCOM file to load directly.
-        string? gedcomFilePath = e.Args.FirstOrDefault();
+        var options = CommandLineParser.Parse(e.Args);
+
+        string? gedcomFilePath = options.GedcomPath;
         if (!GedcomAdapter.IsValidPath(gedcomFilePath))
             gedcomFilePath = null;
 
-        var window = new MainWindow(gedcomFilePath);
+        var window = new MainWindow(gedcomFilePath, options.MaxGenerations);
         window.Show();
     }
 }

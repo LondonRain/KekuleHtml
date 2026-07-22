@@ -14,7 +14,8 @@ public static class Program
 #endif
 
         // check params
-        string? path = args.FirstOrDefault();
+        var options = CommandLineParser.Parse(args);
+        string? path = options.GedcomPath;
         if (!GedcomAdapter.IsValidPath(path))
         {
             Console.WriteLine(Resources.ConsoleUsageGedcomPathRequired);
@@ -58,7 +59,7 @@ public static class Program
 
         var rootPerson = people[userChoice - 1];
 
-        string outputPath = CreateKekuleHtmlAsync(rootPerson, path, adapter).Result;
+        string outputPath = CreateKekuleHtmlAsync(rootPerson, options.MaxGenerations, path, adapter).Result;
 
         Console.WriteLine();
         Console.WriteLine(string.Format(Resources.ConsoleReportCreated, rootPerson.GetFormattedNameWithDates(), outputPath));
@@ -78,7 +79,7 @@ public static class Program
     }
 #endif
 
-    public static Task<string> CreateKekuleHtmlAsync(GedcomIndividualRecord rootPerson, string gedcomPath, GedcomAdapter adapter)
+    public static Task<string> CreateKekuleHtmlAsync(GedcomIndividualRecord rootPerson, int maxGenerations, string gedcomPath, GedcomAdapter adapter)
     {
         return Task.Run(() =>
         {
@@ -86,7 +87,7 @@ public static class Program
             var kekuleListBuilder = new KekuleListBuilder(adapter);
 
             // getting persons
-            var persons = kekuleListBuilder.GetPersons(rootPerson);
+            var persons = kekuleListBuilder.GetPersons(rootPerson, maxGenerations);
 
             // getting family tree
             var familyTree = FamilyTree.CreateFamilyTree(persons);

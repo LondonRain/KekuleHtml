@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Tim
 using GeneGenie.Gedcom;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace KekuleHtml.Models;
 
@@ -20,7 +21,7 @@ public enum MaryHillColour
 [DebuggerDisplay("KekuleNumber: {KekuleNumber}, Name: {FormattedName}")]
 public sealed class Person
 {
-    public required int KekuleNumber { get; init; }
+    public required ulong KekuleNumber { get; init; }
 
     public required GedcomIndividualRecord GedcomRecord { get; init; }
 
@@ -35,13 +36,19 @@ public sealed class Person
     /// <inheritdoc cref="MaryHillColour"/>
     public required MaryHillColour Colour { get; init; }
 
-    public int Generation => (int)Math.Floor(Math.Log2(KekuleNumber));
+    /// <inheritdoc cref="GenerationOf(ulong)"/>
+    public int Generation => GenerationOf(KekuleNumber);
+
+    /// <summary>
+    /// Determines the generation (G0 = proband) from a <paramref name="kekuleNumber"/>.
+    /// </summary>
+    public static int GenerationOf(ulong kekuleNumber) => BitOperations.Log2(kekuleNumber);
 
     /// <summary>
     /// The Kekule number where this individual first appeared. Only set for duplicates.
     /// Set while traversing whenever the same individual is reached again ("Ahnenschwund").
     /// </summary>
-    public int? FirstOccurrence { get; set; }
+    public ulong? FirstOccurrence { get; set; }
 
     /// <summary>
     /// Whether person was already found before. Not <see langword="true"/> for first match.
@@ -53,7 +60,7 @@ public sealed class Person
     /// Only contains more than one entry in case of "Ahnenschwund".
     /// Filled in once the whole tree has been traversed.
     /// </summary>
-    public IReadOnlyList<int> Occurrences { get; set; } = [];
+    public IReadOnlyList<ulong> Occurrences { get; set; } = [];
 
     /// <summary>
     /// Whether person has any duplicates. <see langword="true"/> for every person of the duplicate group.

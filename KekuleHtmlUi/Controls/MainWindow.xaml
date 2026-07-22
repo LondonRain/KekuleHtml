@@ -5,15 +5,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:kekuleHtmlServices="clr-namespace:KekuleHtml.Services;assembly=KekuleHtml"
         xmlns:localControls="clr-namespace:KekuleHtmlUi.Controls"
         xmlns:localConverters="clr-namespace:KekuleHtmlUi.Converters"
         xmlns:localPresenters="clr-namespace:KekuleHtmlUi.Presenters"
         xmlns:localProperties="clr-namespace:KekuleHtmlUi.Properties"
         Title="KekuleHtml"
-        Height="300"
-        MinHeight="300"
-        Width="500"
-        MinWidth="500"
+        Height="380"
+        MinHeight="380"
+        Width="550"
+        MinWidth="550"
         WindowStartupLocation="CenterScreen"
         AllowDrop="True"
         DragEnter="Window_DragEnter"
@@ -99,7 +100,7 @@
 
                 <!-- File path -->
                 <TextBox Grid.Column="0"
-                         Padding="8,4"
+                         Padding="6,4"
                          Height="Auto"
                          VerticalContentAlignment="Center"
                          IsReadOnly="True"
@@ -128,14 +129,36 @@
             <!-- Persons -->
             <localControls:SuggestionComboBox Grid.Row="5"
                                               Margin="0 4 0 0"
-                                              Padding="4"
+                                              Padding="6,4"
                                               VerticalAlignment="Top"
                                               ItemsSource="{Binding Persons}"
                                               DisplayMemberPath="DisplayName"
                                               SelectedItem="{Binding SelectedPerson}"
                                               Text="{Binding Text}" />
 
-            <!-- Empty row to fill up space -->
+            <!-- Number of generations to traverse -->
+            <StackPanel Grid.Row="6"
+                        VerticalAlignment="Top">
+
+                <!-- Generations header -->
+                <TextBlock Margin="0 12 0 0"
+                           Text="{x:Static localProperties:Resources.MaxGenerationsHeader}"
+                           FontWeight="Bold" />
+
+                <!-- Generations hint -->
+                <TextBlock Margin="0 6 0 0"
+                           TextWrapping="Wrap"
+                           Text="{x:Static localProperties:Resources.MaxGenerationsHint}"
+                           Foreground="Gray" />
+
+                <!-- Generations input -->
+                <localControls:NumericUpDown Margin="0 4 0 0"
+                                             Width="60"
+                                             HorizontalAlignment="Left"
+                                             Minimum="{x:Static kekuleHtmlServices:KekuleDefaults.MinGenerations}"
+                                             Maximum="{x:Static kekuleHtmlServices:KekuleDefaults.MaxGenerations}"
+                                             Value="{Binding MaxGenerations}" />
+            </StackPanel>
 
             <!--Output header-->
             <TextBlock Grid.Row="7"

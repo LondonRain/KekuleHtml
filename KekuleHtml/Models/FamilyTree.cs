@@ -26,7 +26,7 @@ namespace KekuleHtml.Models
             }
         }
 
-        public Person? GetPerson(int kekuleNumber)
+        public Person? GetPerson(ulong kekuleNumber)
         {
             return AllPersons.FirstOrDefault(p => p.KekuleNumber == kekuleNumber);
         }

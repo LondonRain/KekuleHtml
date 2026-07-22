@@ -70,6 +70,16 @@ public class MainPresenter : BindableBase
     /// </summary>
     public bool CanGenerateHtml => !IsBusy && SelectedPerson is not null && !string.IsNullOrEmpty(GedcomFilePath);
 
+    private int _MaxGenerations = KekuleDefaults.DefaultMaxGenerations;
+    /// <summary>
+    /// Number of generations to traverse (excluding the proband). Clamped to the supported range.
+    /// </summary>
+    public int MaxGenerations
+    {
+        get => _MaxGenerations;
+        set => SetProperty(ref _MaxGenerations, Math.Clamp(value, KekuleDefaults.MinGenerations, KekuleDefaults.MaxGenerations));
+    }
+
     private bool _OpenFileAfterGeneration = true;
     /// <summary>
     /// Whether the generated HTML file should be opened in browser after generation.
@@ -190,7 +200,7 @@ public class MainPresenter : BindableBase
             IsBusy = true;
             SetStatus(Resources.StatusGeneratingHtml);
 
-            var outputPath = await Program.CreateKekuleHtmlAsync(person.Person, GedcomFilePath, _GedcomAdapter);
+            var outputPath = await Program.CreateKekuleHtmlAsync(person.Person, MaxGenerations, GedcomFilePath, _GedcomAdapter);
 
             SetStatus(Resources.StatusHtmlGenerated(outputPath));
 

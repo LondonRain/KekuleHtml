@@ -129,6 +129,12 @@
   <data name="PersonHeader" xml:space="preserve">
     <value>Person</value>
   </data>
+  <data name="MaxGenerationsHeader" xml:space="preserve">
+    <value>Generations</value>
+  </data>
+  <data name="MaxGenerationsHint" xml:space="preserve">
+    <value>The output is limited to the following number of generations (proband = generation 0).</value>
+  </data>
   <data name="OpenFileCheckbox" xml:space="preserve">
     <value>Open the file in the browser after creating it?</value>
   </data>
