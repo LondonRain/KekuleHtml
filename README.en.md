@@ -44,7 +44,21 @@ There is also a user interface. To use it, run `KekuleHtmlUi.exe`.
 
 ![User Interface](img/ui.png)
 
-You can select a GEDCOM file using “Browse...”. Alternatively, you can drag and drop the file (e.g., from Windows Explorer) onto the window to open it. Under “Select Starting Person...”, you can open a drop-down list to specify the starting person. Typing in the text field filters the drop-down list accordingly. You can use the checkbox to specify whether the file generated after clicking “Create HTML File” should open directly.
+You can select a GEDCOM file using “Browse...”. Alternatively, you can drag and drop the file (e.g., from Windows Explorer) onto the window to open it. Under “Select Starting Person...”, you can open a drop-down list to specify the starting person. Typing in the text field filters the drop-down list accordingly. Under “Generations” you can limit the output to a specified number of generations. You can use the checkbox to specify whether the file generated after clicking “Create HTML File” should open directly.
+
+### Parameters
+
+Both the console application and the application with a graphical user interface support the following command-line parameters.
+
+| Parameter (with example) | Description |
+| ------------------------ | ------------ |
+| kennedy.ged | A relative or absolute path to a GEDCOM file. This is then loaded directly in the user interface. However, it is usually more convenient to select the file yourself via the user interface. |
+| -maxGenerations 12 | Number of generations included in the output. 20 is the default value if this parameter is not set. The maximum is 63. |
+| -lang en | Forces the specified language. Currently, `de` (German) and `en` (English) are supported. If no language is specified via a parameter or if the language is unknown, the system language is used. |
+
+### Ahnenblatt
+
+For integration with the [Ahnenblatt](https://www.ahnenblatt.de/) software, see [here](AhnenblattPlugin/ReadmeAB.md).
 
 ## Features
 

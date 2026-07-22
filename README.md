@@ -44,7 +44,21 @@ Es gibt aber auch eine Bedienoberfläche. Dazu die `KekuleHtmlUi.exe` starten.
 
 ![Bedienoberfläche](img/ui.png)
 
-Über "Durchsuchen ..." kann eine GEDCOM-Datei ausgewählt werden. Alternativ lässt sich diese per Drag and Drop (etwas aus dem Windows Explorer heraus) auf das Fenster ziehen und so öffnen. Unter "Startperson wählen ..." lässt sich eine Auswahlliste öffnen, um diese festzulegen. Wenn man in das Textfeld tippt wird die Auswahlliste entsprechend gefiltert. Über ein Häkchen lässt sich festlegen, ob die nach einem Klick auf "HTML-Datei erstellen" generierte Datei direkt geöffnet werden soll.
+Über "Durchsuchen ..." kann eine GEDCOM-Datei ausgewählt werden. Alternativ lässt sich diese per Drag and Drop (etwas aus dem Windows Explorer heraus) auf das Fenster ziehen und so öffnen. Unter "Startperson wählen ..." lässt sich eine Auswahlliste öffnen, um diese festzulegen. Wenn man in das Textfeld tippt wird die Auswahlliste entsprechend gefiltert. Unter "Generationen" lässt sich die Ausgabe auf eine festgelegte Anzahl an Generationen begrenzen. Über ein Häkchen lässt sich festlegen, ob die nach einem Klick auf "HTML-Datei erstellen" generierte Datei direkt geöffnet werden soll.
+
+### Parameter
+
+Sowohl die Konsolenapplikation als auch die Anwendung mit Bedienoberfläche unterstützen folgende Kommandozeilenparameter.
+
+| Parameter (mit Beispiel) | Beschreibung |
+| ------------------------ | ------------ |
+| kennedy.ged | Ein relativer oder absoluter Pfad zu einer Gedcomdatei. In der Oberfläche wird diese dann direkt geladen. Üblicherweise ist es aber bequemer die Datei selber über die Oberfläche auszuwählen. |
+| -maxGenerations 12 | Anzahl an in die Ausgabe aufgenommenen Generationen. 20 ist der Standardwert, wenn dieser Parameter nicht gesetzt wird. Maximal sind 63 möglich. |
+| -lang en | Erzwingt die angegebene Sprache. Zurzeit werden `de` (Deutsch) und `en` (Englisch) unterstützt. Wird keine Sprache per Parameter angegeben oder ist diese unbekannt, wird die Systemsprache verwendet. |
+
+### Ahnenblatt
+
+Für eine Integration in die Software [Ahnenblatt](https://www.ahnenblatt.de/) siehe [hier](AhnenblattPlugin/ReadmeAB.md).
 
 ## Funktionen
 
