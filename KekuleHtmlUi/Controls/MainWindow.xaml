@@ -11,8 +11,8 @@
         xmlns:localPresenters="clr-namespace:KekuleHtmlUi.Presenters"
         xmlns:localProperties="clr-namespace:KekuleHtmlUi.Properties"
         Title="KekuleHtml"
-        Height="380"
-        MinHeight="380"
+        Height="400"
+        MinHeight="400"
         Width="550"
         MinWidth="550"
         WindowStartupLocation="CenterScreen"
@@ -31,11 +31,36 @@
     <Grid>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Menu bar with a right-aligned help menu -->
+        <Menu Grid.Row="0">
+
+            <!-- Right-align the single top-level menu via a non-filling DockPanel -->
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel LastChildFill="False" />
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
+
+            <MenuItem DockPanel.Dock="Right"
+                      Header="{x:Static localProperties:Resources.MenuHelpHeader}">
+                <MenuItem Header="{x:Static localProperties:Resources.MenuAbout}"
+                          Click="AboutMenuItem_Click">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/Resources/KekuleHtmlIcon.ico"
+                               Width="16"
+                               Height="16" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
         <!-- Drag & drop overlay -->
         <Border x:Name="DropOverlay"
+                Grid.Row="1"
                 Margin="3"
                 Background="#9901362A"
                 BorderBrush="#CC01362A"
@@ -61,83 +86,79 @@
         </Border>
 
         <!-- Input is locked while IsBusy (parsing/generating) -->
-        <Grid Margin="12"
+        <Grid Grid.Row="1"
+              Margin="12"
               IsEnabled="{Binding IsBusy, Converter={StaticResource BoolToNotBoolConverter}, Mode=OneWay}">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <!-- File header -->
-            <TextBlock Grid.Row="0"
-                       Margin="0 0 0 0"
-                       Text="{x:Static localProperties:Resources.GedcomFileHeader}"
-                       FontWeight="Bold" />
+            <!-- File -->
+            <StackPanel Grid.Row="0">
 
-            <!-- File hint -->
-            <TextBlock Grid.Row="1"
-                       Margin="0 6 0 0"
-                       Text="{x:Static localProperties:Resources.GedcomFileHint}"
-                       Foreground="Gray" />
+                <!-- File header -->
+                <TextBlock Text="{x:Static localProperties:Resources.GedcomFileHeader}"
+                           FontWeight="Bold" />
 
-            <!-- File selection -->
-            <Grid Grid.Row="2"
-                  Margin="0 4 0 0">
+                <!-- File hint -->
+                <TextBlock Margin="0 6 0 0"
+                           Text="{x:Static localProperties:Resources.GedcomFileHint}"
+                           Foreground="Gray" />
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                <!-- File selection -->
+                <Grid Margin="0 4 0 0">
 
-                <!-- File path -->
-                <TextBox Grid.Column="0"
-                         Padding="6,4"
-                         Height="Auto"
-                         VerticalContentAlignment="Center"
-                         IsReadOnly="True"
-                         Text="{Binding GedcomFilePath, Mode=OneWay}" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <!-- Browse button -->
-                <Button Grid.Column="1"
-                        Margin="8 0 0 0"
-                        Padding="8,4"
-                        Content="{x:Static localProperties:Resources.BrowseButton}"
-                        Click="BrowseButton_Click" />
-            </Grid>
+                    <!-- File path -->
+                    <TextBox Grid.Column="0"
+                             Padding="6,4"
+                             Height="Auto"
+                             VerticalContentAlignment="Center"
+                             IsReadOnly="True"
+                             Text="{Binding GedcomFilePath, Mode=OneWay}" />
 
-            <!-- Person header -->
-            <TextBlock Grid.Row="3"
-                       Margin="0 12 0 0"
-                       Text="{x:Static localProperties:Resources.PersonHeader}"
-                       FontWeight="Bold" />
+                    <!-- Browse button -->
+                    <Button Grid.Column="1"
+                            Margin="8 0 0 0"
+                            Padding="8,4"
+                            Content="{x:Static localProperties:Resources.BrowseButton}"
+                            Click="BrowseButton_Click" />
+                </Grid>
+            </StackPanel>
 
-            <!-- Person hint -->
-            <TextBlock Grid.Row="4"
-                       Margin="0 6 0 0"
-                       Text="{x:Static localProperties:Resources.PersonHint}"
-                       Foreground="Gray" />
+            <!-- Person -->
+            <StackPanel Grid.Row="1">
 
-            <!-- Persons -->
-            <localControls:SuggestionComboBox Grid.Row="5"
-                                              Margin="0 4 0 0"
-                                              Padding="6,4"
-                                              VerticalAlignment="Top"
-                                              ItemsSource="{Binding Persons}"
-                                              DisplayMemberPath="DisplayName"
-                                              SelectedItem="{Binding SelectedPerson}"
-                                              Text="{Binding Text}" />
+                <!-- Person header -->
+                <TextBlock Margin="0 12 0 0"
+                           Text="{x:Static localProperties:Resources.PersonHeader}"
+                           FontWeight="Bold" />
+
+                <!-- Person hint -->
+                <TextBlock Margin="0 6 0 0"
+                           Text="{x:Static localProperties:Resources.PersonHint}"
+                           Foreground="Gray" />
+
+                <!-- Persons -->
+                <localControls:SuggestionComboBox Margin="0 4 0 0"
+                                                  Padding="6,4"
+                                                  ItemsSource="{Binding Persons}"
+                                                  DisplayMemberPath="DisplayName"
+                                                  SelectedItem="{Binding SelectedPerson}"
+                                                  Text="{Binding Text}" />
+            </StackPanel>
 
             <!-- Number of generations to traverse -->
-            <StackPanel Grid.Row="6"
+            <StackPanel Grid.Row="2"
                         VerticalAlignment="Top">
 
                 <!-- Generations header -->
@@ -160,38 +181,38 @@
                                              Value="{Binding MaxGenerations}" />
             </StackPanel>
 
-            <!--Output header-->
-            <TextBlock Grid.Row="7"
-                       Margin="0"
-                       Text="{x:Static localProperties:Resources.Output}"
-                       FontWeight="Bold" />
+            <!-- Output -->
+            <StackPanel Grid.Row="3">
 
-            <!-- Status text -->
-            <TextBlock Grid.Row="8"
-                       Margin="0 6 0 0"
-                       TextWrapping="Wrap"
-                       Text="{Binding StatusText}">
+                <!--Output header-->
+                <TextBlock Text="{x:Static localProperties:Resources.Output}"
+                           FontWeight="Bold" />
 
-                <!-- Error style -->
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Foreground"
-                                Value="Gray" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasError}"
-                                         Value="True">
-                                <Setter Property="Foreground"
-                                        Value="Firebrick" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
+                <!-- Status text -->
+                <TextBlock Margin="0 6 0 0"
+                           TextWrapping="Wrap"
+                           Text="{Binding StatusText}">
 
-            </TextBlock>
+                    <!-- Error style -->
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground"
+                                    Value="Gray" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasError}"
+                                             Value="True">
+                                    <Setter Property="Foreground"
+                                            Value="Firebrick" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+
+                </TextBlock>
+            </StackPanel>
 
             <!-- Options and action -->
-
-            <Grid Grid.Row="9"
+            <Grid Grid.Row="4"
                   Margin="0 6 0 0">
 
                 <Grid.ColumnDefinitions>

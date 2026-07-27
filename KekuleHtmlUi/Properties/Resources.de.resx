@@ -180,4 +180,31 @@
   <data name="PersonHint" xml:space="preserve">
     <value>Startperson auswählen ...</value>
   </data>
+  <data name="MenuHelpHeader" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="AboutWindowTitle" xml:space="preserve">
+    <value>Über KekuleHtml</value>
+  </data>
+  <data name="AboutVersionLabel" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2026 Tim</value>
+  </data>
+  <data name="AboutLinkLicense" xml:space="preserve">
+    <value>Lizenz (GNU AGPLv3)</value>
+  </data>
+  <data name="AboutLinkDocumentation" xml:space="preserve">
+    <value>Dokumentation</value>
+  </data>
+  <data name="AboutLinkThirdParty" xml:space="preserve">
+    <value>Drittanbieter-Hinweise</value>
+  </data>
+  <data name="AboutLinkReleases" xml:space="preserve">
+    <value>Releases &amp; Quellcode</value>
+  </data>
+  <data name="AboutCloseButton" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
 </root>

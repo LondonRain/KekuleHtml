@@ -1,6 +1,17 @@
 <Project>
 
   <!--
+    Single source of truth for the whole solution's version (console + UI).
+    Bump this one value to version all projects; the SDK derives AssemblyVersion
+    and FileVersion from it, and the UI reads it at runtime for the info window.
+    
+    Do not forget to also manually increase in *.abp.
+  -->
+  <PropertyGroup>
+    <Version>2.0.0.0</Version>
+  </PropertyGroup>
+
+  <!--
     Defines the FORCE_ENGLISH compile symbol for ALL projects in this repository
     (console + UI), forcing the English resources for testing. It is turned on by
     either of:

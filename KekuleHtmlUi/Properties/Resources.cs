@@ -25,7 +25,18 @@ public static class Resources
 
     #region Strings
 
+    public static string AboutCloseButton => Get(nameof(AboutCloseButton));
+    public static string AboutCopyright => Get(nameof(AboutCopyright));
+    public static string AboutLinkDocumentation => Get(nameof(AboutLinkDocumentation));
+    public static string AboutLinkLicense => Get(nameof(AboutLinkLicense));
+    public static string AboutLinkReleases => Get(nameof(AboutLinkReleases));
+    public static string AboutLinkThirdParty => Get(nameof(AboutLinkThirdParty));
+    public static string AboutVersionLabel(string version) => Format(nameof(AboutVersionLabel), version);
+    public static string AboutWindowTitle => Get(nameof(AboutWindowTitle));
     public static string BrowseButton => Get(nameof(BrowseButton));
+    // Menu entry reuses the single AboutWindowTitle resource and appends the trailing " ..." at runtime.
+    public static string MenuAbout => AboutWindowTitle + " ...";
+    public static string MenuHelpHeader => Get(nameof(MenuHelpHeader));
     public static string DropOverlayText => Get(nameof(DropOverlayText));
     public static string GedcomFileHeader => Get(nameof(GedcomFileHeader));
     public static string GedcomFileHint => Get(nameof(GedcomFileHint));

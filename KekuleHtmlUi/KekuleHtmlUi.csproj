@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Resources\KekuleHtmlIcon.ico" />
+    <Resource Include="Resources\KekuleHtmlIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>

@@ -69,6 +69,19 @@ public partial class MainWindow : Window
 
     #endregion
 
+    #region Menu
+
+    /// <summary>
+    /// Shows the info window with copyright, version and project links.
+    /// </summary>
+    private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        var about = new AboutWindow { Owner = this };
+        about.ShowDialog();
+    }
+
+    #endregion
+
     #region Drag & drop
 
     /// <summary>
