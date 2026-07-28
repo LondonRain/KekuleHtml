@@ -95,7 +95,8 @@ section {
 }
 .number {
     display: inline-block;
-    width: 6em;
+    /* per-generation width, set on the enclosing <section> (see GetWidthEmForGeneration); falls back to 6em */
+    width: var(--kekule-number-width, 6em);
     font-weight: bold;
 }
 .dates {
@@ -223,7 +224,7 @@ padding-left: 1rem;
 
         foreach (var generation in familyTree.Generations)
         {
-            html.AppendLine($"<section id=\"gen{generation.GenerationNumber}\">");
+            html.AppendLine($"<section id=\"gen{generation.GenerationNumber}\" style=\"--kekule-number-width: {GetWidthEmForGeneration(generation)}em;\">");
 
             html.AppendLine($"<h2>{generation.ExternalName}: {generation.Description}</h2>");
 
@@ -575,6 +576,31 @@ if (bounds.length > 0)
         }
     }
 
+    /// <summary>
+    /// Gets the column width (in <c>em</c>) for the Kekule numbers of a whole generation.
+    /// </summary>
+    /// <remarks>
+    /// In the page's bold Segoe UI font every digit shares the same advance (~0.575em), so the required width depends solely on the digit count
+    /// of the largest number in the generation. The result is snapped to a small set of tiers so narrow generations stay compact while wide ones
+    /// stop overlapping the name. 12em covers the 20-digit maximum (generation 63, ulong.MaxValue).
+    /// </remarks>
+    private static int GetWidthEmForGeneration(Generation generation)
+    {
+        var maxNumber = generation.Persons.Count == 0
+            ? 0UL
+            : generation.Persons.Max(person => person.KekuleNumber);
+
+        var digits = maxNumber.ToString(CultureInfo.InvariantCulture).Length;
+
+        return digits switch
+        {
+            <= 10 => 6,
+            <= 13 => 8,
+            <= 16 => 10,
+            _ => 12,
+        };
+    }
+
     private static void WriteStatistics(StringBuilder html, Generation generation)
     {
         var theoreticalCount = (int)Math.Pow(2, generation.GenerationNumber);
@@ -604,6 +630,7 @@ if (bounds.length > 0)
 
         html.AppendLine("</div>");
     }
+
     private static void WritePerson(StringBuilder html, Person entry)
     {
         var cssClass = entry.Colour.ToString().ToLowerInvariant();
