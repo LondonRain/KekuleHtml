@@ -5,7 +5,7 @@
 
 [![Licence](https://img.shields.io/github/license/LondonRain/KekuleHtml)](licence.txt)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blueviolet)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-![Windows](https://img.shields.io/badge/Windows-10%2B-steelblue)
+[![Windows](https://img.shields.io/badge/Windows-10%2B-steelblue)](https://www.microsoft.com/windows)
 [![Release](https://img.shields.io/github/v/release/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/commits/main)
 [![Downloads](https://img.shields.io/github/downloads/LondonRain/KekuleHtml/total)](https://github.com/LondonRain/KekuleHtml/releases/latest)

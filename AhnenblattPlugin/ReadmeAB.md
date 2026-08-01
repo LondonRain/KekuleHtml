@@ -9,10 +9,10 @@ Im [Support Portal für Ahnenblatt](https://www.ahnenblattportal.de/viewtopic.ph
 
 ### Installation
 
-Die heruntergeladene Archivdatei mit der Plugin-Version muss - wie alle anderen Ahnenblatt-Plugins auch - entpackt werden und dann unter `%USERPROFILE%\Documents\Ahnenblatt\PlugIns` platziert werden. Die Ordnerstruktur sieht dann wie folgt aus:
+Die heruntergeladene Archivdatei mit der Plugin-Version muss - wie alle anderen Ahnenblatt-Plugins auch - entpackt werden und dann unter `%USERPROFILE%\Dokumente\Ahnenblatt\PlugIns` (z.B: `"C:\Benutzer\Max Mustermann\Dokumente\Ahnenblatt\PlugIns"`) platziert werden. Die Ordnerstruktur sieht dann wie folgt aus:
 
 ```
-Documents/
+Dokumente/
 ├─ Ahnenblatt/
 │  ├─ PlugIns/
 │  │  ├─ KekuleHtml/
@@ -28,6 +28,11 @@ Wenn alles an der richtigen Stelle abgelegt wurde, erscheint "KekuleHtml" in Ahn
 
 ![Plugin für Ahnenblatt](../img/ahnenblatt.png)
 
+### Koordinaten für Kartenfunktionalität
+
+Damit die [Kartenfunktionalität](../README.md#geographische-verteilung-der-ahnenlinien) funktioniert müssen Koordinaten erfasst worden sein. Dies funktioniert in Ahnenblatt über die Ortsverwaltung, die eine Suche nach dem Ortsnamen und die Übernahme der Koordinaten von einer Karte aus unterstützt:
+![Ortsverwaltung](../img/ahnenblatt_coordinates.png)
+
 ---
 
 ## 🇬🇧 Plugin for Ahnenblatt
@@ -41,7 +46,7 @@ There is a thread on the [Ahnenblatt Support Portal](https://www.ahnenblattporta
 
 ### Installation
 
-The downloaded archive file containing the plugin version must – like all other Ahnenblatt plugins – be extracted and then placed in `%USERPROFILE%\Documents\Ahnenblatt\PlugIns`. The folder structure will then look as follows:
+The downloaded archive file containing the plugin version must – like all other Ahnenblatt plugins – be extracted and then placed in `%USERPROFILE%\Documents\Ahnenblatt\PlugIns`. (e.g: `"C:\Users\Max Mustermann\Documents\Ahnenblatt\PlugIns"`) The folder structure will then look as follows:
 
 ```
 Documents/
@@ -58,3 +63,8 @@ Documents/
 If everything has been placed in the correct location, "KekuleHtml" will appear in Ahnenblatt under "Tools/KekuleHtml/Start" in the menu.
 
 ![Plugin for Ahnenblatt](../img/ahnenblatt.png)
+
+### Coordinates for map functionality
+
+For the [map functionality](../README.en.md#geographic-distribution-of-ancestral-lines) to work, coordinates must have been entered. In Ahnenblatt, this is done via the manage places feature, which allows you to search for a place name and import coordinates from a map:
+![Manage places](../img/ahnenblatt_coordinates.png)
