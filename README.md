@@ -26,7 +26,7 @@
 
 Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedia.org/wiki/Kekule-Nummer), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
 
-Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren.
+Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren. Ein weiterer Abschnitt fasst pro Familienzweig die häufigsten Orte und Familiennamen zusammen und zeigt so auf einen Blick, wo die eigenen Forschungsdaten schwerpunktmäßig liegen.
 
 ## Voraussetzungen
 
@@ -105,6 +105,22 @@ Existieren an einem Ort Ereignis-Cluster mehrerer Familienzweige, überlagern si
 Ein Klick auf eines der Cluster öffnet ein Popup mit dem Ortsnamen, der Ereignisanzahl und dem Ereigniszeitraum. Unter Details findet sich eine alphabetisch sortierte Liste der dort vorkommenden Personen mit Geburts (*)- und Sterbejahren (✝), Jahr einer Eheschließung (⚭), sowie einer Zeitspanne von wann bis wann sie dort gelebt hat (⌂).
 
 ![Cluster-Details](img/migration_map_details.png)
+
+### Häufigste Orte und Familiennamen der Ahnenlinien
+
+Direkt unter der Karte fasst ein Dashboard zusammen, wo die eigenen Forschungsdaten schwerpunktmäßig liegen und welche Familiennamen am häufigsten vorkommen. Für jeden der vier Familienzweige nach Mary Hill gibt es eine Kachel, darüber eine schmale Gesamtleiste über alle Zweige hinweg.
+
+![Kacheln der häufigsten Orte und Familiennamen](img/research_focus_cards.png)
+
+Jede Kachel zeigt in der Kopfzeile einen farbigen Punkt des Familienzweigs sowie den Familiennamen des jeweiligen Großelternteils. Darunter stehen drei Kennzahlen und zwei Ranglisten:
+
+- **Kennzahlen:** Anzahl der verschiedenen Orte, Familiennamen und Personen des Familienzweigs.
+- **Top-Orte (Ereignisse):** die häufigsten Orte, gezählt nach Ereignissen (wie bei der Karte), so dass eine Person an einem Ort mehrfach vorkommen kann.
+- **Top-Familiennamen (Personen):** die häufigsten Familiennamen, gezählt nach Personen - jede Person genau einmal.
+
+Beide Ranglisten zeigen bis zu fünf Einträge.
+
+Anders als bei der Karte fließen hier auch Orte **ohne** Koordinaten in die Zählung ein - es zählt allein der Ortsname. Personen werden über [Ahnenschwund](https://de.wikipedia.org/wiki/Ahnenschwund) hinweg nur einmal gezählt.
 
 ### Kekule-Liste
 In der eigentlichen Ahnenliste werden pro Generation alle vorhandenen Personen in einer kompakten Form ausgegeben. Auch hier findet die farbliche Kodierung nach Mary Hill Anwendung.

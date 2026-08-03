@@ -26,7 +26,7 @@
 
 Based on a [GEDCOM](https://en.wikipedia.org/wiki/GEDCOM) file, it generates a compact HTML family tree according to [Kekule](https://en.wikipedia.org/wiki/Ahnentafel), which can help, for example, with navigating your own data and the directory structures of your sources.
 
-In addition, it generates generational statistics and—provided geodata is available—a map that allows you to visualize migration patterns across different generations and family branches.
+In addition, it generates generational statistics and—provided geodata is available—a map that allows you to visualize migration patterns across different generations and family branches. A further section summarizes the most common places and family names per family branch, showing at a glance where the bulk of your research data lies.
 
 ## Requirements
 
@@ -105,6 +105,22 @@ If event clusters from multiple family branches exist at a single location, they
 Clicking on one of the clusters opens a pop-up showing the place name, the number of events, and the time period of the events. Under “Details,” you’ll find an alphabetically sorted list of the people associated with that location, including their birth (*), death (✝), and marriage (⚭) years, as well as the time period during which they lived there (⌂).
 
 ![Cluster Details](img/migration_map_details.png)
+
+### Most Common Places and Family Names of the Ancestral Lines
+
+Directly below the map, a dashboard summarises the main focus of your research data and which family names occur most frequently. There is one card for each of the four family branches according to Mary Hill, with a narrow summary bar above them covering all branches.
+
+![Most Common Places and Family Names of the Ancestral Lines](img/research_focus_cards.png)
+
+Each card shows a coloured dot representing the family branch in the header, along with the family name of the respective grandparent. Below this are three key figures and two rankings:
+
+- **Key figures:** The number of different places, family names and individuals in the family branch.
+- **Top places (events):** the most common places, counted by events (as on the map), meaning that a person may appear multiple times at a single place.
+- **Top family names (persons):** the most common surnames, counted by people – each person is counted exactly once.
+
+Both rankings show up to five entries.
+
+Unlike on the map, places **without** coordinates are also included in the count here – only the place name counts. Individuals are counted only once, even across [pedigree collapse](https://en.wikipedia.org/wiki/Pedigree_collapse).
 
 ### Kekule List
 In the actual ancestor list, all individuals for each generation are displayed in a compact format. Here, too, Mary Hill’s color-coding system is used.
