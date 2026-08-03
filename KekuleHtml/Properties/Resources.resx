@@ -163,6 +163,34 @@
   <data name="HtmlHeadingMigrationMap" xml:space="preserve">
     <value>Geographic distribution of the ancestral lines</value>
   </data>
+  <data name="HtmlHeadingResearchFocus" xml:space="preserve">
+    <value>Most common places and family names of the ancestral lines</value>
+    <comment>Heading of the dashboard section listing the most common places / family names per line.</comment>
+  </data>
+  <data name="HtmlFocusTotal" xml:space="preserve">
+    <value>Total</value>
+    <comment>Title of the aggregate research-focus card covering all lines.</comment>
+  </data>
+  <data name="HtmlFocusPersons" xml:space="preserve">
+    <value>Persons</value>
+    <comment>Key figure label: number of distinct persons in a line.</comment>
+  </data>
+  <data name="HtmlFocusPlaces" xml:space="preserve">
+    <value>Places</value>
+    <comment>Key figure label: number of distinct places in a line.</comment>
+  </data>
+  <data name="HtmlFocusSurnames" xml:space="preserve">
+    <value>Family names</value>
+    <comment>Key figure label: number of distinct family names in a line.</comment>
+  </data>
+  <data name="HtmlFocusTopPlaces" xml:space="preserve">
+    <value>Top places (events)</value>
+    <comment>Heading of the ranked places list; counted by events.</comment>
+  </data>
+  <data name="HtmlFocusTopSurnames" xml:space="preserve">
+    <value>Top family names (persons)</value>
+    <comment>Heading of the ranked family names list; counted by persons.</comment>
+  </data>
   <data name="HtmlHeadingTableOfContents" xml:space="preserve">
     <value>Contents</value>
   </data>

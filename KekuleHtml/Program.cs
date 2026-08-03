@@ -88,10 +88,13 @@ public static class Program
             var migrationPoints = migrationCollector.GetMigrationPoints(familyTree);
             var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoints);
 
+            // creating research focus cards
+            var researchFocusCards = ResearchFocusBuilder.Build(familyTree, migrationPoints, KekuleDefaults.TopListLength);
+
             // create HTML report
             string fileName = "kekule.html";
             var outputPath = Path.Combine(Path.GetDirectoryName(gedcomPath)!, fileName);
-            HtmlWriter.Write(outputPath, rootPerson, familyTree, migrationClusters);
+            HtmlWriter.Write(outputPath, rootPerson, familyTree, migrationClusters, researchFocusCards);
 
             return outputPath;
         });

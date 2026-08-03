@@ -81,18 +81,8 @@ section {
     margin: 2px 0;
     border-left: 8px solid;
 }
-.blue {
-    border-color: #005D8F;
-}
-.green {
-    border-color: #0A7050;
-}
-.red {
-    border-color: #BE2323;
-}
-.yellow {
-    border-color: #F5AF00;
-}
+/* Mary-Hill line colours are generated from a single source, see BuildColourCss() */
+/*__MARYHILL_COLOURS__*/
 .number {
     display: inline-block;
     /* per-generation width, set on the enclosing <section> (see GetWidthEmForGeneration); falls back to 6em */
@@ -157,21 +147,134 @@ section {
 
     display: inline-block;
 }
-.legendColor.blue
+/* .legendColor.blue/.green/.red/.yellow backgrounds are generated, see BuildColourCss() */
+
+/* research focus dashboard */
+
+/* aggregate "total" as a thin strip on top, styled like the map legend */
+.focusTotal
 {
-    background: #005D8F;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1.5rem;
+
+    margin-bottom: 1rem;
+    padding: 0.6rem 0.75rem;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    background: #fafafa;
+
+    color: #555;
+    font-size: 0.95rem;
 }
-.legendColor.green
+.focusTotalLabel
 {
-    background: #0A7050;
+    color: inherit;
+    font-weight: bold;
 }
-.legendColor.red
+.focusGrid
 {
-    background: #BE2323;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
-.legendColor.yellow
+.focusCard
 {
-    background: #F5AF00;
+    padding: 0.6rem;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    background: #fafafa;
+
+    /* keep a card together when printing */
+    page-break-inside: avoid;
+}
+.focusHeader
+{
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    margin-bottom: 0.4rem;
+
+    font-weight: bold;
+    font-size: 1rem;
+}
+.focusDot
+{
+    flex: none;
+
+    width: 14px;
+    height: 14px;
+
+    border-radius: 50%;
+    border: 1px solid #666;
+
+    display: inline-block;
+}
+.totalsRow
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.6rem;
+
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.4rem;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    color: #555;
+    font-size: 0.8rem;
+}
+.focusList h3
+{
+    margin: 0.5rem 0 0.25rem;
+    font-size: 0.85rem;
+}
+.barRow
+{
+    display: grid;
+    /* name column sized to the longest label (--name-col, set on the section), but the bar always
+       keeps at least its minmax minimum; the name truncates if space runs short */
+    grid-template-columns: minmax(0, var(--name-col, 9rem)) minmax(6rem, 1fr) 2rem;
+    align-items: center;
+    gap: 0.4rem;
+
+    margin: 2px 0;
+    font-size: 0.82rem;
+}
+.barLabel
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.barTrack
+{
+    height: 12px;
+    overflow: hidden;
+
+    background: #e5e7eb;
+    border-radius: 3px;
+}
+.barFill
+{
+    display: block;
+    height: 100%;
+    min-width: 2px;
+
+    border-radius: 3px;
+}
+.barValue
+{
+    text-align: right;
+    color: #555;
+    font-variant-numeric: tabular-nums;
 }
 
 /* the collapsible details with text about its persons. make sure that list with persons is condensed. */
@@ -190,11 +293,41 @@ padding-left: 1rem;
 <body>
 """;
 
+    /// <summary>
+    /// Generates the CSS rules that depend on the four Mary-Hill line colours from the single colour source (<see cref="MaryHillColourExtensions"/>),
+    /// so the hex values live in exactly one place. Injected into the static <see cref="CSS"/> block in place of the <c>__MARYHILL_COLOURS__</c> token.
+    /// </summary>
+    private static string BuildColourCss()
+    {
+        var sb = new StringBuilder();
+
+        foreach (var (name, colour) in new[]
+        {
+            ("blue", MaryHillColour.Blue),
+            ("green", MaryHillColour.Green),
+            ("red", MaryHillColour.Red),
+            ("yellow", MaryHillColour.Yellow)
+        })
+        {
+            var hex = colour.ToHex();
+
+            sb.AppendLine($".{name} {{ border-color: {hex}; }}");
+            sb.AppendLine($".legendColor.{name} {{ background: {hex}; }}");
+        }
+
+        return sb.ToString();
+    }
+
     #endregion
 
     #region Write
 
-    public static void Write(string fileName, GedcomIndividualRecord rootPerson, FamilyTree familyTree, IEnumerable<MigrationCluster> migrationClusters)
+    public static void Write(
+        string fileName,
+        GedcomIndividualRecord rootPerson,
+        FamilyTree familyTree,
+        IEnumerable<MigrationCluster> migrationClusters,
+        IEnumerable<ResearchFocusCard> researchFocusCards)
     {
         var html = new StringBuilder();
 
@@ -212,15 +345,17 @@ padding-left: 1rem;
 <title>{Resources.HtmlTitle}</title>
 """);
 
-        html.AppendLine(CSS);
+        html.AppendLine(CSS.Replace("/*__MARYHILL_COLOURS__*/", BuildColourCss()));
 
         html.AppendLine($"<h1>{string.Format(Resources.HtmlHeadingKekuleListFor, EscapeHtml(rootPerson.GetFormattedName()))}</h1>");
 
-        WriteTableOfContents(html, familyTree);
+        WriteTableOfContents(html, familyTree, HasTimeline(familyTree), migrationClusters.Any(), researchFocusCards.Any());
 
         WriteTimelineSvg(html, familyTree);
 
         WriteMigrationMap(html, familyTree, migrationClusters);
+
+        WriteResearchFocus(html, researchFocusCards);
 
         foreach (var generation in familyTree.Generations)
         {
@@ -244,11 +379,21 @@ padding-left: 1rem;
         File.WriteAllText(fileName, html.ToString(), Encoding.UTF8);
     }
 
-    private static void WriteTableOfContents(StringBuilder html, FamilyTree familyTree)
+    private static void WriteTableOfContents(StringBuilder html, FamilyTree familyTree, bool hasTimeline, bool hasMigrationMap, bool hasResearchFocus)
     {
         html.AppendLine("<nav>");
         html.AppendLine($"<h2>{Resources.HtmlHeadingTableOfContents}</h2>");
         html.AppendLine("<ul>");
+
+        // dashboard sections first, in document order; only linked when actually rendered
+        if (hasTimeline)
+            html.AppendLine($"<li><a href=\"#timeline\">{Resources.HtmlHeadingTimeline}</a></li>");
+
+        if (hasMigrationMap)
+            html.AppendLine($"<li><a href=\"#migration\">{Resources.HtmlHeadingMigrationMap}</a></li>");
+
+        if (hasResearchFocus)
+            html.AppendLine($"<li><a href=\"#placesAndNames\">{Resources.HtmlHeadingResearchFocus}</a></li>");
 
         foreach (var generation in familyTree.Generations)
             html.AppendLine($"<li><a href=\"#gen{generation.GenerationNumber}\">{generation.ExternalName}</a></li>");
@@ -259,12 +404,7 @@ padding-left: 1rem;
 
     private static void WriteTimelineSvg(StringBuilder html, FamilyTree familyTree)
     {
-        var generations = familyTree.Generations;
-
-        if (generations.Count == 0)
-            return;
-
-        if (familyTree.MinYear == 0 || familyTree.MaxYear == 0)
+        if (!HasTimeline(familyTree))
             return;
 
         var maxGeneration = familyTree.Generations.Last().GenerationNumber;
@@ -283,6 +423,7 @@ padding-left: 1rem;
             return leftMargin + (year - familyTree.MinYear) * (chartWidth - leftMargin - rightMargin) / (double)(familyTree.MaxYear - familyTree.MinYear);
         }
 
+        html.AppendLine("<section id=\"timeline\">");
         html.AppendLine($"<h2>{Resources.HtmlHeadingTimeline}</h2>");
 
         html.AppendLine($"<svg class=\"timeline\" width=\"{chartWidth}\" height=\"{chartHeight}\" xmlns=\"http://www.w3.org/2000/svg\">");
@@ -316,7 +457,7 @@ padding-left: 1rem;
 
         // --- generations
 
-        foreach (var generation in generations.OrderByDescending(x => x.GenerationNumber))
+        foreach (var generation in familyTree.Generations.OrderByDescending(x => x.GenerationNumber))
         {
             var row = maxGeneration - generation.GenerationNumber;
 
@@ -390,6 +531,7 @@ padding-left: 1rem;
         }
 
         html.AppendLine("</svg>");
+        html.AppendLine("</section>");
     }
 
     private static void WriteMigrationMap(StringBuilder html, FamilyTree familyTree, IEnumerable<MigrationCluster> migrationClusters)
@@ -399,6 +541,8 @@ padding-left: 1rem;
 
         // --- Legend
 
+        // note: the anchor id lives on the <section>; the Leaflet container div below keeps the separate id "migrationMap", so the two must not be merged.
+        html.AppendLine("<section id=\"migration\">");
         html.AppendLine($"<h2>{Resources.HtmlHeadingMigrationMap}</h2>");
 
         html.AppendLine($"""
@@ -460,15 +604,7 @@ const bounds = [];
         // draw the small circles on top
         foreach (var cluster in migrationClusters.OrderByDescending(c => c.Count))
         {
-            var colour =
-                cluster.MaryHillColour switch
-                {
-                    MaryHillColour.Blue => "#005D8F",
-                    MaryHillColour.Green => "#0A7050",
-                    MaryHillColour.Red => "#BE2323",
-                    MaryHillColour.Yellow => "#F5AF00",
-                    _ => throw new InvalidOperationException($"Unexpected colour {cluster.MaryHillColour}!")
-                };
+            var colour = cluster.MaryHillColour.ToHex();
 
             var opacity = GetOpacity(cluster);
             var opacityText = opacity.ToString("F2", CultureInfo.InvariantCulture);
@@ -550,6 +686,7 @@ if (bounds.length > 0)
 """);
 
         html.AppendLine("</script>");
+        html.AppendLine("</section>");
 
         double GetOpacity(MigrationCluster cluster)
         {
@@ -572,6 +709,104 @@ if (bounds.length > 0)
                 double yearsSinceMinYear = cluster.MinYear - minYear;
                 double opacity = Math.Round(yearsSinceMinYear / yearRange * scalableOpacity + minOpacity, 2);
                 return opacity;
+            }
+        }
+    }
+
+    private static void WriteResearchFocus(StringBuilder html, IEnumerable<ResearchFocusCard> cards)
+    {
+        if (!cards.Any())
+            return;
+
+        // Size the (shared) name column to the longest place/surname label so it fits without truncation on wide cards
+        // On narrow ones the bar's minmax minimum wins and the name truncates.
+        var maxLabelLength = cards
+            .SelectMany(c => c.TopPlaces.Concat(c.TopSurnames))
+            .Select(i => i.Label.Length)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        // ~0.45em per character (relative to the bar font) plus a little padding; capped in CSS
+        var nameColEm = (maxLabelLength * 0.45 + 0.4).ToString("F1", CultureInfo.InvariantCulture);
+
+        html.AppendLine($"<section id=\"placesAndNames\" style=\"--name-col: {nameColEm}em\">");
+        html.AppendLine($"<h2>{Resources.HtmlHeadingResearchFocus}</h2>");
+
+        // --- Totals
+
+        // aggregate "total" as a thin strip on top, styled like the map legend
+        var total = cards.SingleOrDefault(c => c.IsTotal);
+        if (total != null)
+        {
+            html.AppendLine("<div class=\"focusTotal\">");
+            html.AppendLine($"<span class=\"focusTotalLabel\">{Resources.HtmlFocusTotal}</span>");
+            html.AppendLine(GetTotals(total));
+            html.AppendLine("</div>");
+        }
+
+        // --- 4 Cards
+
+        // two cards per line
+        html.AppendLine("<div class=\"focusGrid\">");
+
+        foreach (var card in cards.Where(c => !c.IsTotal))
+        {
+            var colour = card.Colour!.Value.ToHex();
+
+            // header like the map legend: coloured dot + the line's ancestor surname (just the dot if that grandparent is unknown)
+            html.AppendLine("<div class=\"focusCard\">");
+            html.AppendLine($"<div class=\"focusHeader\"><span class=\"focusDot\" style=\"background:{colour}\"></span>{EscapeHtml(card.AncestorName)}</div>");
+
+            // totals header (per card)
+            html.AppendLine("<div class=\"totalsRow\">");
+            html.AppendLine(GetTotals(card));
+            html.AppendLine("</div>");
+
+            html.AppendLine("<div class=\"focusList\">");
+
+            // Top places 📍
+            html.AppendLine($"<h3>\U0001F4CD {Resources.HtmlFocusTopPlaces}</h3>");
+            WriteBars(html, card.TopPlaces, colour);
+
+            // Top Surnames 👥
+            html.AppendLine($"<h3>\U0001F465 {Resources.HtmlFocusTopSurnames}</h3>");
+            WriteBars(html, card.TopSurnames, colour);
+
+            html.AppendLine("</div>");
+            html.AppendLine("</div>");
+        }
+
+        html.AppendLine("</div>");
+        html.AppendLine("</section>");
+
+        // totals in list order: 📍 places, 👥 surnames, 👤 persons
+        static string GetTotals(ResearchFocusCard card) => string.Concat(
+            $"<span>\U0001F4CD {Resources.HtmlFocusPlaces} {card.PlaceCount}</span>",
+            $"<span>\U0001F465 {Resources.HtmlFocusSurnames} {card.SurnameCount}</span>",
+            $"<span>\U0001F464 {Resources.HtmlFocusPersons} {card.PersonCount}</span>");
+
+        static void WriteBars(StringBuilder html, IReadOnlyList<CountedItem> items, string colour)
+        {
+            if (items.Count == 0)
+                return;
+
+            // scale each list to its own maximum, so the top entry always fills the bar
+            var max = items.Max(i => i.Count);
+
+            foreach (var item in items)
+            {
+                // keep a minimum width so a single event/person stays visible
+                var percent = max == 0 ? 0 : Math.Max(4, (int)Math.Round(item.Count / (double)max * 100));
+
+                // truncated in a narrow column; the full name is kept in the tooltip
+                var label = EscapeHtml(item.Label);
+
+                html.AppendLine(
+                    "<div class=\"barRow\">" +
+                    $"<span class=\"barLabel\" title=\"{label}\">{label}</span>" +
+                    $"<span class=\"barTrack\"><span class=\"barFill\" style=\"width:{percent}%;background:{colour}\"></span></span>" +
+                    $"<span class=\"barValue\">{item.Count}</span>" +
+                    "</div>");
             }
         }
     }
@@ -668,6 +903,12 @@ if (bounds.length > 0)
     #endregion
 
     #region Helpers
+
+    /// <summary>
+    /// A timeline can only be drawn with at least one generation and a known year range.
+    /// The table of contents uses the same check so it never links to a section that was skipped.
+    /// </summary>
+    private static bool HasTimeline(FamilyTree familyTree) => familyTree.Generations.Count != 0 && familyTree.MinYear != 0 && familyTree.MaxYear != 0;
 
     private static string ReplaceLineBreaks(string value) => value.Replace(Environment.NewLine, "<br/>");
 

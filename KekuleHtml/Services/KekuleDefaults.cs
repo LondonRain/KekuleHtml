@@ -23,4 +23,9 @@ public static class KekuleDefaults
     /// type (<see cref="ulong"/>): generation 63's largest Kekule number is 2^64-1 = ulong.MaxValue.
     /// </summary>
     public const int MaxGenerations = 63;
+
+    /// <summary>
+    /// Number of entries shown in each "research focus" top list (top places / top surnames).
+    /// </summary>
+    public const int TopListLength = 5;
 }

@@ -176,7 +176,70 @@ namespace KekuleHtml.Properties {
                 return ResourceManager.GetString("HtmlHeadingMigrationMap", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Research focus of the ancestral lines.
+        /// </summary>
+        internal static string HtmlHeadingResearchFocus {
+            get {
+                return ResourceManager.GetString("HtmlHeadingResearchFocus", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Total.
+        /// </summary>
+        internal static string HtmlFocusTotal {
+            get {
+                return ResourceManager.GetString("HtmlFocusTotal", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Persons.
+        /// </summary>
+        internal static string HtmlFocusPersons {
+            get {
+                return ResourceManager.GetString("HtmlFocusPersons", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Places.
+        /// </summary>
+        internal static string HtmlFocusPlaces {
+            get {
+                return ResourceManager.GetString("HtmlFocusPlaces", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Family names.
+        /// </summary>
+        internal static string HtmlFocusSurnames {
+            get {
+                return ResourceManager.GetString("HtmlFocusSurnames", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Top places (events).
+        /// </summary>
+        internal static string HtmlFocusTopPlaces {
+            get {
+                return ResourceManager.GetString("HtmlFocusTopPlaces", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Top family names (persons).
+        /// </summary>
+        internal static string HtmlFocusTopSurnames {
+            get {
+                return ResourceManager.GetString("HtmlFocusTopSurnames", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Contents.
         /// </summary>

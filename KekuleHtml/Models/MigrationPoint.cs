@@ -15,17 +15,16 @@ public enum PointOrigin
 /// <summary>
 /// One entry in time of a <see cref="Person"/> being at a <see cref="PlaceName"/> at a certain <see cref="YearFrom"/>.
 /// </summary>
+/// <remarks>
+/// The base type carries no coordinates so places without a georeference still count towards the <see cref="ResearchFocusCard"/>s.
+/// Only <seealso cref="MigrationPointWithCoordinates"/> is drawn on the map.
+/// </remarks>
 [DebuggerDisplay("{DebuggerDisplay}")]
-public sealed class MigrationPoint
+public class MigrationPoint
 {
-
     public required Person Person { get; init; }
 
     public required PointOrigin PointOrigin { get; init; }
-
-    public required double Latitude { get; init; }
-
-    public required double Longitude { get; init; }
 
     public required string PlaceName { get; init; }
 
@@ -35,4 +34,14 @@ public sealed class MigrationPoint
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public string DebuggerDisplay => $"{Person.Colour}, {Person.FormattedName}, {PointOrigin}, {YearFrom}-{YearTo}, {PlaceName}";
+}
+
+/// <summary>
+/// A <see cref="MigrationPoint"/> that has an additional georeference and can be drawn on the migration map.
+/// </summary>
+public sealed class MigrationPointWithCoordinates : MigrationPoint
+{
+    public required double Latitude { get; init; }
+
+    public required double Longitude { get; init; }
 }

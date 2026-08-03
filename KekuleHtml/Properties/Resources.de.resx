@@ -156,6 +156,27 @@
   <data name="HtmlHeadingMigrationMap" xml:space="preserve">
     <value>Geographische Verteilung der Ahnenlinien</value>
   </data>
+  <data name="HtmlHeadingResearchFocus" xml:space="preserve">
+    <value>Häufigste Orte und Familiennamen der Ahnenlinien</value>
+  </data>
+  <data name="HtmlFocusTotal" xml:space="preserve">
+    <value>Gesamt</value>
+  </data>
+  <data name="HtmlFocusPersons" xml:space="preserve">
+    <value>Personen</value>
+  </data>
+  <data name="HtmlFocusPlaces" xml:space="preserve">
+    <value>Orte</value>
+  </data>
+  <data name="HtmlFocusSurnames" xml:space="preserve">
+    <value>Familiennamen</value>
+  </data>
+  <data name="HtmlFocusTopPlaces" xml:space="preserve">
+    <value>Top-Orte (Ereignisse)</value>
+  </data>
+  <data name="HtmlFocusTopSurnames" xml:space="preserve">
+    <value>Top-Familiennamen (Personen)</value>
+  </data>
   <data name="HtmlHeadingTableOfContents" xml:space="preserve">
     <value>Inhalt</value>
   </data>
