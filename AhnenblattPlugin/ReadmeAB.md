@@ -24,7 +24,7 @@ Dokumente/
 
 ### Aufruf
 
-Wenn alles an der richtigen Stelle abgelegt wurde, erscheint "KekuleHtml" in Ahnenblatt im Menü unter "Extras/KekuleHtml/Start".
+Wenn alles an der richtigen Stelle abgelegt wurde, erscheint "KekuleHtml" in Ahnenblatt im Menü unter "Tools/KekuleHtml/Starten...".
 
 ![Plugin für Ahnenblatt](../img/ahnenblatt.png)
 
@@ -60,7 +60,7 @@ Documents/
 ```
 ### How to use
 
-If everything has been placed in the correct location, "KekuleHtml" will appear in Ahnenblatt under "Tools/KekuleHtml/Start" in the menu.
+If everything has been placed in the correct location, "KekuleHtml" will appear in Ahnenblatt under "Tools/KekuleHtml/Start..." in the menu.
 
 ![Plugin for Ahnenblatt](../img/ahnenblatt.png)
 
