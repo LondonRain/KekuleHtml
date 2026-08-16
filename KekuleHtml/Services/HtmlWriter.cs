@@ -612,7 +612,8 @@ const bounds = [];
             // for circleMarkers this are pixels. so the circle size stays the same, independent of the current zoom level.
             // the formula is somehow arbitrary to get a balance between small and big sized circles while retaining visibility of the
             // tiniest ones and not drawing the largest ones too big, still preserving distinguishability between different sizes.
-            var radius = 4.0 + 4.0 * Math.Sqrt(cluster.Count);
+            // diameter is capped at 100 pixels, smallest possible circles are 14 pixels.
+            var radius = Math.Round(Math.Min(3.0 + 4.2 * Math.Sqrt(cluster.Count), 50.0));
             var radiusText = radius.ToString("F1", CultureInfo.InvariantCulture);
 
             var latitude = cluster.Latitude;

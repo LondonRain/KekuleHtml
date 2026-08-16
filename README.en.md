@@ -96,7 +96,7 @@ As the basis for the map, the following events are collected for each person, in
 
 These points are collected and grouped into clusters by location and family branch. The color coding of the respective family lines, based on [Mary Hill](http://www.genrootsorganizer.com/p/13-steps.html), is used starting from the four grandparents.
 
-Each colored point on the map represents one of these clusters. The larger the circle, the more events have taken place at that location. The lighter the circle, the older the first event that occurred there; the darker the circle, the more recent the event. The shading based on event age is relative to each of the four family branches.
+Each colored point on the map represents one of these clusters. The larger the circle, the more events have taken place at that location. The diameter of a circle is no smaller than 14 and no larger than 100 pixels. The lighter the circle, the older the first event that occurred there; the darker the circle, the more recent the event. The shading based on event age is relative to each of the four family branches.
 
 If event clusters from multiple family branches exist at a single location, they do not overlap but are displayed slightly offset from one another, as shown in the following screenshot.
 
