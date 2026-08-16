@@ -33,7 +33,7 @@ public partial class App : Application
         if (!GedcomAdapter.IsValidPath(gedcomFilePath))
             gedcomFilePath = null;
 
-        var window = new MainWindow(gedcomFilePath, options.MaxGenerations);
+        var window = new MainWindow(gedcomFilePath, options.FilterNames, options.MaxGenerations);
         window.Show();
     }
 }

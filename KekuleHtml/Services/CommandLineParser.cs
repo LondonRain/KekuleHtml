@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
-using System.Globalization;
 using KekuleHtml.Helpers;
+using System.Globalization;
 
 namespace KekuleHtml.Services;
 
@@ -14,6 +14,11 @@ namespace KekuleHtml.Services;
 /// </remarks>
 public static class CommandLineParser
 {
+    /// <summary>
+    /// Name of the option that sets <see cref="AppOptions.FilterNames"/>.
+    /// </summary>
+    private const string FILTER_NAMES_OPTION = "-filterNames";
+
     /// <summary>
     /// Name of the option that sets <see cref="AppOptions.MaxGenerations"/>.
     /// </summary>
@@ -33,11 +38,17 @@ public static class CommandLineParser
         string? gedcomPath = null;
         int maxGenerations = KekuleDefaults.DefaultMaxGenerations;
         CultureInfo? language = null;
+        string? filterNames = null;
 
         for (int i = 0; i < args.Count; i++)
         {
             switch (args[i])
             {
+                case FILTER_NAMES_OPTION:
+                    if (TryTakeValue(args, ref i, out var filter))
+                        filterNames = filter;
+                    break;
+
                 case MAX_GENERATIONS_OPTION:
                     if (TryTakeValue(args, ref i, out var raw) &&
                         int.TryParse(raw, out var value))
@@ -62,6 +73,7 @@ public static class CommandLineParser
         return new AppOptions
         {
             GedcomPath = gedcomPath,
+            FilterNames = filterNames,
             MaxGenerations = maxGenerations,
             Language = language
         };

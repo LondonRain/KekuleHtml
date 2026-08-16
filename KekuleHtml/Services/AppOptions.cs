@@ -16,6 +16,15 @@ public sealed class AppOptions
     public string? GedcomPath { get; init; }
 
     /// <summary>
+    /// Optional name filter (<c>-filterNames</c>), or <see langword="null"/> when none was given.
+    /// </summary>
+    /// <remarks>
+    /// In the console the printed name list is filtered by this value.
+    /// In the UI it pre-fills the SuggestionComboBox filter on the first load.
+    /// </remarks>
+    public string? FilterNames { get; init; }
+
+    /// <summary>
     /// Number of generations to traverse (excluding the proband). Defaults to <see cref="KekuleDefaults.DefaultMaxGenerations"/>.
     /// </summary>
     public int MaxGenerations { get; init; } = KekuleDefaults.DefaultMaxGenerations;

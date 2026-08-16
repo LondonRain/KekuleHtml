@@ -66,6 +66,12 @@ public class MainPresenter : BindableBase
     }
 
     /// <summary>
+    /// Filter text (from the <c>-filterNames</c> command-line option) that pre-fills <see cref="Text"/>
+    /// the first time a GEDCOM file is loaded. Cleared afterwards so later file changes start empty.
+    /// </summary>
+    public string? InitialFilterNames { get; set; }
+
+    /// <summary>
     /// Whether HTML can be generated.
     /// </summary>
     public bool CanGenerateHtml => !IsBusy && SelectedPerson is not null && !string.IsNullOrEmpty(GedcomFilePath);
@@ -172,7 +178,17 @@ public class MainPresenter : BindableBase
             }
 
             SelectedPerson = null;
-            Text = null;
+
+            if (InitialFilterNames is not null)
+            {
+                // Pre-fill the person filter once, then forget it so later file changes start with an empty filter.
+                Text = InitialFilterNames;
+                InitialFilterNames = null;
+            }
+            else
+            {
+                Text = null;
+            }
 
             SetStatus(Resources.StatusPersonsFound(Persons.Count));
         }

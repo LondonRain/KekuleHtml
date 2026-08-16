@@ -19,15 +19,17 @@ public partial class MainWindow : Window
 
     /// <summary>
     /// Creates the main window. An optional <paramref name="gedcomFilePath"/> (e.g. from the command line)
-    /// is loaded directly, and <paramref name="maxGenerations"/> pre-fills the generations field.
+    /// is loaded directly,  <paramref name="filterNames"/> pre-fills the person filter on the first load
+    /// and <paramref name="maxGenerations"/> pre-fills the generations field.
     /// </summary>
-    public MainWindow(string? gedcomFilePath = null, int maxGenerations = KekuleDefaults.DefaultMaxGenerations)
+    public MainWindow(string? gedcomFilePath = null, string? filterNames = null, int maxGenerations = KekuleDefaults.DefaultMaxGenerations)
     {
         InitializeComponent();
 
         // Setting up DataContext.
         _Presenter = new MainPresenter
         {
+            InitialFilterNames = filterNames,
             MaxGenerations = maxGenerations
         };
         DataContext = _Presenter;

@@ -28,7 +28,13 @@ public static class Program
         }
 
         var adapter = new GedcomAdapter(path);
+
         var people = adapter.IndividualsSorted;
+        if (!string.IsNullOrWhiteSpace(options.FilterNames))
+        {
+            // apply command line filter to people list.
+            people = people.Where(p => FilterHelper.Matches(p.GetFormattedNameWithDates(), options.FilterNames)).ToList();
+        }
 
         for (var i = 0; i < people.Count; i++)
         {

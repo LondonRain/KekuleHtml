@@ -60,6 +60,7 @@ Sowohl die Konsolenapplikation als auch die Anwendung mit Bedienoberfläche unte
 | Parameter (mit Beispiel) | Beschreibung |
 | ------------------------ | ------------ |
 | kennedy.ged | Ein relativer oder absoluter Pfad zu einer Gedcomdatei. In der Oberfläche wird diese dann direkt geladen. Üblicherweise ist es aber bequemer die Datei selber über die Oberfläche auszuwählen. |
+| -filterNames kennedy | Filtert die Namensliste. In der Konsole wird nur die gefilterte Auswahl ausgegeben. In der Oberfläche wird das Filterfeld der Auswahlliste vorbelegt. Mehrere Suchbegriffe müssen alle im Namen vorkommen. Die Suche unterscheidet nicht zwischen Groß- und Kleinschreibung. Enthält der Filter Leerzeichen, muss er in Anführungszeichen stehen, etwa -filterNames "John Kennedy". |
 | -maxGenerations 12 | Anzahl an in die Ausgabe aufgenommenen Generationen. 20 ist der Standardwert, wenn dieser Parameter nicht gesetzt wird. Maximal sind 63 möglich. |
 | -lang en | Erzwingt die angegebene Sprache. Zurzeit werden `de` (Deutsch) und `en` (Englisch) unterstützt. Wird keine Sprache per Parameter angegeben oder ist diese unbekannt, wird die Systemsprache verwendet. |
 

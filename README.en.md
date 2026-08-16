@@ -60,6 +60,7 @@ Both the console application and the application with a graphical user interface
 | Parameter (with example) | Description |
 | ------------------------ | ------------ |
 | kennedy.ged | A relative or absolute path to a GEDCOM file. This is then loaded directly in the user interface. However, it is usually more convenient to select the file yourself via the user interface. |
+| -filterNames kennedy | Filters the name list. In the console only the filtered selection is printed. In the UI the filter field of the selection list is pre-filled. Multiple search terms must all appear in the name. The search is case-insensitive. If the filter contains spaces it must be quoted, for example -filterNames "John Kennedy". |
 | -maxGenerations 12 | Number of generations included in the output. 20 is the default value if this parameter is not set. The maximum is 63. |
 | -lang en | Forces the specified language. Currently, `de` (German) and `en` (English) are supported. If no language is specified via a parameter or if the language is unknown, the system language is used. |
 
