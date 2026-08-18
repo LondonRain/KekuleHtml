@@ -164,6 +164,19 @@ namespace KekuleHtml.Models
                     return true;
                 }
             }
+            else if (!string.IsNullOrEmpty(date.Date1))
+            {
+                /* GeneGenie keeps the whole "FROM x TO y" (and "BET x AND y") range text in Date1 and leaves Date2 empty. For some
+                 * precision combinations (e.g. "FROM AUG 1900 TO 1920") it additionally fails to populate DateTime2, so the end year
+                 * survives only in the Date1 text. We therefore take the *last* year found in Date1, but only when it holds at least
+                 * two years – a single date carries just one year and legitimately has no end year. */
+                MatchCollection matches = _YearRegex.Matches(date.Date1);
+                if (matches.Count >= 2)
+                {
+                    year2 = int.Parse(matches[^1].Value);
+                    return true;
+                }
+            }
 
             return false;
         }
