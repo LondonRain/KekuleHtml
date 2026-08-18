@@ -65,7 +65,7 @@ public static class ResearchFocusBuilder
                               .Take(topListLength)
                               .ToList();
 
-            topSurnames = persons.Where(p => !string.IsNullOrWhiteSpace(p.Surname))
+            topSurnames = persons.Where(p => !KekuleDefaults.IsUnknownSurname(p.Surname))
                                  .GroupBy(p => p.Surname)
                                  .Select(g => new CountedItem(g.Key, g.Count())) // persons per surname
                                  .OrderByDescending(i => i.Count)
@@ -80,7 +80,7 @@ public static class ResearchFocusBuilder
             AncestorName = surnameForMaryHillLine,
             PersonCount = persons.Count(),
             PlaceCount = points.Select(p => p.PlaceName).Distinct().Count(),
-            SurnameCount = persons.Select(p => p.Surname).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().Count(),
+            SurnameCount = persons.Select(p => p.Surname).Where(s => !KekuleDefaults.IsUnknownSurname(s)).Distinct().Count(),
             TopPlaces = topPlaces,
             TopSurnames = topSurnames
         };
