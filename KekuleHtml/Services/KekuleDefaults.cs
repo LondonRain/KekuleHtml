@@ -15,9 +15,9 @@ public static class KekuleDefaults
     public const int DefaultMaxGenerations = 20;
 
     /// <summary>
-    /// Smallest sensible number of generations (just the proband's parents).
+    /// Smallest sensible number of generations (allow to visualize one person's history).
     /// </summary>
-    public const int MinGenerations = 1;
+    public const int MinGenerations = 0;
 
     /// <summary>
     /// Highest number of generations that can be represented with the Kekule number's data
