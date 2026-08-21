@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
 using KekuleHtml.Models;
+using System.Collections.Frozen;
 
 namespace KekuleHtml.Services;
 
@@ -65,7 +66,7 @@ public static class ResearchFocusBuilder
                               .Take(topListLength)
                               .ToList();
 
-            topSurnames = persons.Where(p => !KekuleDefaults.IsUnknownSurname(p.Surname))
+            topSurnames = persons.Where(p => !IsUnknownSurname(p.Surname))
                                  .GroupBy(p => p.Surname)
                                  .Select(g => new CountedItem(g.Key, g.Count())) // persons per surname
                                  .OrderByDescending(i => i.Count)
@@ -80,7 +81,7 @@ public static class ResearchFocusBuilder
             AncestorName = surnameForMaryHillLine,
             PersonCount = persons.Count(),
             PlaceCount = points.Select(p => p.PlaceName).Distinct().Count(),
-            SurnameCount = persons.Select(p => p.Surname).Where(s => !KekuleDefaults.IsUnknownSurname(s)).Distinct().Count(),
+            SurnameCount = persons.Select(p => p.Surname).Where(s => !IsUnknownSurname(s)).Distinct().Count(),
             TopPlaces = topPlaces,
             TopSurnames = topSurnames
         };
@@ -105,6 +106,46 @@ public static class ResearchFocusBuilder
 
         return string.IsNullOrWhiteSpace(surname) ? null : surname;
     }
+
+    /// <summary>
+    /// Placeholder surnames that stand for an unknown family name rather than a real one.
+    /// GEDCOM has no official placeholder, but these are the widely documented conventions.
+    /// </summary>
+    /// <remarks>
+    /// Values are stored already normalized (see <see cref="IsUnknownSurname(string?)"/>).
+    /// </remarks>
+    private static readonly FrozenSet<string> _UnknownSurnamePlaceholders = new[]
+    {
+        // Nomen Nescio
+        "NN",
+        // Last Name Unknown
+        "LNU",
+        // First Name Unknown
+        "FNU",
+        // Maiden Name Unknown
+        "MNU",
+        "UNK",
+        // Do Not Know
+        "DNK",
+        "UNKNOWN",
+        "UNBEKANNT"
+    }.ToFrozenSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Returns <see langword="true"/> if <paramref name="surname"/> does not denote a real family name:
+    /// either it is empty/whitespace or it is one of the documented "unknown surname" placeholders.
+    /// Matching is case-insensitive and ignores dots and spaces, so <c>N.N.</c>, <c>n. n.</c> and <c>NN</c> all match.
+    /// </summary>
+    private static bool IsUnknownSurname(string? surname)
+    {
+        if (string.IsNullOrWhiteSpace(surname))
+            return true;
+
+        var normalized = surname.Replace(".", string.Empty).Replace(" ", string.Empty).ToUpperInvariant();
+
+        return _UnknownSurnamePlaceholders.Contains(normalized);
+    }
+
 
     #endregion
 }

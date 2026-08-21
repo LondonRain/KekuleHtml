@@ -22,7 +22,7 @@ public partial class MainWindow : Window
     /// is loaded directly,  <paramref name="filterNames"/> pre-fills the person filter on the first load
     /// and <paramref name="maxGenerations"/> pre-fills the generations field.
     /// </summary>
-    public MainWindow(string? gedcomFilePath = null, string? filterNames = null, int maxGenerations = KekuleDefaults.DefaultMaxGenerations)
+    public MainWindow(string? gedcomFilePath = null, string? filterNames = null, int maxGenerations = KekuleConsts.DefaultMaxGenerations)
     {
         InitializeComponent();
 

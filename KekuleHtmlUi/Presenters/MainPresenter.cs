@@ -76,14 +76,14 @@ public class MainPresenter : BindableBase
     /// </summary>
     public bool CanGenerateHtml => !IsBusy && SelectedPerson is not null && !string.IsNullOrEmpty(GedcomFilePath);
 
-    private int _MaxGenerations = KekuleDefaults.DefaultMaxGenerations;
+    private int _MaxGenerations = KekuleConsts.DefaultMaxGenerations;
     /// <summary>
     /// Number of generations to traverse (excluding the proband). Clamped to the supported range.
     /// </summary>
     public int MaxGenerations
     {
         get => _MaxGenerations;
-        set => SetProperty(ref _MaxGenerations, Math.Clamp(value, KekuleDefaults.MinGenerations, KekuleDefaults.MaxGenerations));
+        set => SetProperty(ref _MaxGenerations, Math.Clamp(value, KekuleConsts.MinGenerations, KekuleConsts.MaxGenerations));
     }
 
     private bool _OpenFileAfterGeneration = true;

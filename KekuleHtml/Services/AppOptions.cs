@@ -25,9 +25,9 @@ public sealed class AppOptions
     public string? FilterNames { get; init; }
 
     /// <summary>
-    /// Number of generations to traverse (excluding the proband). Defaults to <see cref="KekuleDefaults.DefaultMaxGenerations"/>.
+    /// Number of generations to traverse (excluding the proband). Defaults to <see cref="KekuleConsts.DefaultMaxGenerations"/>.
     /// </summary>
-    public int MaxGenerations { get; init; } = KekuleDefaults.DefaultMaxGenerations;
+    public int MaxGenerations { get; init; } = KekuleConsts.DefaultMaxGenerations;
 
     /// <summary>
     /// UI language/culture, or <see langword="null"/> when no valid <c>-lang</c> was given - in that case the current system culture is kept.

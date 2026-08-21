@@ -36,7 +36,7 @@ public static class CommandLineParser
     public static AppOptions Parse(IReadOnlyList<string> args)
     {
         string? gedcomPath = null;
-        int maxGenerations = KekuleDefaults.DefaultMaxGenerations;
+        int maxGenerations = KekuleConsts.DefaultMaxGenerations;
         CultureInfo? language = null;
         string? filterNames = null;
 
@@ -53,7 +53,7 @@ public static class CommandLineParser
                     if (TryTakeValue(args, ref i, out var raw) &&
                         int.TryParse(raw, out var value))
                     {
-                        maxGenerations = Math.Clamp(value, KekuleDefaults.MinGenerations, KekuleDefaults.MaxGenerations);
+                        maxGenerations = Math.Clamp(value, KekuleConsts.MinGenerations, KekuleConsts.MaxGenerations);
                     }
                     break;
 

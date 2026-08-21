@@ -95,7 +95,7 @@ public static class Program
             var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoints);
 
             // creating research focus cards
-            var researchFocusCards = ResearchFocusBuilder.Build(familyTree, migrationPoints, KekuleDefaults.TopListLength);
+            var researchFocusCards = ResearchFocusBuilder.Build(familyTree, migrationPoints, KekuleConsts.TopListLength);
 
             // create HTML report
             string fileName = "kekule.html";
