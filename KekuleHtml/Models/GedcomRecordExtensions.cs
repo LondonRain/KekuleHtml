@@ -53,10 +53,22 @@ namespace KekuleHtml.Models
 
         public static string GetFormattedNameWithDates(this GedcomIndividualRecord person) => $"{GetFormattedName(person)} ({GetFormattedDates(person)})";
 
-        private static string? FormatDate(GedcomDate? date)
+        internal static string? FormatDate(GedcomDate? date)
         {
             if (date == null)
                 return null;
+
+            /* A genuine two-ended range ("FROM x TO y", "BET x AND y"). GeneGenie keeps the whole range text in Date1 (leaving Date2 empty) but
+             * populates DateTime1/DateTime2 with the two *distinct* endpoints. Without this guard the token-count heuristic below would mistake a
+             * Date1 like "1900 TO 1920" (three whitespace tokens) for a full day-month-year date and collapse the range to a single invented day
+             * ("01.01.1900"). We therefore detect the two distinct endpoint years and return the honest qualified range text instead. A single
+             * year/month value ("FEB 1837", "1837") has both endpoints in the *same* year (DateTime2 = period end) and is not affected. */
+            if (date.DateTime1.HasValue && date.DateTime2.HasValue &&
+                date.DateTime1.Value.Year != date.DateTime2.Value.Year &&
+                !string.IsNullOrWhiteSpace(date.DateString))
+            {
+                return date.DateString;
+            }
 
             /* GeneGenie always parses a *complete* DateTime, even when the GEDCOM source only specifies a year ("1837") or a month and a year ("FEB 1837").
              * Missing components are silently filled with 1, so e.g. "FEB 1837" becomes 1837 - 02 - 01 and would be rendered as "01.02.1837" – a day-level
@@ -82,8 +94,8 @@ namespace KekuleHtml.Models
                 return date.Date1;
 
             /* Fallback to the original textual representation for everything that carries a *real* qualifier the source did specify and that a DateTime
-             * cannot express: approximate/relative dates (e.g. "ABT 1850", "BEF 1900", "AFT JUL 1887", "EST 1854", "BET 1820 AND 1830") and genuine
-             * two-ended "FROM x TO y" ranges. */
+             * cannot express: approximate/relative dates (e.g. "ABT 1850", "BEF 1900", "AFT JUL 1887", "EST 1854") and ranges whose endpoints GeneGenie
+             * could not both turn into a DateTime (e.g. "BET 10.1790 AND 1791"). Fully parsed two-ended ranges are already handled by the branch above. */
             if (!string.IsNullOrWhiteSpace(date.DateString))
                 return date.DateString;
 
@@ -112,70 +124,59 @@ namespace KekuleHtml.Models
         /// </summary>
         private static readonly Regex _YearRegex = new(@"\b(1\d{3}|20\d{2}|21\d{2})\b");
 
+        /// <summary>
+        /// Extracts the start year from <paramref name="date"/>.
+        /// </summary>
         public static bool TryGetYear1(this GedcomDate date, out int? year1)
         {
             year1 = null;
             if (date == null)
                 return false;
 
-            if (date.DateTime1.HasValue)
-            {
-                // well formed date in DateTime format
-                year1 = date.DateTime1.Value.Year;
-                return true;
-            }
-            else if (!string.IsNullOrEmpty(date.Date1))
-            {
-                // maybe only partly filled date (like 01.1900), allowed by GEDCOM spec.
-                // try to parse a year from it.
-                MatchCollection matches = _YearRegex.Matches(date.Date1);
-                if (matches.Count > 0)
-                {
-                    // search for first matching year between 1000 and 2199
-                    year1 = int.Parse(matches[0].Value);
-                    return true;
-                }
-            }
-
-            return false;
+            return TryGetYear(date.Date1, date.DateTime1, true, out year1);
         }
 
+        /// <summary>
+        /// Extracts the end year from <paramref name="date"/>.
+        /// </summary>
         public static bool TryGetYear2(this GedcomDate date, out int? year2)
         {
             year2 = null;
             if (date == null)
                 return false;
 
-            if (date.DateTime2.HasValue)
+            /* GeneGenie keeps the whole "FROM x TO y" (and "BET x AND y") range text in Date1 and usually leaves Date2 empty. So we look at Date2
+             * when it is populated, otherwise at Date1, and take the *last* year – for a range that is the end year (this also recovers the end year
+             * for precision combinations like "FROM AUG 1900 TO 1920" where GeneGenie fails to populate DateTime2), for a single date it is simply the
+             * start year again. */
+            var text = !string.IsNullOrEmpty(date.Date2) ? date.Date2 : date.Date1;
+            return TryGetYear(text, date.DateTime2, false, out year2);
+        }
+
+        /// <summary>
+        /// Reads a year from <paramref name="text"/> (the first or last plausible year, 1000–2199), preferring it over
+        /// <paramref name="dateTime"/>: for several non-standard inputs GeneGenie mis-parses the DateTime while the raw text still carries the
+        /// correct year (e.g. "26/1/1920" is parsed as year 26, "1900-1920" as its end year). The regex only matches four-digit years, so a
+        /// genuinely pre-1000 date – which GeneGenie *can* parse – falls through to the <paramref name="dateTime"/> fallback.
+        /// </summary>
+        private static bool TryGetYear(string? text, DateTime? dateTime, bool takeFirst, out int? year)
+        {
+            year = null;
+
+            if (!string.IsNullOrEmpty(text))
             {
-                // well formed date in DateTime format
-                year2 = date.DateTime2.Value.Year;
-                return true;
-            }
-            else if (!string.IsNullOrEmpty(date.Date2))
-            {
-                // maybe only partly filled date (like 01.1900), allowed by GEDCOM spec.
-                // try to parse a year from it.
-                MatchCollection matches = _YearRegex.Matches(date.Date2);
+                MatchCollection matches = _YearRegex.Matches(text);
                 if (matches.Count > 0)
                 {
-                    // search for last matching year between 1000 and 2199
-                    year2 = int.Parse(matches[^1].Value);
+                    year = int.Parse(takeFirst ? matches[0].Value : matches[^1].Value);
                     return true;
                 }
             }
-            else if (!string.IsNullOrEmpty(date.Date1))
+
+            if (dateTime.HasValue)
             {
-                /* GeneGenie keeps the whole "FROM x TO y" (and "BET x AND y") range text in Date1 and leaves Date2 empty. For some
-                 * precision combinations (e.g. "FROM AUG 1900 TO 1920") it additionally fails to populate DateTime2, so the end year
-                 * survives only in the Date1 text. We therefore take the *last* year found in Date1, but only when it holds at least
-                 * two years – a single date carries just one year and legitimately has no end year. */
-                MatchCollection matches = _YearRegex.Matches(date.Date1);
-                if (matches.Count >= 2)
-                {
-                    year2 = int.Parse(matches[^1].Value);
-                    return true;
-                }
+                year = dateTime.Value.Year;
+                return true;
             }
 
             return false;
