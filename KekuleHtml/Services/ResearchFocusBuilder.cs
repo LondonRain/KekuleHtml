@@ -128,7 +128,8 @@ public static class ResearchFocusBuilder
         // Do Not Know
         "DNK",
         "UNKNOWN",
-        "UNBEKANNT"
+        "UNBEKANNT",
+        "?"
     }.ToFrozenSet(StringComparer.Ordinal);
 
     /// <summary>
