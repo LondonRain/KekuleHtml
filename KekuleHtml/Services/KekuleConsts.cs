@@ -48,8 +48,8 @@ public static class KekuleConsts
 
     #region Mary Hill colours
 
-    public const string BlueHex = "#005D8F";
-    public const string GreenHex = "#0A7050";
+    public const string BlueHex = "#133FB9";
+    public const string GreenHex = "#137C2D";
     public const string RedHex = "#BE2323";
     public const string YellowHex = "#F5AF00";
 
