@@ -25,9 +25,12 @@ namespace KekuleHtml.Tests;
 [TestClass]
 public sealed class GeneGenieDateParsingTests
 {
-    // input, Date1, Date2, DateTime1 ("yyyy-MM-dd HH:mm:ss" or null), DateTime2, DateString, DatePeriod
+    // Columns: input, Date1, Date2, DateTime1 ("yyyy-MM-dd HH:mm:ss" or null), DateTime2, DateString, DatePeriod.
+    // Rows are split into four groups (identical order across all three test classes) so a value can be traced
+    // from parse -> format -> year side by side. A value counts as a "known bug" when GeneGenie mis-parses it here;
+    // FormatDate / TryGetYear may still hide or repair that downstream (see their per-row notes).
     [TestMethod]
-    // --- standard GEDCOM forms ---
+    // ===== Group 1: standard GEDCOM forms (parsed as specified) =====
     [DataRow("15 JUN 1900", "15 JUN 1900", "", "1900-06-15 00:00:00", null, "15 JUN 1900", "Exact")]
     [DataRow("JUN 1900", "JUN 1900", "", "1900-06-01 00:00:00", "1900-06-30 23:59:59", "FROM JUN 1900", "Range")]
     [DataRow("1900", "1900", "", "1900-01-01 00:00:00", "1900-12-31 23:59:59", "FROM 1900", "Range")]
@@ -40,40 +43,47 @@ public sealed class GeneGenieDateParsingTests
     // Two-ended ranges: the whole range stays in Date1 (Date2 stays empty!), but both DateTime endpoints are populated.
     [DataRow("BET 1900 AND 1920", "1900 AND 1920", "", "1900-01-01 00:00:00", "1920-01-01 00:00:00", "BET 1900 AND 1920", "Between")]
     [DataRow("FROM 1900 TO 1920", "1900 TO 1920", "", "1900-01-01 00:00:00", "1920-01-01 00:00:00", "FROM 1900 TO 1920", "Range")]
-    // Mixed precision "FROM JUN 1900 TO 1920": GeneGenie fails to populate *either* DateTime (the dee481f case).
+    // Mixed precision: GeneGenie leaves *both* DateTime endpoints null here, so the end year survives only in Date1.
     [DataRow("FROM JUN 1900 TO 1920", "JUN 1900 TO 1920", "", null, null, "FROM JUN 1900 TO 1920", "Range")]
     // Open-ended FROM/TO collapse to the same shape as a plain year/month (qualifier lost at parse time).
     [DataRow("FROM 1900", "1900", "", "1900-01-01 00:00:00", "1900-12-31 23:59:59", "FROM 1900", "Range")]
     [DataRow("TO JUN 1920", "JUN 1920", "", "1920-06-01 00:00:00", "1920-06-30 23:59:59", "FROM JUN 1920", "Range")]
-    // Pure numeric years are parsed into a DateTime regardless of the 1000-2199 range our regex uses.
+    // Boundary years: parsed into a DateTime regardless of the 1000-2199 range our regex uses.
     [DataRow("999", "999", "", "0999-01-01 00:00:00", "0999-12-31 23:59:59", "FROM 999", "Range")]
     [DataRow("1000", "1000", "", "1000-01-01 00:00:00", "1000-12-31 23:59:59", "FROM 1000", "Range")]
     [DataRow("2199", "2199", "", "2199-01-01 00:00:00", "2199-12-31 23:59:59", "FROM 2199", "Range")]
     [DataRow("2200", "2200", "", "2200-01-01 00:00:00", "2200-12-31 23:59:59", "FROM 2200", "Range")]
+    // Empty input.
     [DataRow("", "", "", null, null, "", "Exact")]
-    // --- non-standard formats that actually occur in real GEDCOM exports (synthetic values) ---
-    // German month name: not recognized -> month silently defaults to January (a lossy quirk).
-    [DataRow("15 Juni 1900", "15 Juni 1900", "", "1900-01-15 00:00:00", null, "15 Juni 1900", "Exact")]
-    [DataRow("Juni 1900", "Juni 1900", "", "1900-01-01 00:00:00", "1900-01-31 23:59:59", "FROM Juni 1900", "Range")]
-    // Trailing dot on the day: not recognized -> day defaults to 1.
-    [DataRow("15. JUN 1900", "15. JUN 1900", "", "1900-06-01 00:00:00", null, "15. JUN 1900", "Exact")]
+    // ===== Group 2: non-standard forms that occur in real exports, but parsed correctly (no lost value) =====
     [DataRow("15.06.1900", "15.06.1900", "", "1900-06-15 00:00:00", null, "FROM 15.06.1900", "Range")]
     [DataRow("06.1900", "06.1900", "", null, null, "FROM 06.1900", "Range")]
-    // Slash date "15/6/1900": mis-parsed as year 15.
-    [DataRow("15/6/1900", "15/6/1900", "", "0015-01-01 00:00:00", "0015-12-31 23:59:59", "FROM 15/6/1900", "Range")]
+    // German month+year: the internal DateTime month defaults to January, but the value is preserved in the text form.
+    [DataRow("Juni 1900", "Juni 1900", "", "1900-01-01 00:00:00", "1900-01-31 23:59:59", "FROM Juni 1900", "Range")]
     [DataRow("(06/1900)", "(06/1900)", "", null, null, "FROM (06/1900)", "Range")]
-    // Dash ranges: mis-parsed to a DateTime around the *end* year.
-    [DataRow("1900-1920", "1900-1920", "", "1920-01-31 00:00:00", "1920-02-28 23:59:59", "FROM 1900-1920", "Range")]
-    [DataRow("1900 - 1920", "1900 - 1920", "", "1920-01-31 00:00:00", "1920-02-28 23:59:59", "FROM 1900 - 1920", "Range")]
+    // Unrecognized German qualifiers: kept as text, year preserved.
     [DataRow("Vor 1900", "Vor 1900", "", "1900-01-01 00:00:00", "1900-01-31 23:59:59", "FROM Vor 1900", "Range")]
     [DataRow("Ca 1900", "Ca 1900", "", "1900-01-01 00:00:00", "1900-01-31 23:59:59", "FROM Ca 1900", "Range")]
-    [DataRow("BF JUN 1900", "BF JUN 1900", "", "1900-06-01 00:00:00", null, "BF JUN 1900", "Exact")]
-    [DataRow("1900  OR 1920", "1900  OR 1920", "", "1920-01-31 00:00:00", null, "1900  OR 1920", "Exact")]
-    [DataRow("NN NNN 1900", "NN NNN 1900", "", "1900-01-01 00:00:00", null, "NN NNN 1900", "Exact")]
     [DataRow("ABT 06.1900", "06.1900", "", null, null, "EST 06.1900", "Estimate")]
     [DataRow("BEF 06.1900", "06.1900", "", null, null, "BEF 06.1900", "Before")]
     [DataRow("BET 10.1900 AND 1920", "10.1900 AND 1920", "", null, "1920-01-01 00:00:00", "BET 10.1900 AND 1920", "Between")]
-    // --- data-less garbage / blind text ---
+    // ===== Group 3: known GeneGenie bugs (value mis-parsed; frozen as golden master) =====
+    // German month name: not recognized -> month silently defaults to January.
+    [DataRow("15 Juni 1900", "15 Juni 1900", "", "1900-01-15 00:00:00", null, "15 Juni 1900", "Exact")]
+    // Trailing dot on the day: not recognized -> day defaults to 1.
+    [DataRow("15. JUN 1900", "15. JUN 1900", "", "1900-06-01 00:00:00", null, "15. JUN 1900", "Exact")]
+    // Slash date: mis-parsed as year 15.
+    [DataRow("15/6/1900", "15/6/1900", "", "0015-01-01 00:00:00", "0015-12-31 23:59:59", "FROM 15/6/1900", "Range")]
+    // Dash ranges: mis-parsed to a DateTime around the *end* year.
+    [DataRow("1900-1920", "1900-1920", "", "1920-01-31 00:00:00", "1920-02-28 23:59:59", "FROM 1900-1920", "Range")]
+    [DataRow("1900 - 1920", "1900 - 1920", "", "1920-01-31 00:00:00", "1920-02-28 23:59:59", "FROM 1900 - 1920", "Range")]
+    // "BF" qualifier not recognized -> treated as an exact date.
+    [DataRow("BF JUN 1900", "BF JUN 1900", "", "1900-06-01 00:00:00", null, "BF JUN 1900", "Exact")]
+    // "OR" range not recognized -> mis-parsed to the end year.
+    [DataRow("1900  OR 1920", "1900  OR 1920", "", "1920-01-31 00:00:00", null, "1900  OR 1920", "Exact")]
+    // Placeholder day/month tokens -> silently default to 01.01.
+    [DataRow("NN NNN 1900", "NN NNN 1900", "", "1900-01-01 00:00:00", null, "NN NNN 1900", "Exact")]
+    // ===== Group 4: data-less garbage / blind text (no year to recover) =====
     [DataRow("NN NNN NNNN", "NN NNN NNNN", "", null, null, "NN NNN NNNN", "Exact")]
     [DataRow("(lorem)", "(lorem)", "", null, null, "FROM (lorem)", "Range")]
     [DataRow("(lorem ipsum)", "(lorem ipsum)", "", null, null, "FROM (lorem ipsum)", "Range")]
