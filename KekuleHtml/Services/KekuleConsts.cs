@@ -48,8 +48,20 @@ public static class KekuleConsts
 
     #region Mary Hill colours
 
+    /* Hex colours of the four Mary Hill grandparent lines. Reached through MaryHillColourExtensions.ToHex().
+     * 
+     * These values are verified for distinguishability under red-green colour vision deficiency (deuteranopia and
+     * protanopia, roughly 99% of all cases). MaryHillPaletteTests fails if an edit breaks that, so run the tests afterwards.
+     * 
+     * GreenHex is deliberately teal rather than a pure green. Red-green deficiency knocks out the red-green axis of colour
+     * perception while leaving the blue-yellow axis intact, so a green carrying a blue component stays distinguishable,
+     * whereas a pure green around 135 degrees collapses onto red.
+     * 
+     * Green value from Paul Tol, "Colour Schemes" (SRON/EPS/TN/09-002), scheme "Vibrant", colour "teal",
+     * https://sronpersonalpages.nl/~pault/
+     */
     public const string BlueHex = "#133FB9";
-    public const string GreenHex = "#137C2D";
+    public const string GreenHex = "#009988";
     public const string RedHex = "#BE2323";
     public const string YellowHex = "#F5AF00";
 

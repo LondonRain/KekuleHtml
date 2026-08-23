@@ -97,6 +97,8 @@ Als Grundlage der Karte werden für jede Person folgende Ereignisse samt Name, Z
 
 Diese Punkte werden gesammelt und in Cluster nach Ort und Familienzweig aufgeteilt. Dabei wird von den vier Großeltern aus die Farbkodierung der jeweiligen Familienlinien nach [Mary Hill](http://www.genrootsorganizer.com/p/13-steps.html) verwendet.
 
+> ℹ️ Die vier Farbwerte sind so gewählt, dass sie auch bei einer Rot-Grün-Sehschwäche (Deuteranopie und Protanopie) unterscheidbar bleiben. Deshalb ist das Grün türkisstichig. Bei diesen Sehschwächen fällt die Rot-Grün-Achse aus, während die Blau-Gelb-Achse erhalten bleibt. Ein Grün mit Blauanteil bleibt dadurch von Rot unterscheidbar.
+
 Jeder farbige Kreis auf der Karte stellt eines dieser Cluster dar. Je größer der Kreis, desto mehr Ereignisse haben an dem Ort stattgefunden. Der Durchmesser eines Kreises wird nicht kleiner als 14 und nicht größer als 100 Pixel. Je heller der Kreis desto älter ist das erste dortige Ereignis, je dunkler desto neuer. Die Schattierung nach Ereignisalter ist relativ für jeden der 4 Familienzweige.
 
 Existieren an einem Ort Ereignis-Cluster mehrerer Familienzweige, überlagern sich diese nicht, sondern werden leicht zueinander versetzt dargestellt, wie in folgendem Screenshot ersichtlich.
