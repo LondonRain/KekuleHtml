@@ -191,6 +191,10 @@
     <value>Top family names (persons)</value>
     <comment>Heading of the ranked family names list; counted by persons.</comment>
   </data>
+  <data name="HtmlFocusCopy" xml:space="preserve">
+    <value>Copy</value>
+    <comment>Label of the button copying the research-focus section as plain text to the clipboard.</comment>
+  </data>
   <data name="HtmlHeadingTableOfContents" xml:space="preserve">
     <value>Contents</value>
   </data>

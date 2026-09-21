@@ -125,6 +125,8 @@ Beide Ranglisten zeigen bis zu fünf Einträge.
 
 Anders als bei der Karte fließen hier auch Orte **ohne** Koordinaten in die Zählung ein - es zählt allein der Ortsname. Personen werden über [Ahnenschwund](https://de.wikipedia.org/wiki/Ahnenschwund) hinweg nur einmal gezählt.
 
+Rechts neben der Überschrift gibt es ein Kopieren-Knopf. Er kopiert den gesamten Abschnitt (die Gesamtleiste und alle vier Kacheln) als reinen Text in die Zwischenablage. So lassen sich die eigenen Forschungsschwerpunkte etwa in einem Forum, einer Mail oder einem Chat teilen, ohne einen Screenshot verschicken zu müssen.
+
 ### Kekule-Liste
 In der eigentlichen Ahnenliste werden pro Generation alle vorhandenen Personen in einer kompakten Form ausgegeben. Auch hier findet die farbliche Kodierung nach Mary Hill Anwendung.
 

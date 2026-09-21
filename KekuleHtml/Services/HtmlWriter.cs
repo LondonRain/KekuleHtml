@@ -151,6 +151,126 @@ section {
 
 /* research focus dashboard */
 
+/* the heading shares its line with the copy button, so the button needs no line of its own */
+.focusHeading
+{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    /* the bottom margin an h2 would contribute itself (browser default 0.83em at 1.5rem font size).
+       it lives here because the h2 inside this flex row has none - flex items do not collapse margins,
+       so leaving it on the h2 would make this row taller and push the button below the heading's centre. */
+    margin: 2rem 0 calc(0.83 * 1.5rem);
+}
+.focusHeading h2
+{
+    /* margins moved to the flex container above, so the button stays on the heading's centre line */
+    margin: 0;
+}
+
+/* the only interactive control of the document: a flat icon, no frame, no background of its own */
+.copyButton
+{
+    /* pushed to the far right of the heading line, flush with the cards below */
+    margin-left: auto;
+
+    /* anchors the absolutely positioned label */
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: none;
+
+    color: #555;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease, color 0.15s ease;
+}
+/* no outline reset: the browser's focus ring follows the border-radius on its own */
+.copyButton:hover
+{
+    background: #f0f0f0;
+    color: #222;
+}
+.copyIcon
+{
+    width: 1.25rem;
+    height: 1.25rem;
+}
+/* the label is taken out of the flow entirely, so neither the icon nor the heading moves when it appears */
+.copyLabel
+{
+    position: absolute;
+    right: 100%;
+    margin-right: 0.4rem;
+
+    opacity: 0;
+    transform: translateX(0.35rem);
+
+    white-space: nowrap;
+    pointer-events: none;
+
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.95rem;
+
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.copyButton:hover .copyLabel,
+.copyButton:focus-visible .copyLabel
+{
+    opacity: 1;
+    transform: translateX(0);
+}
+/* success: the icon becomes a check mark and turns green for a second */
+.copyIconDone
+{
+    display: none;
+}
+.copyButton.copied
+{
+    color: #2E7D32;
+}
+.copyButton.copied .copyIconCopy
+{
+    display: none;
+}
+.copyButton.copied .copyIconDone
+{
+    display: block;
+}
+@media (prefers-reduced-motion: reduce)
+{
+    .copyLabel,
+    .copyButton:hover .copyLabel,
+    .copyButton:focus-visible .copyLabel
+    {
+        transform: none;
+    }
+}
+
+/* holds the plain-text version of the whole section. it must stay selectable for the
+   execCommand fallback, so it is moved off-screen rather than hidden with display:none. */
+.copySource
+{
+    position: fixed;
+    top: 0;
+    left: -9999px;
+
+    opacity: 0;
+}
+
 /* aggregate "total" as a thin strip on top, styled like the map legend */
 .focusTotal
 {
@@ -294,6 +414,16 @@ padding-left: 1rem;
 .leaflet-popup-content
 {
 overflow-wrap: anywhere;
+}
+
+/* controls are meaningless on paper */
+@media print
+{
+    .copyButton,
+    .copySource
+    {
+        display: none;
+    }
 }
 </style>
 </head>
@@ -774,7 +904,32 @@ if (bounds.length > 0)
         var nameColEm = (maxLabelLength * 0.45 + 0.4).ToString("F1", CultureInfo.InvariantCulture);
 
         html.AppendLine($"<section id=\"placesAndNames\" style=\"--name-col: {nameColEm}em\">");
+
+        // heading and copy button share one line; the button shows nothing but its clipboard icon until hovered
+        html.AppendLine("<div class=\"focusHeading\">");
         html.AppendLine($"<h2>{Resources.HtmlHeadingResearchFocus}</h2>");
+        html.AppendLine($"<button type=\"button\" id=\"focusCopyButton\" class=\"copyButton\"><span class=\"copyLabel\">{Resources.HtmlFocusCopy}</span>");
+
+        // Both icon states live in the markup and are swapped via CSS, so the script needs no icon knowledge.
+        // The rear sheet is an open path rather than a second filled rectangle: nothing has to be covered up,
+        // which keeps the icon correct on any background. currentColor lets hover and success colour it.
+        html.AppendLine("""
+<svg class="copyIcon copyIconCopy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<rect x="8" y="8" width="13" height="13" rx="2"/>
+<path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>
+</svg>
+<svg class="copyIcon copyIconDone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M4 12.5 9.5 18 20 6"/>
+</svg>
+</button>
+""");
+        html.AppendLine("</div>");
+
+        // the plain-text twin of this section, kept off-screen and handed to the clipboard on click
+        html.AppendLine(
+            "<textarea id=\"focusCopySource\" class=\"copySource\" readonly tabindex=\"-1\" aria-hidden=\"true\">" +
+            EscapeHtml(BuildResearchFocusText(cards)) +
+            "</textarea>");
 
         // --- Totals
 
@@ -823,6 +978,46 @@ if (bounds.length > 0)
         html.AppendLine("</div>");
         html.AppendLine("</section>");
 
+        // own script block: the one above belongs to the map and is written before this section
+        html.AppendLine("<script>");
+        html.AppendLine("""
+const focusCopyButton = document.getElementById('focusCopyButton');
+const focusCopySource = document.getElementById('focusCopySource');
+
+focusCopyButton.addEventListener('click', function()
+{
+    if (navigator.clipboard && navigator.clipboard.writeText)
+        navigator.clipboard.writeText(focusCopySource.value).then(showFocusCopied, copyFocusFallback);
+    else
+        copyFocusFallback();
+});
+
+// navigator.clipboard needs a secure context and can be refused for a page opened via file://,
+// which is the normal case for this document. execCommand is deprecated but still works there
+// as long as the call originates from a user gesture - the click on this button is one.
+function copyFocusFallback()
+{
+    focusCopySource.select();
+
+    if (document.execCommand('copy'))
+        showFocusCopied();
+
+    // a failure stays silent on purpose: nothing was copied, and nothing is reported
+}
+
+// the class alone switches the icon and its colour, see the copyIconDone rules
+function showFocusCopied()
+{
+    focusCopyButton.classList.add('copied');
+
+    setTimeout(function()
+    {
+        focusCopyButton.classList.remove('copied');
+    }, 1000);
+}
+""");
+        html.AppendLine("</script>");
+
         // totals in list order: 📍 places, 👥 surnames, 👤 persons
         static string GetTotals(ResearchFocusCard card) => string.Concat(
             $"<span>\U0001F4CD {Resources.HtmlFocusPlaces} {card.PlaceCount}</span>",
@@ -852,6 +1047,60 @@ if (bounds.length > 0)
                     $"<span class=\"barValue\">{item.Count}</span>" +
                     "</div>");
             }
+        }
+    }
+
+    /// <summary>
+    /// Builds the plain-text twin of the research-focus section, ready to be put on the clipboard.
+    /// </summary>
+    /// <remarks>
+    private static string BuildResearchFocusText(IEnumerable<ResearchFocusCard> cards)
+    {
+        var text = new StringBuilder();
+
+        text.AppendLine(Resources.HtmlHeadingResearchFocus);
+
+        var total = cards.SingleOrDefault(c => c.IsTotal);
+        if (total != null)
+            text.AppendLine(GetHeadline(Resources.HtmlFocusTotal, total));
+
+        foreach (var card in cards.Where(c => !c.IsTotal))
+        {
+            text.AppendLine();
+            text.AppendLine(GetHeadline(card.AncestorName, card));
+
+            AppendRanking(text, $"\U0001F4CD {Resources.HtmlFocusTopPlaces}", card.TopPlaces);
+            AppendRanking(text, $"\U0001F465 {Resources.HtmlFocusTopSurnames}", card.TopSurnames);
+        }
+
+        return text.ToString().TrimEnd();
+
+        // the card's headline, e.g. "KENNEDY - places 7, family names 2, persons 9" (each with its emoji).
+        // Falls back to the bare figures when that grandparent is unknown, just like the card shows only its colour dot then.
+        static string GetHeadline(string? name, ResearchFocusCard card)
+        {
+            var figures = string.Join(
+                ", ",
+                $"\U0001F4CD {Resources.HtmlFocusPlaces} {card.PlaceCount}",
+                $"\U0001F465 {Resources.HtmlFocusSurnames} {card.SurnameCount}",
+                $"\U0001F464 {Resources.HtmlFocusPersons} {card.PersonCount}");
+
+            return string.IsNullOrEmpty(name)
+                ? figures
+                : $"{name} – {figures}";
+        }
+
+        // an empty ranking is skipped entirely, heading included - the HTML omits it as well.
+        // the heading needs no colon: its emoji already sets it apart from the indented entries below.
+        static void AppendRanking(StringBuilder text, string heading, IReadOnlyList<CountedItem> items)
+        {
+            if (items.Count == 0)
+                return;
+
+            text.AppendLine(heading);
+
+            foreach (var item in items)
+                text.AppendLine($"  {item.Label} ({item.Count})");
         }
     }
 

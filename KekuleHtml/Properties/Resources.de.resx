@@ -177,6 +177,9 @@
   <data name="HtmlFocusTopSurnames" xml:space="preserve">
     <value>Top-Familiennamen (Personen)</value>
   </data>
+  <data name="HtmlFocusCopy" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
   <data name="HtmlHeadingTableOfContents" xml:space="preserve">
     <value>Inhalt</value>
   </data>

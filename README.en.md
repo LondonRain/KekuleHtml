@@ -125,6 +125,8 @@ Both rankings show up to five entries.
 
 Unlike on the map, places **without** coordinates are also included in the count here – only the place name counts. Individuals are counted only once, even across [pedigree collapse](https://en.wikipedia.org/wiki/Pedigree_collapse).
 
+To the right of the heading, there is a Copy button. It copies the entire section (the summary bar and all four cards) as plain text to the clipboard. This allows you to share your own research focus areas in a forum, an email or a chat, for example, without having to send a screenshot.
+
 ### Kekule List
 In the actual ancestor list, all individuals for each generation are displayed in a compact format. Here, too, Mary Hill’s color-coding system is used.
 

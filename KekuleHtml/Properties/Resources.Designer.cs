@@ -241,6 +241,15 @@ namespace KekuleHtml.Properties {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        internal static string HtmlFocusCopy {
+            get {
+                return ResourceManager.GetString("HtmlFocusCopy", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Contents.
         /// </summary>
         internal static string HtmlHeadingTableOfContents {
