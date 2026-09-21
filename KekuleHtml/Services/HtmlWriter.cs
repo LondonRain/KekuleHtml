@@ -277,16 +277,23 @@ section {
     font-variant-numeric: tabular-nums;
 }
 
-/* the collapsible details with text about its persons. make sure that list with persons is condensed. */
+/* the collapsible details with text about its persons. make sure that list with persons is condensed.
+   the line-height must not go below 1, otherwise a person entry that is long enough to wrap overlaps its own next line. */
 details
 {
 font-size: smaller;
-line-height: 0.6;
+line-height: 1.2;
 }
 details ul
 {
 margin-block-start: 0rem;
 padding-left: 1rem;
+}
+/* the popup width follows its content up to maxWidth. beyond that lines wrap,
+   so a single overlong name or place must not be able to spill out of the popup sideways. */
+.leaflet-popup-content
+{
+overflow-wrap: anywhere;
 }
 </style>
 </head>
@@ -592,13 +599,51 @@ L.tileLayer(
     })
     .addTo(migrationMap);
 
-migrationMap.on('popupopen', function(e) {
-    // having details opened and then closing it makes sure that popup already has the size it needs when details are opened by user.
-    const details = e.popup._contentNode.querySelector('.auto-close-details');
-    details.removeAttribute('open');
-});
-
 const bounds = [];
+
+function addMigrationCluster(latLng, style, html)
+{
+    // leaflet rewrites string popup contents on every update(), which would collapse the details again.
+    // on the other hand an element is only detached and re-attached, so the open state survives.
+    const content = document.createElement('div');
+    content.innerHTML = html;
+
+    const details = content.querySelector('details');
+
+    const marker = L.circleMarker(latLng, style)
+        .bindPopup(content, {minWidth: 240, maxWidth: 800});
+
+    // the popup gets wider when the details are opened. re-run leaflet's layout so the tip stays on the
+    // circle and the grown popup is panned back into view.
+    details.addEventListener('toggle', function()
+    {
+        const focused = document.activeElement;
+
+        marker.getPopup().update();
+
+        // update() re-attaches the content node, which drops keyboard focus from the summary.
+        if (focused && content.contains(focused))
+        {
+            focused.focus({preventScroll: true});
+        }
+    });
+
+    // the details can also be closed by clicking any of its content, but not by clicking the summary,
+    // which toggles on its own.
+    details.addEventListener('click', function(e)
+    {
+        if (!e.target.closest('summary'))
+        {
+            details.open = false;
+        }
+    });
+
+    // always start collapsed the next time this popup is opened.
+    marker.on('popupclose', function() { details.open = false; });
+
+    marker.addTo(migrationMap);
+    bounds.push(latLng);
+}
 """);
 
         // draw the small circles on top
@@ -647,21 +692,20 @@ const bounds = [];
             var latitudeText = latitude.ToString(CultureInfo.InvariantCulture);
             var longitudeText = longitude.ToString(CultureInfo.InvariantCulture);
 
-            var popup = string.Concat(
-                $"{EscapeJs(cluster.PlaceName)}<br/>",
-                $"{string.Format(Resources.HtmlPopupEvents, cluster.Count)}<br/>",
-                $"{string.Format(Resources.HtmlPopupPeriod, cluster.MinYear, cluster.MaxYear)}<br/><br/>",
-                "<details open=\'true\' class=\'auto-close-details\'>",
-                $"<summary>{Resources.HtmlPopupDetails}</summary>",
-                // make sure details can also be closed by clicking any of its content
-                "<div onclick=\\\"this.closest(\'details\').removeAttribute(\'open\');\\\">",
-                $"<p>{ReplaceLineBreaks(cluster.DescriptionHtml)}</p>",
-                "</div></details>");
+            // the markup is emitted as a single javascript string literal, so it is escaped as a whole:
+            // person names come straight from the gedcom file and may contain quotes or line breaks.
+            var popup = EscapeJs(
+                string.Concat(
+                    $"{cluster.PlaceName}<br/>",
+                    $"{string.Format(Resources.HtmlPopupEvents, cluster.Count)}<br/>",
+                    $"{string.Format(Resources.HtmlPopupPeriod, cluster.MinYear, cluster.MaxYear)}<br/><br/>",
+                    "<details>",
+                    $"<summary>{Resources.HtmlPopupDetails}</summary>",
+                    cluster.DescriptionHtml,
+                    "</details>"));
 
             html.AppendLine($$"""
-bounds.push([{{latitudeText}}, {{longitudeText}}]);
-
-L.circleMarker(
+addMigrationCluster(
     [{{latitudeText}}, {{longitudeText}}],
     {
         radius: {{radiusText}},
@@ -669,9 +713,8 @@ L.circleMarker(
         fillColor: "{{colour}}",
         fillOpacity: {{opacityText}},
         weight: 1
-    })
-    .bindPopup("{{popup}}", {maxWidth: 800})
-    .addTo(migrationMap);
+    },
+    "{{popup}}");
 """);
         }
 
@@ -910,8 +953,6 @@ if (bounds.length > 0)
     /// The table of contents uses the same check so it never links to a section that was skipped.
     /// </summary>
     private static bool HasTimeline(FamilyTree familyTree) => familyTree.Generations.Count != 0 && familyTree.MinYear != 0 && familyTree.MaxYear != 0;
-
-    private static string ReplaceLineBreaks(string value) => value.Replace(Environment.NewLine, "<br/>");
 
     private static string EscapeHtml(string? value)
     {

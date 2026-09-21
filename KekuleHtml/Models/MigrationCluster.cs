@@ -96,7 +96,7 @@ namespace KekuleHtml.Models
                         if (death != null)
                             sbInner.Append($"✝ {death.YearFrom}, ");
 
-                        sbOuter.AppendLine($"<li>{sbInner.ToString().TrimEnd().TrimEnd(',')}</li>");
+                        sbOuter.Append($"<li>{sbInner.ToString().TrimEnd().TrimEnd(',')}</li>");
                     }
 
                     sbOuter.Append("</ul>");
