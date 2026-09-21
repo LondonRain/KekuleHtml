@@ -124,12 +124,15 @@ public static class ResearchFocusBuilder
         "FNU",
         // Maiden Name Unknown
         "MNU",
-        "UNK",
         // Do Not Know
         "DNK",
+        // Unknownn
+        "UNK",
         "UNKNOWN",
         "UNBEKANNT",
-        "?"
+        "?",
+        // from Kennedy gedcom example
+        "(-----)"
     }.ToFrozenSet(StringComparer.Ordinal);
 
     /// <summary>
