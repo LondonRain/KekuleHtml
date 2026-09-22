@@ -24,13 +24,13 @@
 
 **KekuleHtml** ist entstanden, um persönliche Ahnenforschungsdaten auszuwerten.
 
-Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedia.org/wiki/Kekule-Nummer), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
+Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedi  a.org/wiki/Kekule-Nummer), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
 
 Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren. Ein weiterer Abschnitt fasst pro Familienzweig die häufigsten Orte und Familiennamen zusammen und zeigt so auf einen Blick, wo die eigenen Forschungsdaten schwerpunktmäßig liegen.
 
 ## Voraussetzungen
 
-- > ℹ️ Die Anwendung basiert auf dem [.NET10-Framework](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Dieses muss installiert sein. 
+- > ℹ️ Die Anwendung setzt die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) voraus. Für Windows wird üblicherweise die Variante **".NET Desktop Runtime für Windows x64"** von der .NET-Downloadseite benötigt.
 - Damit Datumswerte korrekt eingelesen werden können, müssen diese dem [GEDCOM-Standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date) entsprechen. Bspw. funktionieren keine deutschen Monatsnamen.
 - Für die Kartenfunktionalität müssen die Orte georeferenziert worden sein. Eine eigene Georeferenzierung auf Basis der Ortsnamen findet nicht statt. Siehe Abschnitt ["Geographische Verteilung der Ahnenlinien"](#geographische-verteilung-der-ahnenlinien).
 

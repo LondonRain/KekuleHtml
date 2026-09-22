@@ -30,7 +30,7 @@ In addition, it generates generational statistics and—provided geodata is avai
 
 ## Requirements
 
-- > ℹ️ The application is based on the [.NET 10 Framework](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) . This must be installed. 
+- > ℹ️ The application requires the [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). For Windows, the version **".NET Desktop Runtime for Windows x64"** is usually required from the .NET download page.
 - To ensure that date values are imported correctly, they must comply with the [GEDCOM standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date). For example, German month names do not work.
 - For the map functionality, locations must have been georeferenced. The program does not perform its own georeferencing based on place names. See the section [“Geographic Distribution of Ancestral Lines”](#geographic-distribution-of-ancestral-lines).
 
