@@ -44,4 +44,7 @@
     </Reference>
   </ItemGroup>
 
+  <!-- Packs the GitHub release assets; only active for the GitHubRelease publish profile. -->
+  <Import Project="GitHubRelease.targets" />
+
 </Project>

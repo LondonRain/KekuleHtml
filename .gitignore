@@ -25,6 +25,8 @@ artifacts/
 # Publish output
 publish/
 *.pubxml
+# ...but the release profile is part of the repo.
+!KekuleHtmlUi/Properties/PublishProfiles/*.pubxml
 
 ### Windows
 # Windows thumbnail cache files

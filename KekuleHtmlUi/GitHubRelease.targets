@@ -1,0 +1,78 @@
+<Project>
+
+  <!--
+    Packaging of the two GitHub release assets. Driven by the "GitHubRelease"
+    publish profile, which sets $(PackReleaseAssets) and publishes straight into
+    the KekuleHtml\ subfolder of the staging directory:
+
+        bin\Release\net10.0-windows\release\      <- $(ReleaseStageDir)
+        +- KekuleHtml.abp                            copied in by PackReleaseArchives
+        +- KekuleHtml\                            <- $(PublishDir)
+           +- KekuleHtmlUi.exe, Externals\, de\, ...
+
+    Zipping $(PublishDir) yields the flat standalone archive, zipping
+    $(ReleaseStageDir) yields the Ahnenblatt plugin archive - one publish run,
+    identical binaries in both. Everything here is inert unless the profile is
+    used, so plain builds, F5 and a profile-less "dotnet publish" are untouched.
+  -->
+
+  <!--
+    Unconditional: the publish profile is imported after the project body, so
+    $(PackReleaseAssets) is not yet set while these are evaluated.
+  -->
+  <PropertyGroup>
+    <RepoRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..'))</RepoRoot>
+    <ArtifactDir>$(RepoRoot)artifacts\</ArtifactDir>
+    <AbpSourceFile>$(RepoRoot)AhnenblattPlugin\KekuleHtml.abp</AbpSourceFile>
+    <StandaloneZipFile>$(ArtifactDir)KekuleHtml-v$(Version).zip</StandaloneZipFile>
+    <PluginZipFile>$(ArtifactDir)KekuleHtml-v$(Version)-AhnenblattPlugin.zip</PluginZipFile>
+  </PropertyGroup>
+
+  <!--
+    The .abp carries its own version number that Ahnenblatt shows in its plugin
+    list, so it has to match $(Version) from Directory.Build.props. Only verify,
+    never rewrite: '%ab' in '%abpluginpath%' is a valid MSBuild hex escape and
+    would be mangled by any property-based text substitution.
+  -->
+  <Target Name="VerifyAbpVersion"
+          BeforeTargets="Build;PrepareForPublish"
+          Condition="'$(PackReleaseAssets)' == 'true'">
+    <PropertyGroup>
+      <_AbpText>$([System.IO.File]::ReadAllText('$(AbpSourceFile)'))</_AbpText>
+      <_AbpExpectedLine>version=$(Version)</_AbpExpectedLine>
+    </PropertyGroup>
+    <Error Condition="!$(_AbpText.Contains('$(_AbpExpectedLine)'))"
+           Text="$(AbpSourceFile) does not declare '$(_AbpExpectedLine)'. Bump it to match &lt;Version&gt; in Directory.Build.props before publishing the release assets." />
+  </Target>
+
+  <!--
+    Wipe the whole staging root, not just $(PublishDir): the .abp lives one level
+    up, and leftovers from an earlier publish would silently end up in the zips.
+  -->
+  <Target Name="CleanReleaseStage"
+          BeforeTargets="PrepareForPublish"
+          Condition="'$(PackReleaseAssets)' == 'true'">
+    <RemoveDir Directories="$(ReleaseStageDir)" />
+  </Target>
+
+  <Target Name="PackReleaseArchives"
+          AfterTargets="Publish"
+          Condition="'$(PackReleaseAssets)' == 'true'">
+    <MakeDir Directories="$(ArtifactDir)" />
+
+    <!-- Zip before the .abp is staged, so the standalone archive cannot contain it. -->
+    <ZipDirectory SourceDirectory="$(PublishDir)"
+                  DestinationFile="$(StandaloneZipFile)"
+                  Overwrite="true" />
+
+    <Copy SourceFiles="$(AbpSourceFile)" DestinationFolder="$(ReleaseStageDir)" />
+
+    <ZipDirectory SourceDirectory="$(ReleaseStageDir)"
+                  DestinationFile="$(PluginZipFile)"
+                  Overwrite="true" />
+
+    <Message Importance="high" Text="Release asset: $([System.IO.Path]::GetFullPath('$(StandaloneZipFile)'))" />
+    <Message Importance="high" Text="Release asset: $([System.IO.Path]::GetFullPath('$(PluginZipFile)'))" />
+  </Target>
+
+</Project>

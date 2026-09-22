@@ -4,8 +4,9 @@
     Single source of truth for the whole solution's version (console + UI).
     Bump this one value to version all projects; the SDK derives AssemblyVersion
     and FileVersion from it, and the UI reads it at runtime for the info window.
-    
-    Do not forget to also manually increase in *.abp.
+
+    The version also has to be bumped in AhnenblattPlugin\KekuleHtml.abp; the
+    GitHubRelease publish profile verifies this and fails if the two disagree.
   -->
   <PropertyGroup>
     <Version>2.2.0.0</Version>
