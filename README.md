@@ -30,7 +30,7 @@ Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorh
 
 ## Voraussetzungen
 
-- > ℹ️ Die Anwendung setzt die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) voraus. Für Windows wird üblicherweise die Variante **".NET Desktop Runtime für Windows x64"** von der .NET-Downloadseite benötigt.
+- > ℹ️ Die Anwendung setzt die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) voraus. Für Windows wird üblicherweise die Variante **".NET Desktop Runtime für Windows x64"** von der .NET-Downloadseite benötigt. Zur Nutzung unter macOS siehe den Abschnitt ["macOS"](#macos).
 - Damit Datumswerte korrekt eingelesen werden können, müssen diese dem [GEDCOM-Standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date) entsprechen. Bspw. funktionieren keine deutschen Monatsnamen.
 - Für die Kartenfunktionalität müssen die Orte georeferenziert worden sein. Eine eigene Georeferenzierung auf Basis der Ortsnamen findet nicht statt. Siehe Abschnitt ["Geographische Verteilung der Ahnenlinien"](#geographische-verteilung-der-ahnenlinien).
 
@@ -52,6 +52,20 @@ Es gibt aber auch eine Bedienoberfläche. Dazu die `KekuleHtmlUi.exe` starten.
 ![Bedienoberfläche](img/ui.png)
 
 Über "Durchsuchen ..." kann eine GEDCOM-Datei ausgewählt werden. Alternativ lässt sich diese per Drag and Drop (etwas aus dem Windows Explorer heraus) auf das Fenster ziehen und so öffnen. Unter "Startperson wählen ..." lässt sich eine Auswahlliste öffnen, um diese festzulegen. Wenn man in das Textfeld tippt wird die Auswahlliste entsprechend gefiltert. Unter "Generationen" lässt sich die Ausgabe auf eine festgelegte Anzahl an Generationen begrenzen. Über ein Häkchen lässt sich festlegen, ob die nach einem Klick auf "HTML-Datei erstellen" generierte Datei direkt geöffnet werden soll.
+
+### macOS
+
+Die Konsolenapplikation läuft auch unter macOS. Dafür liegt im [Release](https://github.com/LondonRain/KekuleHtml/releases/latest) ein eigenes Archiv bereit, erkennbar am Namenszusatz **`macOS-Console`**. Die beiden anderen Archive sind reine Windows-Pakete und funktionieren auf einem Mac nicht.
+
+Vorausgesetzt wird die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Hier genügt die einfache Variante ".NET Runtime" in der zum Gerät passenden Architektur. Für Apple Silicon (M1 und neuer) ist das Arm64, für ältere Macs mit Intel-Prozessor x64.
+
+Der Start erfolgt im Terminal über `dotnet`:
+
+`dotnet KekuleHtml.dll kennedy.ged`
+
+Das Archiv enthält bewusst keine direkt ausführbare Datei. Eine solche wäre nicht bei Apple signiert und müsste unter macOS je nach Systemeinstellung erst manuell freigegeben werden. Der Start über `dotnet` erspart diesen Schritt.
+
+Davon abgesehen verhält sich das Programm wie unter Windows. Eine Bedienoberfläche gibt es unter macOS nicht, da diese auf WPF basiert und ausschließlich unter Windows läuft. Dasselbe Archiv funktioniert im Übrigen auch unter Linux.
 
 ### Parameter
 

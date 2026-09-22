@@ -1,7 +1,7 @@
-<Project>
+﻿<Project>
 
   <!--
-    Packaging of the two GitHub release assets. Driven by the "GitHubRelease"
+    Packaging of the three GitHub release assets. Driven by the "GitHubRelease"
     publish profile, which sets $(PackReleaseAssets) and publishes straight into
     the KekuleHtml\ subfolder of the staging directory:
 
@@ -12,8 +12,16 @@
 
     Zipping $(PublishDir) yields the flat standalone archive, zipping
     $(ReleaseStageDir) yields the Ahnenblatt plugin archive - one publish run,
-    identical binaries in both. Everything here is inert unless the profile is
-    used, so plain builds, F5 and a profile-less "dotnet publish" are untouched.
+    identical binaries in both.
+
+    The third asset is the console project on its own, published separately into
+    $(MacOsStageDir). It carries no apphost and no WPF, so a single
+    architecture-neutral archive serves every platform that has the .NET runtime;
+    it is named after macOS because that is who it is for - Windows users want
+    one of the two archives above.
+
+    Everything here is inert unless the profile is used, so plain builds, F5 and
+    a profile-less "dotnet publish" are untouched.
   -->
 
   <!--
@@ -24,8 +32,10 @@
     <RepoRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..'))</RepoRoot>
     <ArtifactDir>$(RepoRoot)artifacts\</ArtifactDir>
     <AbpSourceFile>$(RepoRoot)AhnenblattPlugin\KekuleHtml.abp</AbpSourceFile>
+    <MacOsSourceProject>$(RepoRoot)KekuleHtml\KekuleHtml.csproj</MacOsSourceProject>
     <StandaloneZipFile>$(ArtifactDir)KekuleHtml-v$(Version).zip</StandaloneZipFile>
     <PluginZipFile>$(ArtifactDir)KekuleHtml-v$(Version)-AhnenblattPlugin.zip</PluginZipFile>
+    <MacOsZipFile>$(ArtifactDir)KekuleHtml-v$(Version)-macOS-Console.zip</MacOsZipFile>
   </PropertyGroup>
 
   <!--
@@ -52,7 +62,7 @@
   <Target Name="CleanReleaseStage"
           BeforeTargets="PrepareForPublish"
           Condition="'$(PackReleaseAssets)' == 'true'">
-    <RemoveDir Directories="$(ReleaseStageDir)" />
+    <RemoveDir Directories="$(ReleaseStageDir);$(MacOsStageDir)" />
   </Target>
 
   <Target Name="PackReleaseArchives"
@@ -71,8 +81,31 @@
                   DestinationFile="$(PluginZipFile)"
                   Overwrite="true" />
 
+    <!--
+      Publish the console project on its own. PublishDir has to be absolute here,
+      because a relative one would resolve against KekuleHtml.csproj, not this
+      project. The publish-specific global properties are dropped: KekuleHtml has
+      no publish profile of its own, and inheriting ours would send it looking
+      for a profile that does not exist there. UseAppHost=false drops the native
+      KekuleHtml.exe launcher: it is a Windows binary and would only be confusing
+      in an archive whose whole point is that it is not for Windows.
+    -->
+    <PropertyGroup>
+      <_MacOsStageFullPath>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\$(MacOsStageDir)'))</_MacOsStageFullPath>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(MacOsSourceProject)"
+             Targets="Publish"
+             Properties="Configuration=$(Configuration);PublishDir=$(_MacOsStageFullPath);UseAppHost=false"
+             RemoveProperties="PublishProfile;DeployOnBuild;PublishProtocol;_TargetId;Platform;RuntimeIdentifier;SelfContained" />
+
+    <ZipDirectory SourceDirectory="$(_MacOsStageFullPath)"
+                  DestinationFile="$(MacOsZipFile)"
+                  Overwrite="true" />
+
     <Message Importance="high" Text="Release asset: $([System.IO.Path]::GetFullPath('$(StandaloneZipFile)'))" />
     <Message Importance="high" Text="Release asset: $([System.IO.Path]::GetFullPath('$(PluginZipFile)'))" />
+    <Message Importance="high" Text="Release asset: $([System.IO.Path]::GetFullPath('$(MacOsZipFile)'))" />
   </Target>
 
 </Project>

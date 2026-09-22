@@ -30,7 +30,7 @@ In addition, it generates generational statistics and—provided geodata is avai
 
 ## Requirements
 
-- > ℹ️ The application requires the [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). For Windows, the version **".NET Desktop Runtime for Windows x64"** is usually required from the .NET download page.
+- > ℹ️ The application requires the [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). For Windows, the version **".NET Desktop Runtime for Windows x64"** is usually required from the .NET download page. For use on macOS, see the ["macOS"](#macos) section.
 - To ensure that date values are imported correctly, they must comply with the [GEDCOM standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date). For example, German month names do not work.
 - For the map functionality, locations must have been georeferenced. The program does not perform its own georeferencing based on place names. See the section [“Geographic Distribution of Ancestral Lines”](#geographic-distribution-of-ancestral-lines).
 
@@ -52,6 +52,20 @@ There is also a user interface. To use it, run `KekuleHtmlUi.exe`.
 ![User Interface](img/ui.png)
 
 You can select a GEDCOM file using “Browse...”. Alternatively, you can drag and drop the file (e.g., from Windows Explorer) onto the window to open it. Under “Select Starting Person...”, you can open a drop-down list to specify the starting person. Typing in the text field filters the drop-down list accordingly. Under “Generations” you can limit the output to a specified number of generations. You can use the checkbox to specify whether the file generated after clicking “Create HTML File” should open directly.
+
+### macOS
+
+The console application also runs on macOS. A dedicated archive is provided with each [release](https://github.com/LondonRain/KekuleHtml/releases/latest), recognisable by the **`macOS-Console`** suffix in its name. The other two archives are Windows-only packages and will not work on a Mac.
+
+The [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) is required. The plain ".NET Runtime" variant is sufficient here, in the architecture matching the machine. For Apple Silicon (M1 and newer) that is Arm64, for older Intel-based Macs it is x64.
+
+It is started from the terminal through `dotnet`:
+
+`dotnet KekuleHtml.dll kennedy.ged`
+
+The archive deliberately ships without a directly executable file. Such a file would not be signed with Apple and, depending on the system settings, would first have to be cleared manually on macOS. Starting it through `dotnet` avoids that step.
+
+Apart from that, the program behaves just as it does on Windows. There is no graphical interface on macOS, as it is built on WPF and runs on Windows only. The same archive also works on Linux.
 
 ### Parameters
 
