@@ -123,7 +123,7 @@ Jede Kachel zeigt in der Kopfzeile einen farbigen Punkt des Familienzweigs sowie
 
 Beide Ranglisten zeigen bis zu fünf Einträge.
 
-Anders als bei der Karte fließen hier auch Orte **ohne** Koordinaten in die Zählung ein - es zählt allein der Ortsname. Personen werden über [Ahnenschwund](https://de.wikipedia.org/wiki/Ahnenschwund) hinweg nur einmal gezählt.
+Anders als bei der Karte fließen hier auch Orte **ohne** Koordinaten in die Zählung ein - es zählt allein der Ortsname. Personen werden über [Ahnenschwund](https://de.wikipedia.org/wiki/Ahnenschwund) hinweg nur einmal gezählt. Übliche Platzhalter für unbekannte Familiennamen werden ausgelassen.
 
 Rechts neben der Überschrift gibt es ein Kopieren-Knopf. Er kopiert den gesamten Abschnitt (die Gesamtleiste und alle vier Kacheln) als reinen Text in die Zwischenablage. So lassen sich die eigenen Forschungsschwerpunkte etwa in einem Forum, einer Mail oder einem Chat teilen, ohne einen Screenshot verschicken zu müssen.
 

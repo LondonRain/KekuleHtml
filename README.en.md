@@ -119,11 +119,11 @@ Each card shows a coloured dot representing the family branch in the header, alo
 
 - **Key figures:** The number of different places, family names and individuals in the family branch.
 - **Top places (events):** the most common places, counted by events (as on the map), meaning that a person may appear multiple times at a single place.
-- **Top family names (persons):** the most common surnames, counted by people – each person is counted exactly once.
+- **Top family names (persons):** the most common family names, counted by people – each person is counted exactly once.
 
 Both rankings show up to five entries.
 
-Unlike on the map, places **without** coordinates are also included in the count here – only the place name counts. Individuals are counted only once, even across [pedigree collapse](https://en.wikipedia.org/wiki/Pedigree_collapse).
+Unlike on the map, places **without** coordinates are also included in the count here – only the place name counts. Individuals are counted only once, even across [pedigree collapse](https://en.wikipedia.org/wiki/Pedigree_collapse). Common placeholders for unknown family names are omitted.
 
 To the right of the heading, there is a Copy button. It copies the entire section (the summary bar and all four cards) as plain text to the clipboard. This allows you to share your own research focus areas in a forum, an email or a chat, for example, without having to send a screenshot.
 
