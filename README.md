@@ -6,6 +6,8 @@
 [![Licence](https://img.shields.io/github/license/LondonRain/KekuleHtml)](licence.txt)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blueviolet)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 [![Windows](https://img.shields.io/badge/Windows-10%2B-steelblue)](https://www.microsoft.com/windows)
+[![macOS](https://img.shields.io/badge/macOS-lightsteelblue?logo=apple&logoColor=black)](#macos-und-linux)
+[![Linux](https://img.shields.io/badge/Linux-lightsteelblue?logo=linux&logoColor=black)](#macos-und-linux)
 [![Release](https://img.shields.io/github/v/release/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/commits/main)
 [![Downloads](https://img.shields.io/github/downloads/LondonRain/KekuleHtml/total)](https://github.com/LondonRain/KekuleHtml/releases/latest)
@@ -24,13 +26,13 @@
 
 **KekuleHtml** ist entstanden, um persönliche Ahnenforschungsdaten auszuwerten.
 
-Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedi  a.org/wiki/Kekule-Nummer), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
+Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedia.org/wiki/Kekule-Nummer), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
 
 Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren. Ein weiterer Abschnitt fasst pro Familienzweig die häufigsten Orte und Familiennamen zusammen und zeigt so auf einen Blick, wo die eigenen Forschungsdaten schwerpunktmäßig liegen.
 
 ## Voraussetzungen
 
-- > ℹ️ Die Anwendung setzt die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) voraus. Für Windows wird üblicherweise die Variante **".NET Desktop Runtime für Windows x64"** von der .NET-Downloadseite benötigt.
+- > ℹ️ Die Anwendung setzt die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) voraus. Für Windows wird üblicherweise die Variante **".NET Desktop Runtime für Windows x64"** von der .NET-Downloadseite benötigt. Zur Nutzung unter macOS siehe den Abschnitt ["macOS und Linux"](#macos-und-linux).
 - Damit Datumswerte korrekt eingelesen werden können, müssen diese dem [GEDCOM-Standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date) entsprechen. Bspw. funktionieren keine deutschen Monatsnamen.
 - Für die Kartenfunktionalität müssen die Orte georeferenziert worden sein. Eine eigene Georeferenzierung auf Basis der Ortsnamen findet nicht statt. Siehe Abschnitt ["Geographische Verteilung der Ahnenlinien"](#geographische-verteilung-der-ahnenlinien).
 
@@ -52,6 +54,20 @@ Es gibt aber auch eine Bedienoberfläche. Dazu die `KekuleHtmlUi.exe` starten.
 ![Bedienoberfläche](img/ui.png)
 
 Über "Durchsuchen ..." kann eine GEDCOM-Datei ausgewählt werden. Alternativ lässt sich diese per Drag and Drop (etwas aus dem Windows Explorer heraus) auf das Fenster ziehen und so öffnen. Unter "Startperson wählen ..." lässt sich eine Auswahlliste öffnen, um diese festzulegen. Wenn man in das Textfeld tippt wird die Auswahlliste entsprechend gefiltert. Unter "Generationen" lässt sich die Ausgabe auf eine festgelegte Anzahl an Generationen begrenzen. Über ein Häkchen lässt sich festlegen, ob die nach einem Klick auf "HTML-Datei erstellen" generierte Datei direkt geöffnet werden soll.
+
+### macOS und Linux
+
+Die Konsolenapplikation läuft grundsätzlich auch unter macOS und Linux. Eine Bedienoberfläche gibt es hier allerdings nicht, da diese auf WPF basiert und ausschließlich unter Windows läuft. So richtet sich diese Version an erfahrenere Anwender, die wissen wie ein Terminal zu bedienen ist.
+
+Vorausgesetzt wird die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Hier genügt die einfache Variante ".NET Runtime" in der zum Gerät passenden Architektur. Für Apple Silicon (M1 und neuer) ist das Arm64, für ältere Macs mit Intel-Prozessor x64.
+
+Im [Release](https://github.com/LondonRain/KekuleHtml/releases/latest) liegt ein eigenes Archiv bereit, erkennbar am Namenszusatz **`macOS-Linux-Console`**. Die beiden anderen Archive sind reine Windows-Pakete und funktionieren auf einem Mac oder unter Linux nicht.
+
+Der Start erfolgt im Terminal über `dotnet`:
+
+`dotnet KekuleHtml.dll kennedy.ged`
+
+Das Archiv enthält bewusst keine direkt ausführbare Datei. Eine solche wäre nicht bei Apple signiert und müsste unter macOS je nach Systemeinstellung erst manuell freigegeben werden. Der Start über `dotnet` erspart diesen Schritt. Davon abgesehen verhält sich das Programm wie unter Windows.
 
 ### Parameter
 
