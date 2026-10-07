@@ -6,6 +6,8 @@
 [![Licence](https://img.shields.io/github/license/LondonRain/KekuleHtml)](licence.txt)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blueviolet)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 [![Windows](https://img.shields.io/badge/Windows-10%2B-steelblue)](https://www.microsoft.com/windows)
+[![macOS](https://img.shields.io/badge/macOS-lightsteelblue?logo=apple&logoColor=black)](#macos-and-linux)
+[![Linux](https://img.shields.io/badge/Linux-lightsteelblue?logo=linux&logoColor=black)](#macos-and-linux)
 [![Release](https://img.shields.io/github/v/release/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/commits/main)
 [![Downloads](https://img.shields.io/github/downloads/LondonRain/KekuleHtml/total)](https://github.com/LondonRain/KekuleHtml/releases/latest)
@@ -30,7 +32,7 @@ In addition, it generates generational statistics and—provided geodata is avai
 
 ## Requirements
 
-- > ℹ️ The application requires the [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). For Windows, the version **".NET Desktop Runtime for Windows x64"** is usually required from the .NET download page. For use on macOS, see the ["macOS"](#macos) section.
+- > ℹ️ The application requires the [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). For Windows, the version **".NET Desktop Runtime for Windows x64"** is usually required from the .NET download page. For use on macOS, see the ["macOS and Linux"](#macos-and-linux) section.
 - To ensure that date values are imported correctly, they must comply with the [GEDCOM standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date). For example, German month names do not work.
 - For the map functionality, locations must have been georeferenced. The program does not perform its own georeferencing based on place names. See the section [“Geographic Distribution of Ancestral Lines”](#geographic-distribution-of-ancestral-lines).
 
@@ -53,19 +55,19 @@ There is also a user interface. To use it, run `KekuleHtmlUi.exe`.
 
 You can select a GEDCOM file using “Browse...”. Alternatively, you can drag and drop the file (e.g., from Windows Explorer) onto the window to open it. Under “Select Starting Person...”, you can open a drop-down list to specify the starting person. Typing in the text field filters the drop-down list accordingly. Under “Generations” you can limit the output to a specified number of generations. You can use the checkbox to specify whether the file generated after clicking “Create HTML File” should open directly.
 
-### macOS
+### macOS and Linux
 
-The console application also runs on macOS. A dedicated archive is provided with each [release](https://github.com/LondonRain/KekuleHtml/releases/latest), recognisable by the **`macOS-Console`** suffix in its name. The other two archives are Windows-only packages and will not work on a Mac.
+The console application generally runs on macOS and Linux as well. However, there is no graphical user interface, as this is based on WPF and runs exclusively on Windows. This version is therefore aimed at more experienced users who know how to use a terminal.
 
-The [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) is required. The plain ".NET Runtime" variant is sufficient here, in the architecture matching the machine. For Apple Silicon (M1 and newer) that is Arm64, for older Intel-based Macs it is x64.
+The [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) is required. The plain ".NET Runtime" version in the architecture matching your device is sufficient. For Apple Silicon (M1 and newer), this is Arm64, for older Macs with Intel processors, it is x64.
+
+The [release](https://github.com/LondonRain/KekuleHtml/releases/latest) includes a separate archive, identifiable by the suffix **`macOS-Linux-Console`**. The other two archives are Windows-only packages and will not work on a Mac or under Linux.
 
 It is started from the terminal through `dotnet`:
 
 `dotnet KekuleHtml.dll kennedy.ged`
 
-The archive deliberately ships without a directly executable file. Such a file would not be signed with Apple and, depending on the system settings, would first have to be cleared manually on macOS. Starting it through `dotnet` avoids that step.
-
-Apart from that, the program behaves just as it does on Windows. There is no graphical interface on macOS, as it is built on WPF and runs on Windows only. The same archive also works on Linux.
+The archive deliberately does not contain a directly executable file. Such a file would not be signed by Apple and, depending on the system settings, would first need to be manually authorised on macOS. Running the programme via `dotnet` eliminates this step. Apart from that, the programme behaves just as it does on Windows.
 
 ### Parameters
 

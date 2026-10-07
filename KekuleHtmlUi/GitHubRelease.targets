@@ -35,7 +35,7 @@
     <MacOsSourceProject>$(RepoRoot)KekuleHtml\KekuleHtml.csproj</MacOsSourceProject>
     <StandaloneZipFile>$(ArtifactDir)KekuleHtml-v$(Version).zip</StandaloneZipFile>
     <PluginZipFile>$(ArtifactDir)KekuleHtml-v$(Version)-AhnenblattPlugin.zip</PluginZipFile>
-    <MacOsZipFile>$(ArtifactDir)KekuleHtml-v$(Version)-macOS-Console.zip</MacOsZipFile>
+    <MacOsZipFile>$(ArtifactDir)KekuleHtml-v$(Version)-macOS-Linux-Console.zip</MacOsZipFile>
   </PropertyGroup>
 
   <!--
