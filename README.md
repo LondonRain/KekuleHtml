@@ -6,6 +6,8 @@
 [![Licence](https://img.shields.io/github/license/LondonRain/KekuleHtml)](licence.txt)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blueviolet)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 [![Windows](https://img.shields.io/badge/Windows-10%2B-steelblue)](https://www.microsoft.com/windows)
+[![macOS](https://img.shields.io/badge/macOS-lightsteelblue?logo=apple&logoColor=black)](#macos-und-linux)
+[![Linux](https://img.shields.io/badge/Linux-lightsteelblue?logo=linux&logoColor=black)](#macos-und-linux)
 [![Release](https://img.shields.io/github/v/release/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/commits/main)
 [![Downloads](https://img.shields.io/github/downloads/LondonRain/KekuleHtml/total)](https://github.com/LondonRain/KekuleHtml/releases/latest)
@@ -26,11 +28,11 @@
 
 Basierend auf einer [GEDCOM](https://de.wikipedia.org/wiki/Gedcom)-Datei erstellt es eine kompakte HTML-Ahnenliste nach [Kekule](https://de.wikipedia.org/wiki/Kekule-Nummer), die bspw. bei der Orientierung in den eigenen Daten und Verzeichnisstrukturen der Quellen helfen kann.
 
-Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren.
+Zusätzlich erstellt es eine Generationenstatistik und - so dafür Geodaten vorhanden sind - eine Karte, die es erlaubt Migrationsbewegungen über die verschiedenen Generationen und Familienzweige hinweg zu visualisieren. Ein weiterer Abschnitt fasst pro Familienzweig die häufigsten Orte und Familiennamen zusammen und zeigt so auf einen Blick, wo die eigenen Forschungsdaten schwerpunktmäßig liegen.
 
 ## Voraussetzungen
 
-- > ℹ️ Die Anwendung basiert auf dem [.NET10-Framework](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Dieses muss installiert sein. 
+- > ℹ️ Die Anwendung setzt die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) voraus. Für Windows wird üblicherweise die Variante **".NET Desktop Runtime für Windows x64"** von der .NET-Downloadseite benötigt. Zur Nutzung unter macOS siehe den Abschnitt ["macOS und Linux"](#macos-und-linux).
 - Damit Datumswerte korrekt eingelesen werden können, müssen diese dem [GEDCOM-Standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date) entsprechen. Bspw. funktionieren keine deutschen Monatsnamen.
 - Für die Kartenfunktionalität müssen die Orte georeferenziert worden sein. Eine eigene Georeferenzierung auf Basis der Ortsnamen findet nicht statt. Siehe Abschnitt ["Geographische Verteilung der Ahnenlinien"](#geographische-verteilung-der-ahnenlinien).
 
@@ -53,6 +55,20 @@ Es gibt aber auch eine Bedienoberfläche. Dazu die `KekuleHtmlUi.exe` starten.
 
 Über "Durchsuchen ..." kann eine GEDCOM-Datei ausgewählt werden. Alternativ lässt sich diese per Drag and Drop (etwas aus dem Windows Explorer heraus) auf das Fenster ziehen und so öffnen. Unter "Startperson wählen ..." lässt sich eine Auswahlliste öffnen, um diese festzulegen. Wenn man in das Textfeld tippt wird die Auswahlliste entsprechend gefiltert. Unter "Generationen" lässt sich die Ausgabe auf eine festgelegte Anzahl an Generationen begrenzen. Über ein Häkchen lässt sich festlegen, ob die nach einem Klick auf "HTML-Datei erstellen" generierte Datei direkt geöffnet werden soll.
 
+### macOS und Linux
+
+Die Konsolenapplikation läuft grundsätzlich auch unter macOS und Linux. Eine Bedienoberfläche gibt es hier allerdings nicht, da diese auf WPF basiert und ausschließlich unter Windows läuft. So richtet sich diese Version an erfahrenere Anwender, die wissen wie ein Terminal zu bedienen ist.
+
+Vorausgesetzt wird die [.NET-10-Laufzeitumgebung](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). Hier genügt die einfache Variante ".NET Runtime" in der zum Gerät passenden Architektur. Für Apple Silicon (M1 und neuer) ist das Arm64, für ältere Macs mit Intel-Prozessor x64.
+
+Im [Release](https://github.com/LondonRain/KekuleHtml/releases/latest) liegt ein eigenes Archiv bereit, erkennbar am Namenszusatz **`macOS-Linux-Console`**. Die beiden anderen Archive sind reine Windows-Pakete und funktionieren auf einem Mac oder unter Linux nicht.
+
+Der Start erfolgt im Terminal über `dotnet`:
+
+`dotnet KekuleHtml.dll kennedy.ged`
+
+Das Archiv enthält bewusst keine direkt ausführbare Datei. Eine solche wäre nicht bei Apple signiert und müsste unter macOS je nach Systemeinstellung erst manuell freigegeben werden. Der Start über `dotnet` erspart diesen Schritt. Davon abgesehen verhält sich das Programm wie unter Windows.
+
 ### Parameter
 
 Sowohl die Konsolenapplikation als auch die Anwendung mit Bedienoberfläche unterstützen folgende Kommandozeilenparameter.
@@ -60,6 +76,7 @@ Sowohl die Konsolenapplikation als auch die Anwendung mit Bedienoberfläche unte
 | Parameter (mit Beispiel) | Beschreibung |
 | ------------------------ | ------------ |
 | kennedy.ged | Ein relativer oder absoluter Pfad zu einer Gedcomdatei. In der Oberfläche wird diese dann direkt geladen. Üblicherweise ist es aber bequemer die Datei selber über die Oberfläche auszuwählen. |
+| -filterNames kennedy | Filtert die Namensliste. In der Konsole wird nur die gefilterte Auswahl ausgegeben. In der Oberfläche wird das Filterfeld der Auswahlliste vorbelegt. Mehrere Suchbegriffe müssen alle im Namen vorkommen. Die Suche unterscheidet nicht zwischen Groß- und Kleinschreibung. Enthält der Filter Leerzeichen, muss er in Anführungszeichen stehen, etwa -filterNames "John Kennedy". |
 | -maxGenerations 12 | Anzahl an in die Ausgabe aufgenommenen Generationen. 20 ist der Standardwert, wenn dieser Parameter nicht gesetzt wird. Maximal sind 63 möglich. |
 | -lang en | Erzwingt die angegebene Sprache. Zurzeit werden `de` (Deutsch) und `en` (Englisch) unterstützt. Wird keine Sprache per Parameter angegeben oder ist diese unbekannt, wird die Systemsprache verwendet. |
 
@@ -96,7 +113,9 @@ Als Grundlage der Karte werden für jede Person folgende Ereignisse samt Name, Z
 
 Diese Punkte werden gesammelt und in Cluster nach Ort und Familienzweig aufgeteilt. Dabei wird von den vier Großeltern aus die Farbkodierung der jeweiligen Familienlinien nach [Mary Hill](http://www.genrootsorganizer.com/p/13-steps.html) verwendet.
 
-Jeder farbliche Punkt auf der Karte stellt eines dieser Cluster dar. Je größer der Kreis, desto mehr Ereignisse haben an dem Ort stattgefunden. Je heller der Kreis desto älter ist das erste dortige Ereignis, je dunkler desto neuer. Die Schattierung nach Ereignisalter ist relativ für jeden der 4 Familienzweige.
+> ℹ️ Die vier Farbwerte sind so gewählt, dass sie auch bei einer Rot-Grün-Sehschwäche (Deuteranopie und Protanopie) unterscheidbar bleiben. Deshalb ist das Grün türkisstichig. Bei diesen Sehschwächen fällt die Rot-Grün-Achse aus, während die Blau-Gelb-Achse erhalten bleibt. Ein Grün mit Blauanteil bleibt dadurch von Rot unterscheidbar.
+
+Jeder farbige Kreis auf der Karte stellt eines dieser Cluster dar. Je größer der Kreis, desto mehr Ereignisse haben an dem Ort stattgefunden. Der Durchmesser eines Kreises wird nicht kleiner als 14 und nicht größer als 100 Pixel. Je heller der Kreis desto älter ist das erste dortige Ereignis, je dunkler desto neuer. Die Schattierung nach Ereignisalter ist relativ für jeden der 4 Familienzweige.
 
 Existieren an einem Ort Ereignis-Cluster mehrerer Familienzweige, überlagern sich diese nicht, sondern werden leicht zueinander versetzt dargestellt, wie in folgendem Screenshot ersichtlich.
 
@@ -105,6 +124,24 @@ Existieren an einem Ort Ereignis-Cluster mehrerer Familienzweige, überlagern si
 Ein Klick auf eines der Cluster öffnet ein Popup mit dem Ortsnamen, der Ereignisanzahl und dem Ereigniszeitraum. Unter Details findet sich eine alphabetisch sortierte Liste der dort vorkommenden Personen mit Geburts (*)- und Sterbejahren (✝), Jahr einer Eheschließung (⚭), sowie einer Zeitspanne von wann bis wann sie dort gelebt hat (⌂).
 
 ![Cluster-Details](img/migration_map_details.png)
+
+### Häufigste Orte und Familiennamen der Ahnenlinien
+
+Direkt unter der Karte fasst ein Dashboard zusammen, wo die eigenen Forschungsdaten schwerpunktmäßig liegen und welche Familiennamen am häufigsten vorkommen. Für jeden der vier Familienzweige nach Mary Hill gibt es eine Kachel, darüber eine schmale Gesamtleiste über alle Zweige hinweg.
+
+![Kacheln der häufigsten Orte und Familiennamen](img/research_focus_cards.png)
+
+Jede Kachel zeigt in der Kopfzeile einen farbigen Punkt des Familienzweigs sowie den Familiennamen des jeweiligen Großelternteils. Darunter stehen drei Kennzahlen und zwei Ranglisten:
+
+- **Kennzahlen:** Anzahl der verschiedenen Orte, Familiennamen und Personen des Familienzweigs.
+- **Top-Orte (Ereignisse):** die häufigsten Orte, gezählt nach Ereignissen (wie bei der Karte), so dass eine Person an einem Ort mehrfach vorkommen kann.
+- **Top-Familiennamen (Personen):** die häufigsten Familiennamen, gezählt nach Personen - jede Person genau einmal.
+
+Beide Ranglisten zeigen bis zu fünf Einträge.
+
+Anders als bei der Karte fließen hier auch Orte **ohne** Koordinaten in die Zählung ein - es zählt allein der Ortsname. Personen werden über [Ahnenschwund](https://de.wikipedia.org/wiki/Ahnenschwund) hinweg nur einmal gezählt. Übliche Platzhalter für unbekannte Familiennamen werden ausgelassen.
+
+Rechts neben der Überschrift gibt es ein Kopieren-Knopf. Er kopiert den gesamten Abschnitt (die Gesamtleiste und alle vier Kacheln) als reinen Text in die Zwischenablage. So lassen sich die eigenen Forschungsschwerpunkte etwa in einem Forum, einer Mail oder einem Chat teilen, ohne einen Screenshot verschicken zu müssen.
 
 ### Kekule-Liste
 In der eigentlichen Ahnenliste werden pro Generation alle vorhandenen Personen in einer kompakten Form ausgegeben. Auch hier findet die farbliche Kodierung nach Mary Hill Anwendung.

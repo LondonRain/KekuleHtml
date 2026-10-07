@@ -6,6 +6,8 @@
 [![Licence](https://img.shields.io/github/license/LondonRain/KekuleHtml)](licence.txt)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blueviolet)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 [![Windows](https://img.shields.io/badge/Windows-10%2B-steelblue)](https://www.microsoft.com/windows)
+[![macOS](https://img.shields.io/badge/macOS-lightsteelblue?logo=apple&logoColor=black)](#macos-and-linux)
+[![Linux](https://img.shields.io/badge/Linux-lightsteelblue?logo=linux&logoColor=black)](#macos-and-linux)
 [![Release](https://img.shields.io/github/v/release/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/LondonRain/KekuleHtml)](https://github.com/LondonRain/KekuleHtml/commits/main)
 [![Downloads](https://img.shields.io/github/downloads/LondonRain/KekuleHtml/total)](https://github.com/LondonRain/KekuleHtml/releases/latest)
@@ -26,11 +28,11 @@
 
 Based on a [GEDCOM](https://en.wikipedia.org/wiki/GEDCOM) file, it generates a compact HTML family tree according to [Kekule](https://en.wikipedia.org/wiki/Ahnentafel), which can help, for example, with navigating your own data and the directory structures of your sources.
 
-In addition, it generates generational statistics and—provided geodata is available—a map that allows you to visualize migration patterns across different generations and family branches.
+In addition, it generates generational statistics and—provided geodata is available—a map that allows you to visualize migration patterns across different generations and family branches. A further section summarizes the most common places and family names per family branch, showing at a glance where the bulk of your research data lies.
 
 ## Requirements
 
-- > ℹ️ The application is based on the [.NET 10 Framework](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) . This must be installed. 
+- > ℹ️ The application requires the [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). For Windows, the version **".NET Desktop Runtime for Windows x64"** is usually required from the .NET download page. For use on macOS, see the ["macOS and Linux"](#macos-and-linux) section.
 - To ensure that date values are imported correctly, they must comply with the [GEDCOM standard](https://gedcom.io/specifications/FamilySearchGEDCOMv7.html#date). For example, German month names do not work.
 - For the map functionality, locations must have been georeferenced. The program does not perform its own georeferencing based on place names. See the section [“Geographic Distribution of Ancestral Lines”](#geographic-distribution-of-ancestral-lines).
 
@@ -53,6 +55,20 @@ There is also a user interface. To use it, run `KekuleHtmlUi.exe`.
 
 You can select a GEDCOM file using “Browse...”. Alternatively, you can drag and drop the file (e.g., from Windows Explorer) onto the window to open it. Under “Select Starting Person...”, you can open a drop-down list to specify the starting person. Typing in the text field filters the drop-down list accordingly. Under “Generations” you can limit the output to a specified number of generations. You can use the checkbox to specify whether the file generated after clicking “Create HTML File” should open directly.
 
+### macOS and Linux
+
+The console application generally runs on macOS and Linux as well. However, there is no graphical user interface, as this is based on WPF and runs exclusively on Windows. This version is therefore aimed at more experienced users who know how to use a terminal.
+
+The [.NET 10 runtime environment](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) is required. The plain ".NET Runtime" version in the architecture matching your device is sufficient. For Apple Silicon (M1 and newer), this is Arm64, for older Macs with Intel processors, it is x64.
+
+The [release](https://github.com/LondonRain/KekuleHtml/releases/latest) includes a separate archive, identifiable by the suffix **`macOS-Linux-Console`**. The other two archives are Windows-only packages and will not work on a Mac or under Linux.
+
+It is started from the terminal through `dotnet`:
+
+`dotnet KekuleHtml.dll kennedy.ged`
+
+The archive deliberately does not contain a directly executable file. Such a file would not be signed by Apple and, depending on the system settings, would first need to be manually authorised on macOS. Running the programme via `dotnet` eliminates this step. Apart from that, the programme behaves just as it does on Windows.
+
 ### Parameters
 
 Both the console application and the application with a graphical user interface support the following command-line parameters.
@@ -60,6 +76,7 @@ Both the console application and the application with a graphical user interface
 | Parameter (with example) | Description |
 | ------------------------ | ------------ |
 | kennedy.ged | A relative or absolute path to a GEDCOM file. This is then loaded directly in the user interface. However, it is usually more convenient to select the file yourself via the user interface. |
+| -filterNames kennedy | Filters the name list. In the console only the filtered selection is printed. In the UI the filter field of the selection list is pre-filled. Multiple search terms must all appear in the name. The search is case-insensitive. If the filter contains spaces it must be quoted, for example -filterNames "John Kennedy". |
 | -maxGenerations 12 | Number of generations included in the output. 20 is the default value if this parameter is not set. The maximum is 63. |
 | -lang en | Forces the specified language. Currently, `de` (German) and `en` (English) are supported. If no language is specified via a parameter or if the language is unknown, the system language is used. |
 
@@ -96,7 +113,9 @@ As the basis for the map, the following events are collected for each person, in
 
 These points are collected and grouped into clusters by location and family branch. The color coding of the respective family lines, based on [Mary Hill](http://www.genrootsorganizer.com/p/13-steps.html), is used starting from the four grandparents.
 
-Each colored point on the map represents one of these clusters. The larger the circle, the more events have taken place at that location. The lighter the circle, the older the first event that occurred there; the darker the circle, the more recent the event. The shading based on event age is relative to each of the four family branches.
+> ℹ️ The four colour values are chosen so that they remain distinguishable with red-green color vision deficiency (deuteranopia and protanopia). This is why the green has a teal cast. These deficiencies knock out the red-green axis while leaving the blue-yellow axis intact. So a green carrying a blue component stays tellable apart from red.
+
+Each colored point on the map represents one of these clusters. The larger the circle, the more events have taken place at that location. The diameter of a circle is no smaller than 14 and no larger than 100 pixels. The lighter the circle, the older the first event that occurred there; the darker the circle, the more recent the event. The shading based on event age is relative to each of the four family branches.
 
 If event clusters from multiple family branches exist at a single location, they do not overlap but are displayed slightly offset from one another, as shown in the following screenshot.
 
@@ -105,6 +124,24 @@ If event clusters from multiple family branches exist at a single location, they
 Clicking on one of the clusters opens a pop-up showing the place name, the number of events, and the time period of the events. Under “Details,” you’ll find an alphabetically sorted list of the people associated with that location, including their birth (*), death (✝), and marriage (⚭) years, as well as the time period during which they lived there (⌂).
 
 ![Cluster Details](img/migration_map_details.png)
+
+### Most Common Places and Family Names of the Ancestral Lines
+
+Directly below the map, a dashboard summarises the main focus of your research data and which family names occur most frequently. There is one card for each of the four family branches according to Mary Hill, with a narrow summary bar above them covering all branches.
+
+![Most Common Places and Family Names of the Ancestral Lines](img/research_focus_cards.png)
+
+Each card shows a coloured dot representing the family branch in the header, along with the family name of the respective grandparent. Below this are three key figures and two rankings:
+
+- **Key figures:** The number of different places, family names and individuals in the family branch.
+- **Top places (events):** the most common places, counted by events (as on the map), meaning that a person may appear multiple times at a single place.
+- **Top family names (persons):** the most common family names, counted by people – each person is counted exactly once.
+
+Both rankings show up to five entries.
+
+Unlike on the map, places **without** coordinates are also included in the count here – only the place name counts. Individuals are counted only once, even across [pedigree collapse](https://en.wikipedia.org/wiki/Pedigree_collapse). Common placeholders for unknown family names are omitted.
+
+To the right of the heading, there is a Copy button. It copies the entire section (the summary bar and all four cards) as plain text to the clipboard. This allows you to share your own research focus areas in a forum, an email or a chat, for example, without having to send a screenshot.
 
 ### Kekule List
 In the actual ancestor list, all individuals for each generation are displayed in a compact format. Here, too, Mary Hill’s color-coding system is used.

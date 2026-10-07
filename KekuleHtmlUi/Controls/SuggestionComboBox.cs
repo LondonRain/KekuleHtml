@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
+using KekuleHtml.Helpers;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows;
@@ -77,21 +78,10 @@ public class SuggestionComboBox : ComboBox
     public Func<object, string, bool> FilterPredicate { get; set; } = DefaultFilterPredicate;
 
     /// <summary>
-    /// Search for every word in match (AND) but it can be anywhere in the string.
+    /// <inheritdoc cref="  FilterHelper.Matches(string?, string?)"/>
+    /// Shares its logic with the console via <see cref="FilterHelper.Matches"/>.
     /// </summary>
-    private static bool DefaultFilterPredicate(object item, string searchText)
-    {
-        if (string.IsNullOrWhiteSpace(searchText))
-            return true;
-
-        string? text = item?.ToString();
-        if (string.IsNullOrEmpty(text))
-            return false;
-
-        return searchText
-            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .All(word => text.Contains(word, StringComparison.OrdinalIgnoreCase));
-    }
+    private static bool DefaultFilterPredicate(object item, string searchText) => FilterHelper.Matches(item?.ToString(), searchText);
 
     /// <summary>
     /// Apply the <see cref="FilterPredicate"/> on our <see cref="_CollectionView"/>.
@@ -106,9 +96,11 @@ public class SuggestionComboBox : ComboBox
             _CollectionView.Filter = item => FilterPredicate(item, searchText);
         }
 
-        if (!string.IsNullOrEmpty(searchText) && !IsDropDownOpen && _CollectionView.Cast<object>().Any())
+        // Only auto-open while the user is actually typing (keyboard focus is within the control).
+        // A programmatic prefill (e.g. the -filterNames option) sets the text without focus and must not open the list.
+        if (!string.IsNullOrEmpty(searchText) && !IsDropDownOpen && IsKeyboardFocusWithin && _CollectionView.Cast<object>().Any())
         {
-            // When starting typing for filtering, ppen the ComboBox.
+            // When starting typing for filtering, open the ComboBox.
             IsDropDownOpen = true;
 
             // When starting typing for filtering, make sure that the newly entered text won't be selected automatically everytime.

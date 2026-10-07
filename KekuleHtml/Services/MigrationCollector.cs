@@ -138,24 +138,42 @@ public class MigrationCollector(GedcomAdapter adapter)
         int yearFrom,
         int? yearTo = null)
     {
-        // skip points without georeference
-        if (string.IsNullOrWhiteSpace(place?.Latitude) || string.IsNullOrWhiteSpace(place?.Longitude))
+        // a place name is the minimum needed to attribute the event to a location
+        if (place == null || string.IsNullOrWhiteSpace(place.Name))
             return;
 
         if (yearTo == yearFrom)
             yearTo = null;
 
-        points.Add(
-            new MigrationPoint
-            {
-                Person = person,
-                PointOrigin = pointOrigin,
-                Latitude = ParseCoordinate(place.Latitude),
-                Longitude = ParseCoordinate(place.Longitude),
-                PlaceName = place.Name,
-                YearFrom = yearFrom,
-                YearTo = yearTo
-            });
+        // points with a georeference can be drawn on the map. the others still count towards the research focus lists.
+        var hasCoordinates = !string.IsNullOrWhiteSpace(place.Latitude) && !string.IsNullOrWhiteSpace(place.Longitude);
+
+        if (hasCoordinates)
+        {
+            points.Add(
+                new MigrationPointWithCoordinates
+                {
+                    Person = person,
+                    PointOrigin = pointOrigin,
+                    PlaceName = place.Name,
+                    YearFrom = yearFrom,
+                    YearTo = yearTo,
+                    Latitude = ParseCoordinate(place.Latitude),
+                    Longitude = ParseCoordinate(place.Longitude)
+                });
+        }
+        else
+        {
+            points.Add(
+                new MigrationPoint
+                {
+                    Person = person,
+                    PointOrigin = pointOrigin,
+                    PlaceName = place.Name,
+                    YearFrom = yearFrom,
+                    YearTo = yearTo
+                });
+        }
     }
 
     private static double ParseCoordinate(string value)
@@ -176,6 +194,7 @@ public class MigrationCollector(GedcomAdapter adapter)
     public IReadOnlyList<MigrationCluster> BuildMigrationClusters(IEnumerable<MigrationPoint> points)
     {
         return points
+            .OfType<MigrationPointWithCoordinates>()
             .GroupBy(p => new
             {
                 p.Latitude,

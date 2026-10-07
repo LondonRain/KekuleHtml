@@ -28,7 +28,13 @@ public static class Program
         }
 
         var adapter = new GedcomAdapter(path);
+
         var people = adapter.IndividualsSorted;
+        if (!string.IsNullOrWhiteSpace(options.FilterNames))
+        {
+            // apply command line filter to people list.
+            people = people.Where(p => FilterHelper.Matches(p.GetFormattedNameWithDates(), options.FilterNames)).ToList();
+        }
 
         for (var i = 0; i < people.Count; i++)
         {
@@ -88,10 +94,13 @@ public static class Program
             var migrationPoints = migrationCollector.GetMigrationPoints(familyTree);
             var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoints);
 
+            // creating research focus cards
+            var researchFocusCards = ResearchFocusBuilder.Build(familyTree, migrationPoints, KekuleConsts.TopListLength);
+
             // create HTML report
             string fileName = "kekule.html";
             var outputPath = Path.Combine(Path.GetDirectoryName(gedcomPath)!, fileName);
-            HtmlWriter.Write(outputPath, rootPerson, familyTree, migrationClusters);
+            HtmlWriter.Write(outputPath, rootPerson, familyTree, migrationClusters, researchFocusCards);
 
             return outputPath;
         });

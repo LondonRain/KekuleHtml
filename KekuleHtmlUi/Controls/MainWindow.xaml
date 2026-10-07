@@ -176,8 +176,8 @@
                 <localControls:NumericUpDown Margin="0 4 0 0"
                                              Width="60"
                                              HorizontalAlignment="Left"
-                                             Minimum="{x:Static kekuleHtmlServices:KekuleDefaults.MinGenerations}"
-                                             Maximum="{x:Static kekuleHtmlServices:KekuleDefaults.MaxGenerations}"
+                                             Minimum="{x:Static kekuleHtmlServices:KekuleConsts.MinGenerations}"
+                                             Maximum="{x:Static kekuleHtmlServices:KekuleConsts.MaxGenerations}"
                                              Value="{Binding MaxGenerations}" />
             </StackPanel>
 

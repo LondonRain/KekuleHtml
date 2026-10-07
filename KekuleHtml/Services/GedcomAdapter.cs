@@ -11,20 +11,6 @@ namespace KekuleHtml.Services;
 /// </summary>
 public sealed class GedcomAdapter
 {
-    #region Consts
-
-    /// <summary>
-    /// Primary GEDCOM file extension (including the leading dot).
-    /// </summary>
-    public const string GedcomExtension = ".ged";
-
-    /// <summary>
-    /// Alternative GEDCOM file extension (including the leading dot).
-    /// </summary>
-    public const string GedcomExtensionAlternative = ".gedcom";
-
-    #endregion
-
     #region Variables
 
     private readonly GedcomDatabase _Database;
@@ -59,8 +45,8 @@ public sealed class GedcomAdapter
             return false;
 
         var extension = Path.GetExtension(path);
-        return extension.Equals(GedcomExtension, StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(GedcomExtensionAlternative, StringComparison.OrdinalIgnoreCase);
+        return extension.Equals(KekuleConsts.GedcomExtension, StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(KekuleConsts.GedcomExtensionAlternative, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

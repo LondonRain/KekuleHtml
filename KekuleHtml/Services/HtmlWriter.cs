@@ -81,18 +81,8 @@ section {
     margin: 2px 0;
     border-left: 8px solid;
 }
-.blue {
-    border-color: #005D8F;
-}
-.green {
-    border-color: #0A7050;
-}
-.red {
-    border-color: #BE2323;
-}
-.yellow {
-    border-color: #F5AF00;
-}
+/* Mary-Hill line colours are generated from a single source, see BuildColourCss() */
+/*__MARYHILL_COLOURS__*/
 .number {
     display: inline-block;
     /* per-generation width, set on the enclosing <section> (see GetWidthEmForGeneration); falls back to 6em */
@@ -157,44 +147,324 @@ section {
 
     display: inline-block;
 }
-.legendColor.blue
+/* .legendColor.blue/.green/.red/.yellow backgrounds are generated, see BuildColourCss() */
+
+/* research focus dashboard */
+
+/* the heading shares its line with the copy button, so the button needs no line of its own */
+.focusHeading
 {
-    background: #005D8F;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    /* the bottom margin an h2 would contribute itself (browser default 0.83em at 1.5rem font size).
+       it lives here because the h2 inside this flex row has none - flex items do not collapse margins,
+       so leaving it on the h2 would make this row taller and push the button below the heading's centre. */
+    margin: 2rem 0 calc(0.83 * 1.5rem);
 }
-.legendColor.green
+.focusHeading h2
 {
-    background: #0A7050;
-}
-.legendColor.red
-{
-    background: #BE2323;
-}
-.legendColor.yellow
-{
-    background: #F5AF00;
+    /* margins moved to the flex container above, so the button stays on the heading's centre line */
+    margin: 0;
 }
 
-/* the collapsible details with text about its persons. make sure that list with persons is condensed. */
+/* the only interactive control of the document: a flat icon, no frame, no background of its own */
+.copyButton
+{
+    /* pushed to the far right of the heading line, flush with the cards below */
+    margin-left: auto;
+
+    /* anchors the absolutely positioned label */
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: none;
+
+    color: #555;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease, color 0.15s ease;
+}
+/* no outline reset: the browser's focus ring follows the border-radius on its own */
+.copyButton:hover
+{
+    background: #f0f0f0;
+    color: #222;
+}
+.copyIcon
+{
+    width: 1.25rem;
+    height: 1.25rem;
+}
+/* the label is taken out of the flow entirely, so neither the icon nor the heading moves when it appears */
+.copyLabel
+{
+    position: absolute;
+    right: 100%;
+    margin-right: 0.4rem;
+
+    opacity: 0;
+    transform: translateX(0.35rem);
+
+    white-space: nowrap;
+    pointer-events: none;
+
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.95rem;
+
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.copyButton:hover .copyLabel,
+.copyButton:focus-visible .copyLabel
+{
+    opacity: 1;
+    transform: translateX(0);
+}
+/* success: the icon becomes a check mark and turns green for a second */
+.copyIconDone
+{
+    display: none;
+}
+.copyButton.copied
+{
+    color: #2E7D32;
+}
+.copyButton.copied .copyIconCopy
+{
+    display: none;
+}
+.copyButton.copied .copyIconDone
+{
+    display: block;
+}
+@media (prefers-reduced-motion: reduce)
+{
+    .copyLabel,
+    .copyButton:hover .copyLabel,
+    .copyButton:focus-visible .copyLabel
+    {
+        transform: none;
+    }
+}
+
+/* holds the plain-text version of the whole section. it must stay selectable for the
+   execCommand fallback, so it is moved off-screen rather than hidden with display:none. */
+.copySource
+{
+    position: fixed;
+    top: 0;
+    left: -9999px;
+
+    opacity: 0;
+}
+
+/* aggregate "total" as a thin strip on top, styled like the map legend */
+.focusTotal
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1.5rem;
+
+    margin-bottom: 1rem;
+    padding: 0.6rem 0.75rem;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    background: #fafafa;
+
+    color: #555;
+    font-size: 0.95rem;
+}
+.focusTotalLabel
+{
+    color: inherit;
+    font-weight: bold;
+}
+.focusGrid
+{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.focusCard
+{
+    padding: 0.6rem;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    background: #fafafa;
+
+    /* keep a card together when printing */
+    page-break-inside: avoid;
+}
+.focusHeader
+{
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    margin-bottom: 0.4rem;
+
+    font-weight: bold;
+    font-size: 1rem;
+}
+.focusDot
+{
+    flex: none;
+
+    width: 14px;
+    height: 14px;
+
+    border-radius: 50%;
+    border: 1px solid #666;
+
+    display: inline-block;
+}
+.totalsRow
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.6rem;
+
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.4rem;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    color: #555;
+    font-size: 0.8rem;
+}
+.focusList h3
+{
+    margin: 0.5rem 0 0.25rem;
+    font-size: 0.85rem;
+}
+.barRow
+{
+    display: grid;
+    /* name column sized to the longest label (--name-col, set on the section), but the bar always
+       keeps at least its minmax minimum; the name truncates if space runs short */
+    grid-template-columns: minmax(0, var(--name-col, 9rem)) minmax(6rem, 1fr) 2rem;
+    align-items: center;
+    gap: 0.4rem;
+
+    margin: 2px 0;
+    font-size: 0.82rem;
+}
+.barLabel
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.barTrack
+{
+    height: 12px;
+    overflow: hidden;
+
+    background: #e5e7eb;
+    border-radius: 3px;
+}
+.barFill
+{
+    display: block;
+    height: 100%;
+    min-width: 2px;
+
+    border-radius: 3px;
+}
+.barValue
+{
+    text-align: right;
+    color: #555;
+    font-variant-numeric: tabular-nums;
+}
+
+/* the collapsible details with text about its persons. make sure that list with persons is condensed.
+   the line-height must not go below 1, otherwise a person entry that is long enough to wrap overlaps its own next line. */
 details
 {
 font-size: smaller;
-line-height: 0.6;
+line-height: 1.2;
 }
 details ul
 {
 margin-block-start: 0rem;
 padding-left: 1rem;
 }
+/* the popup width follows its content up to maxWidth. beyond that lines wrap,
+   so a single overlong name or place must not be able to spill out of the popup sideways. */
+.leaflet-popup-content
+{
+overflow-wrap: anywhere;
+}
+
+/* controls are meaningless on paper */
+@media print
+{
+    .copyButton,
+    .copySource
+    {
+        display: none;
+    }
+}
 </style>
 </head>
 <body>
 """;
 
+    /// <summary>
+    /// Generates the CSS rules that depend on the four Mary-Hill line colours from the single colour source (<see cref="MaryHillColourExtensions"/>),
+    /// so the hex values live in exactly one place. Injected into the static <see cref="CSS"/> block in place of the <c>__MARYHILL_COLOURS__</c> token.
+    /// </summary>
+    private static string BuildColourCss()
+    {
+        var sb = new StringBuilder();
+
+        foreach (var (name, colour) in new[]
+        {
+            ("blue", MaryHillColour.Blue),
+            ("green", MaryHillColour.Green),
+            ("red", MaryHillColour.Red),
+            ("yellow", MaryHillColour.Yellow)
+        })
+        {
+            var hex = colour.ToHex();
+
+            sb.AppendLine($".{name} {{ border-color: {hex}; }}");
+            sb.AppendLine($".legendColor.{name} {{ background: {hex}; }}");
+        }
+
+        return sb.ToString();
+    }
+
     #endregion
 
     #region Write
 
-    public static void Write(string fileName, GedcomIndividualRecord rootPerson, FamilyTree familyTree, IEnumerable<MigrationCluster> migrationClusters)
+    public static void Write(
+        string fileName,
+        GedcomIndividualRecord rootPerson,
+        FamilyTree familyTree,
+        IEnumerable<MigrationCluster> migrationClusters,
+        IEnumerable<ResearchFocusCard> researchFocusCards)
     {
         var html = new StringBuilder();
 
@@ -212,15 +482,17 @@ padding-left: 1rem;
 <title>{Resources.HtmlTitle}</title>
 """);
 
-        html.AppendLine(CSS);
+        html.AppendLine(CSS.Replace("/*__MARYHILL_COLOURS__*/", BuildColourCss()));
 
         html.AppendLine($"<h1>{string.Format(Resources.HtmlHeadingKekuleListFor, EscapeHtml(rootPerson.GetFormattedName()))}</h1>");
 
-        WriteTableOfContents(html, familyTree);
+        WriteTableOfContents(html, familyTree, HasTimeline(familyTree), migrationClusters.Any(), researchFocusCards.Any());
 
         WriteTimelineSvg(html, familyTree);
 
         WriteMigrationMap(html, familyTree, migrationClusters);
+
+        WriteResearchFocus(html, researchFocusCards);
 
         foreach (var generation in familyTree.Generations)
         {
@@ -244,11 +516,21 @@ padding-left: 1rem;
         File.WriteAllText(fileName, html.ToString(), Encoding.UTF8);
     }
 
-    private static void WriteTableOfContents(StringBuilder html, FamilyTree familyTree)
+    private static void WriteTableOfContents(StringBuilder html, FamilyTree familyTree, bool hasTimeline, bool hasMigrationMap, bool hasResearchFocus)
     {
         html.AppendLine("<nav>");
         html.AppendLine($"<h2>{Resources.HtmlHeadingTableOfContents}</h2>");
         html.AppendLine("<ul>");
+
+        // dashboard sections first, in document order; only linked when actually rendered
+        if (hasTimeline)
+            html.AppendLine($"<li><a href=\"#timeline\">{Resources.HtmlHeadingTimeline}</a></li>");
+
+        if (hasMigrationMap)
+            html.AppendLine($"<li><a href=\"#migration\">{Resources.HtmlHeadingMigrationMap}</a></li>");
+
+        if (hasResearchFocus)
+            html.AppendLine($"<li><a href=\"#placesAndNames\">{Resources.HtmlHeadingResearchFocus}</a></li>");
 
         foreach (var generation in familyTree.Generations)
             html.AppendLine($"<li><a href=\"#gen{generation.GenerationNumber}\">{generation.ExternalName}</a></li>");
@@ -259,12 +541,7 @@ padding-left: 1rem;
 
     private static void WriteTimelineSvg(StringBuilder html, FamilyTree familyTree)
     {
-        var generations = familyTree.Generations;
-
-        if (generations.Count == 0)
-            return;
-
-        if (familyTree.MinYear == 0 || familyTree.MaxYear == 0)
+        if (!HasTimeline(familyTree))
             return;
 
         var maxGeneration = familyTree.Generations.Last().GenerationNumber;
@@ -283,6 +560,7 @@ padding-left: 1rem;
             return leftMargin + (year - familyTree.MinYear) * (chartWidth - leftMargin - rightMargin) / (double)(familyTree.MaxYear - familyTree.MinYear);
         }
 
+        html.AppendLine("<section id=\"timeline\">");
         html.AppendLine($"<h2>{Resources.HtmlHeadingTimeline}</h2>");
 
         html.AppendLine($"<svg class=\"timeline\" width=\"{chartWidth}\" height=\"{chartHeight}\" xmlns=\"http://www.w3.org/2000/svg\">");
@@ -316,7 +594,7 @@ padding-left: 1rem;
 
         // --- generations
 
-        foreach (var generation in generations.OrderByDescending(x => x.GenerationNumber))
+        foreach (var generation in familyTree.Generations.OrderByDescending(x => x.GenerationNumber))
         {
             var row = maxGeneration - generation.GenerationNumber;
 
@@ -390,6 +668,7 @@ padding-left: 1rem;
         }
 
         html.AppendLine("</svg>");
+        html.AppendLine("</section>");
     }
 
     private static void WriteMigrationMap(StringBuilder html, FamilyTree familyTree, IEnumerable<MigrationCluster> migrationClusters)
@@ -399,6 +678,8 @@ padding-left: 1rem;
 
         // --- Legend
 
+        // note: the anchor id lives on the <section>; the Leaflet container div below keeps the separate id "migrationMap", so the two must not be merged.
+        html.AppendLine("<section id=\"migration\">");
         html.AppendLine($"<h2>{Resources.HtmlHeadingMigrationMap}</h2>");
 
         html.AppendLine($"""
@@ -448,27 +729,57 @@ L.tileLayer(
     })
     .addTo(migrationMap);
 
-migrationMap.on('popupopen', function(e) {
-    // having details opened and then closing it makes sure that popup already has the size it needs when details are opened by user.
-    const details = e.popup._contentNode.querySelector('.auto-close-details');
-    details.removeAttribute('open');
-});
-
 const bounds = [];
+
+function addMigrationCluster(latLng, style, html)
+{
+    // leaflet rewrites string popup contents on every update(), which would collapse the details again.
+    // on the other hand an element is only detached and re-attached, so the open state survives.
+    const content = document.createElement('div');
+    content.innerHTML = html;
+
+    const details = content.querySelector('details');
+
+    const marker = L.circleMarker(latLng, style)
+        .bindPopup(content, {minWidth: 240, maxWidth: 800});
+
+    // the popup gets wider when the details are opened. re-run leaflet's layout so the tip stays on the
+    // circle and the grown popup is panned back into view.
+    details.addEventListener('toggle', function()
+    {
+        const focused = document.activeElement;
+
+        marker.getPopup().update();
+
+        // update() re-attaches the content node, which drops keyboard focus from the summary.
+        if (focused && content.contains(focused))
+        {
+            focused.focus({preventScroll: true});
+        }
+    });
+
+    // the details can also be closed by clicking any of its content, but not by clicking the summary,
+    // which toggles on its own.
+    details.addEventListener('click', function(e)
+    {
+        if (!e.target.closest('summary'))
+        {
+            details.open = false;
+        }
+    });
+
+    // always start collapsed the next time this popup is opened.
+    marker.on('popupclose', function() { details.open = false; });
+
+    marker.addTo(migrationMap);
+    bounds.push(latLng);
+}
 """);
 
         // draw the small circles on top
         foreach (var cluster in migrationClusters.OrderByDescending(c => c.Count))
         {
-            var colour =
-                cluster.MaryHillColour switch
-                {
-                    MaryHillColour.Blue => "#005D8F",
-                    MaryHillColour.Green => "#0A7050",
-                    MaryHillColour.Red => "#BE2323",
-                    MaryHillColour.Yellow => "#F5AF00",
-                    _ => throw new InvalidOperationException($"Unexpected colour {cluster.MaryHillColour}!")
-                };
+            var colour = cluster.MaryHillColour.ToHex();
 
             var opacity = GetOpacity(cluster);
             var opacityText = opacity.ToString("F2", CultureInfo.InvariantCulture);
@@ -476,7 +787,8 @@ const bounds = [];
             // for circleMarkers this are pixels. so the circle size stays the same, independent of the current zoom level.
             // the formula is somehow arbitrary to get a balance between small and big sized circles while retaining visibility of the
             // tiniest ones and not drawing the largest ones too big, still preserving distinguishability between different sizes.
-            var radius = 4.0 + 4.0 * Math.Sqrt(cluster.Count);
+            // diameter is capped at 100 pixels, smallest possible circles are 14 pixels.
+            var radius = Math.Round(Math.Min(3.0 + 4.2 * Math.Sqrt(cluster.Count), 50.0));
             var radiusText = radius.ToString("F1", CultureInfo.InvariantCulture);
 
             var latitude = cluster.Latitude;
@@ -510,21 +822,20 @@ const bounds = [];
             var latitudeText = latitude.ToString(CultureInfo.InvariantCulture);
             var longitudeText = longitude.ToString(CultureInfo.InvariantCulture);
 
-            var popup = string.Concat(
-                $"{EscapeJs(cluster.PlaceName)}<br/>",
-                $"{string.Format(Resources.HtmlPopupEvents, cluster.Count)}<br/>",
-                $"{string.Format(Resources.HtmlPopupPeriod, cluster.MinYear, cluster.MaxYear)}<br/><br/>",
-                "<details open=\'true\' class=\'auto-close-details\'>",
-                $"<summary>{Resources.HtmlPopupDetails}</summary>",
-                // make sure details can also be closed by clicking any of its content
-                "<div onclick=\\\"this.closest(\'details\').removeAttribute(\'open\');\\\">",
-                $"<p>{ReplaceLineBreaks(cluster.DescriptionHtml)}</p>",
-                "</div></details>");
+            // the markup is emitted as a single javascript string literal, so it is escaped as a whole:
+            // person names come straight from the gedcom file and may contain quotes or line breaks.
+            var popup = EscapeJs(
+                string.Concat(
+                    $"{cluster.PlaceName}<br/>",
+                    $"{string.Format(Resources.HtmlPopupEvents, cluster.Count)}<br/>",
+                    $"{string.Format(Resources.HtmlPopupPeriod, cluster.MinYear, cluster.MaxYear)}<br/><br/>",
+                    "<details>",
+                    $"<summary>{Resources.HtmlPopupDetails}</summary>",
+                    cluster.DescriptionHtml,
+                    "</details>"));
 
             html.AppendLine($$"""
-bounds.push([{{latitudeText}}, {{longitudeText}}]);
-
-L.circleMarker(
+addMigrationCluster(
     [{{latitudeText}}, {{longitudeText}}],
     {
         radius: {{radiusText}},
@@ -532,9 +843,8 @@ L.circleMarker(
         fillColor: "{{colour}}",
         fillOpacity: {{opacityText}},
         weight: 1
-    })
-    .bindPopup("{{popup}}", {maxWidth: 800})
-    .addTo(migrationMap);
+    },
+    "{{popup}}");
 """);
         }
 
@@ -550,6 +860,7 @@ if (bounds.length > 0)
 """);
 
         html.AppendLine("</script>");
+        html.AppendLine("</section>");
 
         double GetOpacity(MigrationCluster cluster)
         {
@@ -573,6 +884,223 @@ if (bounds.length > 0)
                 double opacity = Math.Round(yearsSinceMinYear / yearRange * scalableOpacity + minOpacity, 2);
                 return opacity;
             }
+        }
+    }
+
+    private static void WriteResearchFocus(StringBuilder html, IEnumerable<ResearchFocusCard> cards)
+    {
+        if (!cards.Any())
+            return;
+
+        // Size the (shared) name column to the longest place/surname label so it fits without truncation on wide cards
+        // On narrow ones the bar's minmax minimum wins and the name truncates.
+        var maxLabelLength = cards
+            .SelectMany(c => c.TopPlaces.Concat(c.TopSurnames))
+            .Select(i => i.Label.Length)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        // ~0.45em per character (relative to the bar font) plus a little padding; capped in CSS
+        var nameColEm = (maxLabelLength * 0.45 + 0.4).ToString("F1", CultureInfo.InvariantCulture);
+
+        html.AppendLine($"<section id=\"placesAndNames\" style=\"--name-col: {nameColEm}em\">");
+
+        // heading and copy button share one line; the button shows nothing but its clipboard icon until hovered
+        html.AppendLine("<div class=\"focusHeading\">");
+        html.AppendLine($"<h2>{Resources.HtmlHeadingResearchFocus}</h2>");
+        html.AppendLine($"<button type=\"button\" id=\"focusCopyButton\" class=\"copyButton\"><span class=\"copyLabel\">{Resources.HtmlFocusCopy}</span>");
+
+        // Both icon states live in the markup and are swapped via CSS, so the script needs no icon knowledge.
+        // The rear sheet is an open path rather than a second filled rectangle: nothing has to be covered up,
+        // which keeps the icon correct on any background. currentColor lets hover and success colour it.
+        html.AppendLine("""
+<svg class="copyIcon copyIconCopy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<rect x="8" y="8" width="13" height="13" rx="2"/>
+<path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>
+</svg>
+<svg class="copyIcon copyIconDone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M4 12.5 9.5 18 20 6"/>
+</svg>
+</button>
+""");
+        html.AppendLine("</div>");
+
+        // the plain-text twin of this section, kept off-screen and handed to the clipboard on click
+        html.AppendLine(
+            "<textarea id=\"focusCopySource\" class=\"copySource\" readonly tabindex=\"-1\" aria-hidden=\"true\">" +
+            EscapeHtml(BuildResearchFocusText(cards)) +
+            "</textarea>");
+
+        // --- Totals
+
+        // aggregate "total" as a thin strip on top, styled like the map legend
+        var total = cards.SingleOrDefault(c => c.IsTotal);
+        if (total != null)
+        {
+            html.AppendLine("<div class=\"focusTotal\">");
+            html.AppendLine($"<span class=\"focusTotalLabel\">{Resources.HtmlFocusTotal}</span>");
+            html.AppendLine(GetTotals(total));
+            html.AppendLine("</div>");
+        }
+
+        // --- 4 Cards
+
+        // two cards per line
+        html.AppendLine("<div class=\"focusGrid\">");
+
+        foreach (var card in cards.Where(c => !c.IsTotal))
+        {
+            var colour = card.Colour!.Value.ToHex();
+
+            // header like the map legend: coloured dot + the line's ancestor surname (just the dot if that grandparent is unknown)
+            html.AppendLine("<div class=\"focusCard\">");
+            html.AppendLine($"<div class=\"focusHeader\"><span class=\"focusDot\" style=\"background:{colour}\"></span>{EscapeHtml(card.AncestorName)}</div>");
+
+            // totals header (per card)
+            html.AppendLine("<div class=\"totalsRow\">");
+            html.AppendLine(GetTotals(card));
+            html.AppendLine("</div>");
+
+            html.AppendLine("<div class=\"focusList\">");
+
+            // Top places 📍
+            html.AppendLine($"<h3>\U0001F4CD {Resources.HtmlFocusTopPlaces}</h3>");
+            WriteBars(html, card.TopPlaces, colour);
+
+            // Top Surnames 👥
+            html.AppendLine($"<h3>\U0001F465 {Resources.HtmlFocusTopSurnames}</h3>");
+            WriteBars(html, card.TopSurnames, colour);
+
+            html.AppendLine("</div>");
+            html.AppendLine("</div>");
+        }
+
+        html.AppendLine("</div>");
+        html.AppendLine("</section>");
+
+        // own script block: the one above belongs to the map and is written before this section
+        html.AppendLine("<script>");
+        html.AppendLine("""
+const focusCopyButton = document.getElementById('focusCopyButton');
+const focusCopySource = document.getElementById('focusCopySource');
+
+focusCopyButton.addEventListener('click', function()
+{
+    if (navigator.clipboard && navigator.clipboard.writeText)
+        navigator.clipboard.writeText(focusCopySource.value).then(showFocusCopied, copyFocusFallback);
+    else
+        copyFocusFallback();
+});
+
+// navigator.clipboard needs a secure context and can be refused for a page opened via file://,
+// which is the normal case for this document. execCommand is deprecated but still works there
+// as long as the call originates from a user gesture - the click on this button is one.
+function copyFocusFallback()
+{
+    focusCopySource.select();
+
+    if (document.execCommand('copy'))
+        showFocusCopied();
+
+    // a failure stays silent on purpose: nothing was copied, and nothing is reported
+}
+
+// the class alone switches the icon and its colour, see the copyIconDone rules
+function showFocusCopied()
+{
+    focusCopyButton.classList.add('copied');
+
+    setTimeout(function()
+    {
+        focusCopyButton.classList.remove('copied');
+    }, 1000);
+}
+""");
+        html.AppendLine("</script>");
+
+        // totals in list order: 📍 places, 👥 surnames, 👤 persons
+        static string GetTotals(ResearchFocusCard card) => string.Concat(
+            $"<span>\U0001F4CD {Resources.HtmlFocusPlaces} {card.PlaceCount}</span>",
+            $"<span>\U0001F465 {Resources.HtmlFocusSurnames} {card.SurnameCount}</span>",
+            $"<span>\U0001F464 {Resources.HtmlFocusPersons} {card.PersonCount}</span>");
+
+        static void WriteBars(StringBuilder html, IReadOnlyList<CountedItem> items, string colour)
+        {
+            if (items.Count == 0)
+                return;
+
+            // scale each list to its own maximum, so the top entry always fills the bar
+            var max = items.Max(i => i.Count);
+
+            foreach (var item in items)
+            {
+                // keep a minimum width so a single event/person stays visible
+                var percent = max == 0 ? 0 : Math.Max(4, (int)Math.Round(item.Count / (double)max * 100));
+
+                // truncated in a narrow column; the full name is kept in the tooltip
+                var label = EscapeHtml(item.Label);
+
+                html.AppendLine(
+                    "<div class=\"barRow\">" +
+                    $"<span class=\"barLabel\" title=\"{label}\">{label}</span>" +
+                    $"<span class=\"barTrack\"><span class=\"barFill\" style=\"width:{percent}%;background:{colour}\"></span></span>" +
+                    $"<span class=\"barValue\">{item.Count}</span>" +
+                    "</div>");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Builds the plain-text twin of the research-focus section, ready to be put on the clipboard.
+    /// </summary>
+    /// <remarks>
+    private static string BuildResearchFocusText(IEnumerable<ResearchFocusCard> cards)
+    {
+        var text = new StringBuilder();
+
+        text.AppendLine(Resources.HtmlHeadingResearchFocus);
+
+        var total = cards.SingleOrDefault(c => c.IsTotal);
+        if (total != null)
+            text.AppendLine(GetHeadline(Resources.HtmlFocusTotal, total));
+
+        foreach (var card in cards.Where(c => !c.IsTotal))
+        {
+            text.AppendLine();
+            text.AppendLine(GetHeadline(card.AncestorName, card));
+
+            AppendRanking(text, $"\U0001F4CD {Resources.HtmlFocusTopPlaces}", card.TopPlaces);
+            AppendRanking(text, $"\U0001F465 {Resources.HtmlFocusTopSurnames}", card.TopSurnames);
+        }
+
+        return text.ToString().TrimEnd();
+
+        // the card's headline, e.g. "KENNEDY - places 7, family names 2, persons 9" (each with its emoji).
+        // Falls back to the bare figures when that grandparent is unknown, just like the card shows only its colour dot then.
+        static string GetHeadline(string? name, ResearchFocusCard card)
+        {
+            var figures = string.Join(
+                ", ",
+                $"\U0001F4CD {Resources.HtmlFocusPlaces} {card.PlaceCount}",
+                $"\U0001F465 {Resources.HtmlFocusSurnames} {card.SurnameCount}",
+                $"\U0001F464 {Resources.HtmlFocusPersons} {card.PersonCount}");
+
+            return string.IsNullOrEmpty(name)
+                ? figures
+                : $"{name} – {figures}";
+        }
+
+        // an empty ranking is skipped entirely, heading included - the HTML omits it as well.
+        // the heading needs no colon: its emoji already sets it apart from the indented entries below.
+        static void AppendRanking(StringBuilder text, string heading, IReadOnlyList<CountedItem> items)
+        {
+            if (items.Count == 0)
+                return;
+
+            text.AppendLine(heading);
+
+            foreach (var item in items)
+                text.AppendLine($"  {item.Label} ({item.Count})");
         }
     }
 
@@ -669,7 +1197,11 @@ if (bounds.length > 0)
 
     #region Helpers
 
-    private static string ReplaceLineBreaks(string value) => value.Replace(Environment.NewLine, "<br/>");
+    /// <summary>
+    /// A timeline can only be drawn with at least one generation and a known year range.
+    /// The table of contents uses the same check so it never links to a section that was skipped.
+    /// </summary>
+    private static bool HasTimeline(FamilyTree familyTree) => familyTree.Generations.Count != 0 && familyTree.MinYear != 0 && familyTree.MaxYear != 0;
 
     private static string EscapeHtml(string? value)
     {
