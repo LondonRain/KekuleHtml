@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
 using GeneGenie.Gedcom;
+using KekuleHtml.Properties;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -31,7 +32,7 @@ public sealed class Person
 
     public string FormattedNameWithDates => GedcomRecord.GetFormattedNameWithDates();
 
-    public string Surname => GedcomRecord.GetName().Surname;
+    public string Surname => GedcomRecord.GetName()?.Surname ?? Resources.NameUnknown;
 
     /// <inheritdoc cref="MaryHillColour"/>
     public required MaryHillColour Colour { get; init; }
