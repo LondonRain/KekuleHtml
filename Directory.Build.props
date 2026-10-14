@@ -9,7 +9,7 @@
       GitHubRelease publish profile verifies this and fails if the two disagree.
     -->
     <PropertyGroup>
-        <Version>2.2.0.0</Version>
+        <Version>2.2.1</Version>
     </PropertyGroup>
 
     <!--
