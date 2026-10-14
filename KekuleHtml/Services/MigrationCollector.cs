@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Tim
 using GeneGenie.Gedcom;
 using KekuleHtml.Models;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace KekuleHtml.Services;
@@ -148,7 +149,9 @@ public class MigrationCollector(GedcomAdapter adapter)
         // points with a georeference can be drawn on the map. the others still count towards the research focus lists.
         var hasCoordinates = !string.IsNullOrWhiteSpace(place.Latitude) && !string.IsNullOrWhiteSpace(place.Longitude);
 
-        if (hasCoordinates)
+        if (hasCoordinates &&
+            TryParseCoordinate(place.Latitude, out var latitude) &&
+            TryParseCoordinate(place.Longitude, out var longitude))
         {
             points.Add(
                 new MigrationPointWithCoordinates
@@ -158,8 +161,8 @@ public class MigrationCollector(GedcomAdapter adapter)
                     PlaceName = place.Name,
                     YearFrom = yearFrom,
                     YearTo = yearTo,
-                    Latitude = ParseCoordinate(place.Latitude),
-                    Longitude = ParseCoordinate(place.Longitude)
+                    Latitude = latitude,
+                    Longitude = longitude
                 });
         }
         else
@@ -176,15 +179,31 @@ public class MigrationCollector(GedcomAdapter adapter)
         }
     }
 
-    private static double ParseCoordinate(string value)
+    private static bool TryParseCoordinate(string coordinate, out double coordinateValue)
     {
-        value = value.Trim();
+        coordinate = coordinate.Trim();
 
-        var sign = value.StartsWith('S') || value.StartsWith('W') ? -1 : 1;
+        var sign = coordinate.StartsWith('S') || coordinate.StartsWith('W') ? -1 : 1;
 
-        value = value.Substring(1);
+        // skip hemisphere indicator
+        coordinate = coordinate[1..];
 
-        return sign * double.Parse(value, CultureInfo.InvariantCulture);
+        // handle GEDCOM invalid coordinates that contain a comma as decimal separator. we can heal that.
+        coordinate = coordinate.Replace(',', '.');
+
+        if (double.TryParse(coordinate, CultureInfo.InvariantCulture, out coordinateValue))
+        {
+            // simple guard against coordinates that would be out of range
+            if (coordinateValue >= 0.0 && coordinateValue <= 180.0)
+            {
+                coordinateValue *= sign;
+                return true;
+            }
+        }
+
+        Debug.WriteLine($"Could not parse coordinate {coordinate}");
+
+        return false;
     }
 
     #endregion

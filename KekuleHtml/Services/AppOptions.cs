@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
 using System.Globalization;
+using System.Reflection;
 
 namespace KekuleHtml.Services;
 
@@ -34,4 +35,9 @@ public sealed class AppOptions
     /// Applied via <see cref="KekuleHtml.Helpers.CultureHelper.Apply(CultureInfo?)"/>.
     /// </summary>
     public CultureInfo? Language { get; init; }
+
+    /// <summary>
+    /// Version comes from the single, central value in Directory.Build.props.
+    /// </summary>
+    public static string Version { get; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "?";
 }

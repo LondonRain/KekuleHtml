@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
 using KekuleHtml.Models;
+using KekuleHtml.Properties;
 using System.Collections.Frozen;
 
 namespace KekuleHtml.Services;
@@ -126,13 +127,15 @@ public static class ResearchFocusBuilder
         "MNU",
         // Do Not Know
         "DNK",
-        // Unknownn
+        // Unknown
         "UNK",
         "UNKNOWN",
         "UNBEKANNT",
         "?",
         // from Kennedy gedcom example
-        "(-----)"
+        "(-----)",
+        // our own Unknown resource that happens as a fallback when a person has no surname set
+        Resources.NameUnknown.ToUpperInvariant(),
     }.ToFrozenSet(StringComparer.Ordinal);
 
     /// <summary>

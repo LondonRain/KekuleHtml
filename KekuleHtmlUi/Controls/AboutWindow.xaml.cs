@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Tim
+using KekuleHtml.Services;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Navigation;
 
@@ -32,9 +32,7 @@ public partial class AboutWindow : Window
     {
         InitializeComponent();
 
-        // Version comes from the single, central value in Directory.Build.props.
-        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "?";
-        VersionText.Text = Properties.Resources.AboutVersionLabel(version);
+        VersionText.Text = Properties.Resources.AboutVersionLabel(AppOptions.Version);
 
         LicenseLink.NavigateUri = new Uri(LicenseUrl);
         ThirdPartyLink.NavigateUri = new Uri(ThirdPartyUrl);
