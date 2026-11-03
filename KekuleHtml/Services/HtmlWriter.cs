@@ -32,6 +32,9 @@ body {
     margin: 2rem auto;
     max-width: 1200px;
     line-height: 1.4;
+    /* enable background printing. makes sure that Mary-Hill colour legend circles will always be printed. */
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
 }
 /* general styling */
 h1 {
