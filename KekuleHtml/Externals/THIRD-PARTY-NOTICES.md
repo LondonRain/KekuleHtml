@@ -9,7 +9,7 @@ License:
 AGPL-3.0
 
 Included version:
-bab63fa - 2025-03-23
+8e0a690 -  2026-11-25
 
 Leaflet
 -------
