@@ -30,6 +30,13 @@ public sealed class GedcomAdapter
         _Database = reader.Database;
         _Families = _Database.Families.ToDictionary(f => f.XRefID);
         _Individuals = _Database.Individuals.ToDictionary(i => i.XRefID);
+
+        // skip locations with no name or no coordinates and those where the name is not unique.
+        Locations = _Database.Locations
+            .Where(l => !string.IsNullOrWhiteSpace(l.Name) && MigrationCollector.HasCoordinate(l.Latitude, l.Longitude))
+            .GroupBy(l => l.Name)
+            .Where(g => g.Count() == 1)
+            .ToDictionary(g => g.Key, g => g.Single());
     }
 
     #endregion
@@ -67,6 +74,11 @@ public sealed class GedcomAdapter
                 .ToList();
         }
     }
+
+    /// <summary>
+    /// Gets all the locations that have a valid coordinate and are uniquely identifiable by name.
+    /// </summary>
+    public Dictionary<string, GedcomLocationRecord> Locations { get; }
 
     public GedcomIndividualRecord? GetFather(GedcomIndividualRecord person)
     {

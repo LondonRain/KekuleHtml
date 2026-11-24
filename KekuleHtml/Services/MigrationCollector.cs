@@ -30,7 +30,7 @@ public class MigrationCollector(GedcomAdapter adapter)
         return points.OrderBy(p => p.Person.Colour).ThenBy(p => p.YearFrom).ThenBy(p => p.PlaceName).ToList();
     }
 
-    private static void CollectBirth(IList<MigrationPoint> points, Person person)
+    private void CollectBirth(IList<MigrationPoint> points, Person person)
     {
         var birth = person.GedcomRecord.Birth;
 
@@ -45,7 +45,7 @@ public class MigrationCollector(GedcomAdapter adapter)
             year1!.Value);
     }
 
-    private static void CollectDeath(IList<MigrationPoint> points, Person person)
+    private void CollectDeath(IList<MigrationPoint> points, Person person)
     {
         var death = person.GedcomRecord.Death;
 
@@ -133,7 +133,7 @@ public class MigrationCollector(GedcomAdapter adapter)
         }
     }
 
-    private static void AddPoint(
+    private void AddPoint(
         IList<MigrationPoint> points,
         Person person,
         PointOrigin pointOrigin,
@@ -149,11 +149,29 @@ public class MigrationCollector(GedcomAdapter adapter)
             yearTo = null;
 
         // points with a georeference can be drawn on the map. the others still count towards the research focus lists.
-        var hasCoordinates = !string.IsNullOrWhiteSpace(place.Latitude) && !string.IsNullOrWhiteSpace(place.Longitude);
+        var latitudeString = place.Latitude;
+        var longitudeString = place.Longitude;
 
-        if (hasCoordinates &&
-            TryParseCoordinate(place.Latitude, out var latitude) &&
-            TryParseCoordinate(place.Longitude, out var longitude))
+        if (!HasCoordinate(latitudeString, longitudeString))
+        {
+            // some events do not carry the coordinates themselves but only reference a location entry that does, so fall back to that to include those.
+            latitudeString = place.Location?.Latitude;
+            longitudeString = place.Location?.Longitude;
+        }
+
+        if (!HasCoordinate(latitudeString, longitudeString))
+        {
+            // some events do not even reference a location entry. we try to match a uniquely matching place name with coordinates as last fallback.
+            if (_Adapter.Locations.TryGetValue(place.Name, out var locationRecord))
+            {
+                latitudeString = locationRecord.Latitude;
+                longitudeString = locationRecord.Longitude;
+            }
+        }
+
+        if (HasCoordinate(latitudeString, longitudeString) &&
+            TryParseCoordinate(latitudeString!, out var latitude) &&
+            TryParseCoordinate(longitudeString!, out var longitude))
         {
             points.Add(
                 new MigrationPointWithCoordinates
@@ -180,6 +198,8 @@ public class MigrationCollector(GedcomAdapter adapter)
                 });
         }
     }
+
+    public static bool HasCoordinate(string? latitude, string? longitude) => !string.IsNullOrWhiteSpace(latitude) && !string.IsNullOrWhiteSpace(longitude);
 
     private static bool TryParseCoordinate(string coordinate, out double coordinateValue)
     {
