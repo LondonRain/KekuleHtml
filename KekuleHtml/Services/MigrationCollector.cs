@@ -25,6 +25,8 @@ public class MigrationCollector(GedcomAdapter adapter)
             CollectMarriage(points, person);
         }
 
+        Debug.WriteLine($"Found {points.Count} {nameof(MigrationPoint)}s of which {points.OfType<MigrationPointWithCoordinates>().Count()} have coordinates.");
+
         return points.OrderBy(p => p.Person.Colour).ThenBy(p => p.YearFrom).ThenBy(p => p.PlaceName).ToList();
     }
 
@@ -210,9 +212,9 @@ public class MigrationCollector(GedcomAdapter adapter)
 
     #region Cluster
 
-    public IReadOnlyList<MigrationCluster> BuildMigrationClusters(IEnumerable<MigrationPoint> points)
+    public static IReadOnlyList<MigrationCluster> BuildMigrationClusters(IEnumerable<MigrationPoint> points)
     {
-        return points
+        var migrationClusters = points
             .OfType<MigrationPointWithCoordinates>()
             .GroupBy(p => new
             {
@@ -239,6 +241,10 @@ public class MigrationCollector(GedcomAdapter adapter)
             .OrderBy(c => c.PlaceName)
             .ThenByDescending(x => x.Count)
             .ToList();
+
+        Debug.WriteLine($"Found {migrationClusters.Count} {nameof(MigrationCluster)}s.");
+
+        return migrationClusters;
     }
 
     #endregion

@@ -92,7 +92,7 @@ public static class Program
             // creating migration clusters
             var migrationCollector = new MigrationCollector(adapter);
             var migrationPoints = migrationCollector.GetMigrationPoints(familyTree);
-            var migrationClusters = migrationCollector.BuildMigrationClusters(migrationPoints);
+            var migrationClusters = MigrationCollector.BuildMigrationClusters(migrationPoints);
 
             // creating research focus cards
             var researchFocusCards = ResearchFocusBuilder.Build(familyTree, migrationPoints, KekuleConsts.TopListLength);
