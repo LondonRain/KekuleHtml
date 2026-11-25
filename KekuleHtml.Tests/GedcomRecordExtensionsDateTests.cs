@@ -19,8 +19,8 @@ namespace KekuleHtml.Tests;
 /// pinned by <see cref="GeneGenieDateParsingTests"/>.
 /// </para>
 /// <para>
-/// Expected years are derived by hand. The display strings of non-standard forms that GeneGenie mis-parses are
-/// frozen as golden values (flagged // BUG). FormatDate's "d" branch is culture dependent, so the culture is pinned to de-DE.
+/// Expected years are derived by hand. Only well-formed full dates are localized, everything else is displayed as
+/// written. FormatDate's "d" branch is culture dependent, so the culture is pinned to de-DE.
 /// </para>
 /// </summary>
 [TestClass]
@@ -47,12 +47,10 @@ public sealed class GedcomRecordExtensionsDateTests
     // ===== Group 1: standard GEDCOM forms (parsed as specified) =====
     // Full precision -> localized "d".
     [DataRow("15 JUN 1900", "15.06.1900")]
-    // Month+year: the synthetic "FROM" is suppressed.
+    // Month+year and year only: no day is invented.
     [DataRow("JUN 1900", "JUN 1900")]
-    // Year only.
     [DataRow("1900", "1900")]
-    // GeneGenie normalizes ABT -> EST.
-    [DataRow("ABT 1900", "EST 1900")]
+    [DataRow("ABT 1900", "ABT 1900")]
     [DataRow("BEF 1900", "BEF 1900")]
     [DataRow("AFT JUN 1900", "AFT JUN 1900")]
     [DataRow("EST 1900", "EST 1900")]
@@ -60,15 +58,34 @@ public sealed class GedcomRecordExtensionsDateTests
     // Two-ended ranges are returned verbatim instead of collapsing to a single invented date.
     [DataRow("BET 1900 AND 1920", "BET 1900 AND 1920")]
     [DataRow("FROM 1900 TO 1920", "FROM 1900 TO 1920")]
-    [DataRow("FROM JUN 1900 TO 1920", "JUN 1900 TO 1920")]
-    // Accepted limitation: an open-ended "FROM" cannot be told apart from a plain year, so it loses "FROM".
-    [DataRow("FROM 1900", "1900")]
-    [DataRow("TO JUN 1920", "JUN 1920")]
+    [DataRow("FROM JUN 1900 TO 1920", "FROM JUN 1900 TO 1920")]
+    // Open-ended ranges keep their qualifier.
+    [DataRow("FROM 1900", "FROM 1900")]
+    [DataRow("TO JUN 1920", "TO JUN 1920")]
+    [DataRow("TO 1920", "TO 1920")]
     [DataRow("999", "999")]
     [DataRow("1000", "1000")]
     [DataRow("2199", "2199")]
     [DataRow("2200", "2200")]
     [DataRow("", "")]
+    // Qualified full-precision dates keep their qualifier instead of being localized.
+    [DataRow("ABT 15 JUN 1900", "ABT 15 JUN 1900")]
+    [DataRow("BEF 15 JUN 1900", "BEF 15 JUN 1900")]
+    [DataRow("AFT 15 JUN 1900", "AFT 15 JUN 1900")]
+    [DataRow("FROM 15 JUN 1900", "FROM 15 JUN 1900")]
+    [DataRow("TO 15 JUN 1920", "TO 15 JUN 1920")]
+    // Ranges are never collapsed to their start date.
+    [DataRow("BET 15 JUN 1900 AND 1920", "BET 15 JUN 1900 AND 1920")]
+    [DataRow("BET JUN 1900 AND AUG 1920", "BET JUN 1900 AND AUG 1920")]
+    [DataRow("FROM JAN 1900 TO MAR 1900", "FROM JAN 1900 TO MAR 1900")]
+    // Interpreted dates are shown including their phrase.
+    [DataRow("INT 15 JUN 1900 (lorem)", "INT 15 JUN 1900 (lorem)")]
+    [DataRow("INT 1900 (lorem 1920)", "INT 1900 (lorem 1920)")]
+    // Full dates in other calendars: converted to Gregorian and localized.
+    [DataRow("JULIAN 15 JUN 1900", "28.06.1900")]
+    [DataRow("@#DHEBREW@ 15 TSH 5660", "19.09.1899")]
+    // Dual dating is shown as written, so the second year is not lost.
+    [DataRow("15 JUN 1900/01", "15 JUN 1900/01")]
     // ===== Group 2: non-standard forms, parsed correctly (display honest) =====
     [DataRow("15.06.1900", "15.06.1900")]
     [DataRow("06.1900", "06.1900")]
@@ -76,26 +93,22 @@ public sealed class GedcomRecordExtensionsDateTests
     [DataRow("(06/1900)", "(06/1900)")]
     [DataRow("Vor 1900", "Vor 1900")]
     [DataRow("Ca 1900", "Ca 1900")]
-    [DataRow("ABT 06.1900", "EST 06.1900")]
+    [DataRow("ABT 06.1900", "ABT 06.1900")]
     [DataRow("BEF 06.1900", "BEF 06.1900")]
     [DataRow("BET 10.1900 AND 1920", "BET 10.1900 AND 1920")]
-    // ===== Group 3: known GeneGenie bugs (mis-parsed; display frozen as golden master) =====
-    // BUG: German month -> wrong month (January).
-    [DataRow("15 Juni 1900", "15.01.1900")]
-    // BUG: trailing-dot day -> day lost.
-    [DataRow("15. JUN 1900", "01.06.1900")]
-    // Mis-parsed internally (year 15), but FormatDate returns the raw text, so the display stays correct.
+    [DataRow("ABOUT 1900", "ABOUT 1900")]
+    [DataRow("15 JUNE 1900", "15.06.1900")]
+    [DataRow("15 SEPT 1900", "15.09.1900")]
+    // ===== Group 3: known GeneGenie bugs (mis-parsed internally, but the display stays as written) =====
+    [DataRow("BEFORE 1900", "BEFORE 1900")]
+    [DataRow("15 Juni 1900", "15 Juni 1900")]
+    [DataRow("15. JUN 1900", "15. JUN 1900")]
     [DataRow("15/6/1900", "15/6/1900")]
-    // Mis-parsed internally (end year), but returned as raw text, so the display stays correct.
     [DataRow("1900-1920", "1900-1920")]
-    // BUG: dash range with spaces -> range lost (rendered as a single invented date).
-    [DataRow("1900 - 1920", "31.01.1920")]
-    // BUG: "BF" qualifier dropped -> treated as an exact date.
-    [DataRow("BF JUN 1900", "01.06.1900")]
-    // BUG: "OR" range lost.
-    [DataRow("1900  OR 1920", "31.01.1920")]
-    // BUG: placeholder day/month -> 01.01.
-    [DataRow("NN NNN 1900", "01.01.1900")]
+    [DataRow("1900 - 1920", "1900 - 1920")]
+    [DataRow("BF JUN 1900", "BF JUN 1900")]
+    [DataRow("1900  OR 1920", "1900  OR 1920")]
+    [DataRow("NN NNN 1900", "NN NNN 1900")]
     public void FormatDate_returns_expected_string(string input, string expected)
     {
         Assert.AreEqual(expected, GedcomRecordExtensions.FormatDate(Parse(input)));
@@ -139,12 +152,28 @@ public sealed class GedcomRecordExtensionsDateTests
     [DataRow("FROM JUN 1900 TO 1920", true, 1900, true, 1920)]
     [DataRow("FROM 1900", true, 1900, true, 1900)]
     [DataRow("TO JUN 1920", true, 1920, true, 1920)]
+    [DataRow("TO 1920", true, 1920, true, 1920)]
     // Boundary years fall outside the regex's 1000-2199 window -> the DateTime fallback supplies the year.
     [DataRow("999", true, 999, true, 999)]
     [DataRow("1000", true, 1000, true, 1000)]
     [DataRow("2199", true, 2199, true, 2199)]
     [DataRow("2200", true, 2200, true, 2200)]
     [DataRow("", false, 0, false, 0)]
+    [DataRow("ABT 15 JUN 1900", true, 1900, true, 1900)]
+    [DataRow("BEF 15 JUN 1900", true, 1900, true, 1900)]
+    [DataRow("AFT 15 JUN 1900", true, 1900, true, 1900)]
+    [DataRow("FROM 15 JUN 1900", true, 1900, true, 1900)]
+    [DataRow("TO 15 JUN 1920", true, 1920, true, 1920)]
+    [DataRow("BET 15 JUN 1900 AND 1920", true, 1900, true, 1920)]
+    [DataRow("BET JUN 1900 AND AUG 1920", true, 1900, true, 1920)]
+    [DataRow("FROM JAN 1900 TO MAR 1900", true, 1900, true, 1900)]
+    // The year in the phrase must not be taken for the end year.
+    [DataRow("INT 15 JUN 1900 (lorem)", true, 1900, true, 1900)]
+    [DataRow("INT 1900 (lorem 1920)", true, 1900, true, 1900)]
+    [DataRow("JULIAN 15 JUN 1900", true, 1900, true, 1900)]
+    // Hebrew year 5660 is outside the regex window: start year from DateTime1, no end year for a single day (no DateTime2).
+    [DataRow("@#DHEBREW@ 15 TSH 5660", true, 1899, false, 0)]
+    [DataRow("15 JUN 1900/01", true, 1900, true, 1900)]
     // ===== Group 2: non-standard forms, parsed correctly =====
     [DataRow("15.06.1900", true, 1900, true, 1900)]
     [DataRow("06.1900", true, 1900, true, 1900)]
@@ -155,7 +184,11 @@ public sealed class GedcomRecordExtensionsDateTests
     [DataRow("ABT 06.1900", true, 1900, true, 1900)]
     [DataRow("BEF 06.1900", true, 1900, true, 1900)]
     [DataRow("BET 10.1900 AND 1920", true, 1900, true, 1920)]
+    [DataRow("ABOUT 1900", true, 1900, true, 1900)]
+    [DataRow("15 JUNE 1900", true, 1900, true, 1900)]
+    [DataRow("15 SEPT 1900", true, 1900, true, 1900)]
     // ===== Group 3: known GeneGenie bugs -- but the regex-first helper recovers the correct year(s) =====
+    [DataRow("BEFORE 1900", true, 1900, true, 1900)]
     [DataRow("15 Juni 1900", true, 1900, true, 1900)]
     [DataRow("15. JUN 1900", true, 1900, true, 1900)]
     // Regex-first rescues the year GeneGenie mis-parsed as 15.
