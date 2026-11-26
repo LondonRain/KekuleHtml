@@ -52,7 +52,11 @@ public class MainPresenter : BindableBase
     public PersonPresenter? SelectedPerson
     {
         get => _SelectedPerson;
-        set => SetProperty(ref _SelectedPerson, value, () => RaisePropertyChanged(nameof(CanGenerateHtml)));
+        set
+        {
+            if (SetProperty(ref _SelectedPerson, value))
+                RaisePropertyChanged(nameof(CanGenerateHtml));
+        }
     }
 
     private string? _Text;
@@ -62,7 +66,11 @@ public class MainPresenter : BindableBase
     public string? Text
     {
         get => _Text;
-        set => SetProperty(ref _Text, value, () => RaisePropertyChanged(nameof(CanGenerateHtml)));
+        set
+        {
+            if (SetProperty(ref _Text, value))
+                RaisePropertyChanged(nameof(CanGenerateHtml));
+        }
     }
 
     /// <summary>
