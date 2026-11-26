@@ -32,7 +32,11 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      # restores the packages, builds all projects and runs the tests. Projects with TreatWarningsAsErrors
-      # fail on warnings. This includes the tests in the category "Online", which download the Leaflet
-      # files from unpkg.com, so a run can also fail because that site is unavailable.
-      - run: dotnet test KekuleHtml.slnx
+      # restores the packages and builds all projects. Projects with TreatWarningsAsErrors fail on warnings.
+      # This has to be a step of its own: "dotnet test" only builds the test project and what it references,
+      # which leaves out the UI. No test covers the UI, so compiling it is the only check it gets.
+      - run: dotnet build KekuleHtml.slnx
+
+      # runs the tests on the binaries built above. This includes the tests in the category "Online", which
+      # download the Leaflet files from unpkg.com, so a run can also fail because that site is unavailable.
+      - run: dotnet test KekuleHtml.slnx --no-build
