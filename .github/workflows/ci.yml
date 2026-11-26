@@ -1,0 +1,38 @@
+# Continuous integration: builds the whole solution and runs the unit tests on GitHub.
+# The result is listed in the "Actions" tab and shown as a check on each pull request.
+# It only reports, it neither merges nor changes anything.
+name: CI
+
+# When the workflow runs. Pushes to other branches don't trigger it.
+on:
+  # pull requests targeting one of these branches, including those opened by Dependabot.
+  pull_request:
+    branches: [dev, main]
+  # pushes to one of these branches, e.g. after merging a pull request locally.
+  push:
+    branches: [dev, main]
+
+# The access token handed to the job may only read the repository. Running tests needs no more.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # a fresh virtual machine for every run. The WPF project can only be built on Windows.
+    runs-on: windows-latest
+
+    # Dependabot keeps the versions of the actions used below up to date.
+    steps:
+      # fetches the sources of the commit to be tested. For a pull request this is the result of merging it.
+      - uses: actions/checkout@v7
+
+      # makes sure that a .NET 10 SDK is available, which has to follow the TargetFramework of the projects.
+      # Without a global.json the newest SDK on the machine is used for the build.
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: "10.0.x"
+
+      # restores the packages, builds all projects and runs the tests. Projects with TreatWarningsAsErrors
+      # fail on warnings. This includes the tests in the category "Online", which download the Leaflet
+      # files from unpkg.com, so a run can also fail because that site is unavailable.
+      - run: dotnet test KekuleHtml.slnx
