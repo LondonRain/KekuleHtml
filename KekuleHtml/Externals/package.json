@@ -1,0 +1,8 @@
+{
+  "name": "kekulehtml-externals",
+  "private": true,
+  "dependencies": {
+    "leaflet": "1.9.4",
+    "leaflet.fullscreen": "5.3.2"
+  }
+}
