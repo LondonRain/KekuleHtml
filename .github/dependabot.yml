@@ -1,0 +1,35 @@
+# Dependabot opens pull requests which update outdated dependencies.
+# GitHub only reads this file from the default branch (main), so changes have to be brought there to take effect.
+# Past runs and their errors: "Insights" -> "Dependency graph" -> "Dependabot".
+version: 2
+
+# Per entry:
+#   directory      where to look for the files listing the dependencies, relative to the repository root.
+#   target-branch  those files are read from this branch, and the pull requests are opened against it.
+#                  Security updates are different: they always use the default branch, and the settings of
+#                  an entry don't apply to them.
+#   interval       how often to check. A new release is only proposed once it is a few days old.
+updates:
+  # NuGet packages of all projects in the solution.
+  # After a GeneGenie.Gedcom update, also adjust its version in KekuleHtml/Externals/THIRD-PARTY-NOTICES.md.
+  - package-ecosystem: "nuget"
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+
+  # The libraries which the generated HTML file loads from unpkg.com. Dependabot only updates package.json.
+  # The URLs and integrity hashes in HtmlWriter.cs have to be adjusted by hand, and ExternalDependencyTests
+  # fails until that is done.
+  - package-ecosystem: "npm"
+    directory: "/KekuleHtml/Externals"
+    target-branch: "dev"
+    schedule:
+      interval: "monthly"
+
+  # The actions used by the workflows in .github/workflows, which Dependabot finds from the root directory.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: "monthly"
