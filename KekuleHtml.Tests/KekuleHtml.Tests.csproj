@@ -22,4 +22,9 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Versions of the libraries loaded by the generated HTML, see ExternalDependencyTests. -->
+    <None Include="..\KekuleHtml\Externals\package.json" Link="package.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
