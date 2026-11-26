@@ -21,10 +21,9 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="GeneGenie.Gedcom">
-      <HintPath>Externals\GeneGenie.Gedcom.dll</HintPath>
-    </Reference>
+  <!-- A locally built DLL can replace this package, see Directory.Build.targets. -->
+  <ItemGroup Condition="'$(GeneGenieLocalDll)' == ''">
+    <PackageReference Include="GeneGenie.Gedcom" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>

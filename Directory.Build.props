@@ -13,6 +13,13 @@
     </PropertyGroup>
 
     <!--
+      Optional settings for this machine only (not under version control), such as
+      GeneGenieLocalDll, see Directory.Build.targets.
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)Directory.Build.local.props"
+            Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.local.props')" />
+
+    <!--
       Defines the FORCE_ENGLISH compile symbol for ALL projects in this repository
       (console + UI), forcing the English resources for testing. It is turned on by
       either of:

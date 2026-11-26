@@ -19,13 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- The core project's raw assembly reference is not transitive, so reference the DLL directly. -->
-    <Reference Include="GeneGenie.Gedcom">
-      <HintPath>..\KekuleHtml\Externals\GeneGenie.Gedcom.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 

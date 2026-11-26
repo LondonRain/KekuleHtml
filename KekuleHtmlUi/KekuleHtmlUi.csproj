@@ -38,12 +38,6 @@
     <ProjectReference Include="..\KekuleHtml\KekuleHtml.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="GeneGenie.Gedcom">
-      <HintPath>..\KekuleHtml\Externals\GeneGenie.Gedcom.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
   <!-- Packs the GitHub release assets; only active for the GitHubRelease publish profile. -->
   <Import Project="GitHubRelease.targets" />
 

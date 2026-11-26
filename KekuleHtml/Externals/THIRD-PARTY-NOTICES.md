@@ -9,7 +9,7 @@ License:
 AGPL-3.0
 
 Included version:
-8e0a690 -  2026-11-25
+ed777a3 - 2026-11-26 - v2.1.1 (NuGet)
 
 Leaflet
 -------

@@ -10,6 +10,7 @@
 *.suo
 *.user
 launchSettings.json
+Directory.Build.local.props
 
 # Debug symbols
 *.pdb

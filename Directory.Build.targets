@@ -1,0 +1,38 @@
+<Project>
+
+    <!--
+      Replaces the GeneGenie.Gedcom NuGet package with a locally built DLL, to try out
+      library changes. Set GeneGenieLocalDll to the full path of the DLL in one of
+      these ways:
+        * in Directory.Build.local.props next to this file (also picked up by VS):
+            <Project>
+              <PropertyGroup>
+                <GeneGenieLocalDll>$(MSBuildThisFileDirectory)..\GeneGenie.Gedcom\GeneGenie.Gedcom\bin\Release\net10.0\GeneGenie.Gedcom.dll</GeneGenieLocalDll>
+              </PropertyGroup>
+            </Project>
+        * as an environment variable, or
+        * on the command line: -p:GeneGenieLocalDll=...
+      Leave it unset to use the package version given in KekuleHtml.csproj.
+
+      A plain assembly reference isn't passed on to referencing projects, so it is
+      added to every project here.
+    -->
+    <ItemGroup Condition="'$(GeneGenieLocalDll)' != ''">
+        <Reference Include="GeneGenie.Gedcom">
+            <HintPath>$(GeneGenieLocalDll)</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <!-- Announces the local DLL in every build and keeps it out of release assets. -->
+    <Target Name="CheckGeneGenieLocalDll"
+            BeforeTargets="ResolveAssemblyReferences"
+            Condition="'$(GeneGenieLocalDll)' != ''">
+        <Error Condition="!Exists('$(GeneGenieLocalDll)')"
+               Text="GeneGenieLocalDll points to a file that does not exist: $(GeneGenieLocalDll)" />
+        <Error Condition="'$(PackReleaseAssets)' == 'true'"
+               Text="Release assets must be built with the NuGet package. Unset GeneGenieLocalDll first: $(GeneGenieLocalDll)" />
+        <Message Importance="high"
+                 Text="$(MSBuildProjectName) uses a local GeneGenie.Gedcom DLL instead of the NuGet package: $(GeneGenieLocalDll)" />
+    </Target>
+
+</Project>
